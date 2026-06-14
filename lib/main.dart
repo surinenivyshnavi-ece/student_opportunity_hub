@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-
+import 'internships_page.dart';
+import 'hackathons_page.dart';
+import 'team formation_page.dart';
+import 'profile_page.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -25,20 +28,59 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blue.shade50,
       appBar: AppBar(
-        title: const Text('Student Opportunity Hub'),
+        centerTitle: true,
+        title: const Text(
+          'Student Opportunity Hub',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            buildButton(context, "Internships", const InternshipsPage()),
+
+            const Text(
+              " 🎓Welcome to Student Opportunity Hub",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            const Text(
+              "Find internships, hackathons, teammates and opportunities.",
+              textAlign: TextAlign.center,
+            ),
+
+            const SizedBox(height: 25),
+
+            buildButton(context, "📚 Internships", const InternshipsPage()),
             const SizedBox(height: 15),
-            buildButton(context, "Hackathons", const HackathonsPage()),
+
+            buildButton(context, "🏆 Hackathons", const HackathonsPage()),
             const SizedBox(height: 15),
-            buildButton(context, "Team Formation", const TeamPage()),
+
+            buildButton(context, "👥 Team Formation", const TeamPage()),
             const SizedBox(height: 15),
-            buildButton(context, "Profile", const ProfilePage()),
+
+            buildButton(context, "👤 Profile", const ProfilePage()),
+
+            const SizedBox(height: 30),
+
+            const Text(
+              "Built by Team Student Opportunity Hub",
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+            ),
           ],
         ),
       ),
@@ -46,89 +88,34 @@ class HomePage extends StatelessWidget {
   }
 
   Widget buildButton(BuildContext context, String text, Widget page) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
+    return Center(
+        child: SizedBox(
+          width: 280,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              elevation: 4,
+              padding: const EdgeInsets.all(18),
+            ),
+
         onPressed: () {
+
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => page),
           );
         },
-        child: Text(text),
+        child:  Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Text(
+        text,
+        style: const TextStyle(fontSize: 18),
       ),
-    );
-  }
-}
-
-/// ================= INTERNSHIPS PAGE =================
-class InternshipsPage extends StatelessWidget {
-  const InternshipsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Internships")),
-      body: const Center(
-        child: Text(
-          "Internship Listings Coming Soon",
-          style: TextStyle(fontSize: 18),
+    ),
+      ),
         ),
-      ),
     );
   }
 }
 
-/// ================= HACKATHONS PAGE =================
-class HackathonsPage extends StatelessWidget {
-  const HackathonsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Hackathons")),
-      body: const Center(
-        child: Text(
-          "Hackathon Events Coming Soon",
-          style: TextStyle(fontSize: 18),
-        ),
-      ),
-    );
-  }
-}
-
-/// ================= TEAM FORMATION PAGE =================
-class TeamPage extends StatelessWidget {
-  const TeamPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Team Formation")),
-      body: const Center(
-        child: Text(
-          "Find Teammates Coming Soon",
-          style: TextStyle(fontSize: 18),
-        ),
-      ),
-    );
-  }
-}
-
-/// ================= PROFILE PAGE =================
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Profile")),
-      body: const Center(
-        child: Text(
-          "User Profile Coming Soon",
-          style: TextStyle(fontSize: 18),
-        ),
-      ),
-    );
-  }
-}
