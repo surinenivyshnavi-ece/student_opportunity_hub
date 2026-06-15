@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "758376005903",
+    "project_id": "student-opportunity-hub-44329",
+    "storage_bucket": "student-opportunity-hub-44329.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:758376005903:android:a06932264b9be35a7ebe7a",
+        "android_client_info": {
+          "package_name": "com.example.student_opportunity_hub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpG4qpR10WM5q9dSOMrUvrT7S_GJFN2Fo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
