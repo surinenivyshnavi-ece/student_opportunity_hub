@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddTeamFormationPage extends StatefulWidget {
   const AddTeamFormationPage({super.key});
@@ -9,48 +10,27 @@ class AddTeamFormationPage extends StatefulWidget {
 
 class _AddTeamFormationPageState extends State<AddTeamFormationPage> {
 
-  final nameController = TextEditingController();
+  final teamNameController = TextEditingController();
   final skillController = TextEditingController();
-  final requirementController = TextEditingController();
-
-  final List<Map<String, String>> teams = [];
-
-  void addTeam() {
-
-    if (nameController.text.isNotEmpty &&
-        skillController.text.isNotEmpty &&
-        requirementController.text.isNotEmpty) {
-
-      setState(() {
-
-        teams.add({
-          "name": nameController.text,
-          "skill": skillController.text,
-          "requirement": requirementController.text,
-        });
-
-      });
-
-      nameController.clear();
-      skillController.clear();
-      requirementController.clear();
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Team request added successfully"),
-        ),
-      );
-
-    }
-
-  }
+  final membersController = TextEditingController();
+  final contactController = TextEditingController();
 
 
-  void deleteTeam(int index){
+  Future<void> addTeam() async {
 
-    setState(() {
-      teams.removeAt(index);
+    await FirebaseFirestore.instance
+        .collection('team_formations')
+        .add({
+
+      'team name': teamNameController.text,
+      'requiredSkill': skillController.text,
+      'membersNeeded': membersController.text,
+      'contact': contactController.text,
+
     });
+
+
+    Navigator.pop(context);
 
   }
 
@@ -61,7 +41,7 @@ class _AddTeamFormationPageState extends State<AddTeamFormationPage> {
     return Scaffold(
 
       appBar: AppBar(
-        title: const Text("Team Formation"),
+        title: const Text("Add Team Formation"),
       ),
 
 
@@ -75,47 +55,45 @@ class _AddTeamFormationPageState extends State<AddTeamFormationPage> {
 
 
             TextField(
-              controller: nameController,
+
+              controller: teamNameController,
+
               decoration: const InputDecoration(
-                labelText: "Your Name",
-                border: OutlineInputBorder(),
+                labelText: "Team Name",
               ),
+
             ),
 
 
-            const SizedBox(height: 12),
-
-
             TextField(
+
               controller: skillController,
+
               decoration: const InputDecoration(
-                labelText: "Your Skills",
-                border: OutlineInputBorder(),
+                labelText: "Required Skill",
               ),
+
             ),
-
-
-            const SizedBox(height: 12),
 
 
             TextField(
-              controller: requirementController,
+
+              controller: membersController,
+
               decoration: const InputDecoration(
-                labelText: "Team Requirement",
-                border: OutlineInputBorder(),
+                labelText: "Members Needed",
               ),
+
             ),
 
 
-            const SizedBox(height: 15),
+            TextField(
 
+              controller: contactController,
 
-            ElevatedButton(
+              decoration: const InputDecoration(
+                labelText: "Contact",
 
-              onPressed: addTeam,
-
-              child: const Text(
-                "Create Team Request",
               ),
 
             ),
@@ -124,55 +102,13 @@ class _AddTeamFormationPageState extends State<AddTeamFormationPage> {
             const SizedBox(height: 20),
 
 
-            Expanded(
+            ElevatedButton(
 
-              child: ListView.builder(
+              onPressed: addTeam,
 
-                itemCount: teams.length,
+              child: const Text("Save"),
 
-
-                itemBuilder: (context,index){
-
-
-                  return Card(
-
-                    child: ListTile(
-
-                      title: Text(
-                        teams[index]["name"]!,
-                      ),
-
-
-                      subtitle: Text(
-
-                        "Skills: ${teams[index]["skill"]}\n"
-                            "Need: ${teams[index]["requirement"]}",
-
-                      ),
-
-
-                      trailing: IconButton(
-
-                        icon: const Icon(Icons.delete),
-
-                        onPressed: (){
-
-                          deleteTeam(index);
-
-                        },
-
-                      ),
-
-                    ),
-
-                  );
-
-
-                },
-
-              ),
-
-            )
+            ),
 
 
           ],

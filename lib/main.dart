@@ -89,16 +89,16 @@ class HomePage extends StatelessWidget {
                 const SizedBox(height: 30),
 
                 /// BUTTONS
-                buildButton(context, "📚 Internships", const InternshipsPage()),
+                buildButton(context, "📚 Internships",  InternshipsPage()),
                 const SizedBox(height: 15),
 
-                buildButton(context, "🏆 Hackathons", const HackathonsPage()),
+                buildButton(context, "🏆 Hackathons", HackathonsPage()),
                 const SizedBox(height: 15),
 
-                buildButton(context, "👥 Team Formation", const TeamPage()),
+                buildButton(context, "👥 Team Formation",  TeamFormationPage()),
                 const SizedBox(height: 15),
 
-                buildButton(context, "👤 Profile", const ProfilePage()),
+                buildButton(context, "👤 Profile",  ProfilePage()),
 
                 const SizedBox(height: 30),
 
