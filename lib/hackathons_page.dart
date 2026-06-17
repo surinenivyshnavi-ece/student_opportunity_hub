@@ -4,40 +4,37 @@ import 'package:url_launcher/url_launcher.dart';
 import 'add_hackathon_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class HackathonsPage extends StatelessWidget {
+class HackathonsPage extends StatefulWidget {
+  const HackathonsPage({super.key});
 
-  HackathonsPage({super.key});
+  @override
+  State<HackathonsPage> createState() => _HackathonsPageState();
+}
 
-
+class _HackathonsPageState extends State<HackathonsPage> {
   final CollectionReference hackathonsRef =
   FirebaseFirestore.instance.collection('hackathons');
+
+  String searchText = '';
+
   bool get isAdmin =>
       FirebaseAuth.instance.currentUser?.email ==
           "surinenivyshnavi2006@gmail.com";
 
-
   Future<void> openLink(String link) async {
-
     final Uri url = Uri.parse(link);
 
     if (await canLaunchUrl(url)) {
-
       await launchUrl(url);
-
     }
 
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       appBar: AppBar(
-
         title: const Text("Hackathons"),
-
         actions: [
           if (isAdmin)
             IconButton(
@@ -46,141 +43,126 @@ class HackathonsPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const AddHackathonPage(),
+                    builder: (context) =>
+                    const AddHackathonPage(),
                   ),
                 );
               },
             ),
         ],
-
-
       ),
 
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: TextField(
+              decoration: const InputDecoration(
+                hintText: "Search Hackathons...",
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  searchText = value.toLowerCase();
+                });
+              },
+            ),
+          ),
 
-      body: StreamBuilder<QuerySnapshot>(
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: hackathonsRef.snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState ==
+                    ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
 
-        stream: hackathonsRef.snapshots(),
+                final docs = snapshot.data!.docs.where((doc) {
+                  final data =
+                  doc.data() as Map<String, dynamic>;
 
-        builder: (context, snapshot) {
+                  final title =
+                  (data['title'] ?? '')
+                      .toString()
+                      .toLowerCase();
 
+                  return title.contains(searchText);
+                }).toList();
 
-          if (snapshot.connectionState ==
-              ConnectionState.waiting) {
+                if (docs.isEmpty) {
+                  return const Center(
+                    child: Text("No hackathons found"),
+                  );
+                }
 
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+                return ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: docs.length,
+                  itemBuilder: (context, index) {
+                    final data =
+                    docs[index].data()
+                    as Map<String, dynamic>;
 
-          }
+                    return Card(
+                      child: ListTile(
+                        leading:
+                        const Icon(Icons.emoji_events),
 
-
-          final docs = snapshot.data!.docs;
-
-
-          if (docs.isEmpty) {
-
-            return const Center(
-              child: Text("No hackathons available"),
-            );
-
-          }
-
-
-
-          return ListView.builder(
-
-            padding: const EdgeInsets.all(16),
-
-            itemCount: docs.length,
-
-
-            itemBuilder: (context,index) {
-
-
-              final data =
-              docs[index].data()
-              as Map<String,dynamic>;
-
-
-              return Card(
-
-                child: ListTile(
-
-                  leading: const Icon(Icons.emoji_events),
-
-
-                  title: Text(
-                    data['title'] ?? '',
-                  ),
-
-
-                  subtitle: Column(
-
-                    crossAxisAlignment:
-                    CrossAxisAlignment.start,
-
-
-                    children: [
-
-
-                      Text(
-                        "Organizer: ${data['organizer'] ?? ''}",
-                      ),
-
-
-                      Text(
-                        "Deadline: ${data['deadline'] ?? ''}",
-                      ),
-
-
-                      TextButton(
-
-                        onPressed: () {
-
-                          openLink(
-                            data['link'] ?? '',
-                          );
-
-                        },
-
-                        child: const Text(
-                          "Open Hackathon Link",
+                        title: Text(
+                          data['title'] ?? '',
                         ),
 
+                        subtitle: Column(
+                          crossAxisAlignment:
+                          CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Organizer: ${data['organizer'] ?? ''}",
+                            ),
+                            Text(
+                              "Deadline: ${data['deadline'] ?? ''}",
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                openLink(
+                                  data['link'] ?? '',
+                                );
+                              },
+                              child: const Text(
+                                "Open Hackathon Link",
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        trailing: isAdmin
+                            ? IconButton(
+                          icon: const Icon(
+                            Icons.delete,
+                          ),
+                          onPressed: () async {
+                            await hackathonsRef
+                                .doc(
+                              docs[index].id,
+                            )
+                                .delete();
+                          },
+                        )
+                            : null,
                       ),
-
-
-                    ],
-
-                  ),
-
-
-                  trailing: isAdmin
-                      ? IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () async {
-                      await hackathonsRef
-                          .doc(docs[index].id)
-                          .delete();
-                    },
-                  )
-                      : null,
-
-                ),
-
-              );
-
-            },
-
-          );
-
-
-        },
-
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
-
     );
 
   }
-
 }
