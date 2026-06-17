@@ -57,8 +57,6 @@ class MyApp extends StatelessWidget {
 
 
 
-// ================= AUTH CHECK =================
-
 class AuthCheck extends StatelessWidget {
 
   const AuthCheck({super.key});
@@ -67,19 +65,15 @@ class AuthCheck extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-
     return StreamBuilder<User?>(
 
-
       stream: FirebaseAuth.instance.authStateChanges(),
-
 
       builder: (context, snapshot) {
 
 
         if (snapshot.connectionState ==
             ConnectionState.waiting) {
-
 
           return const Scaffold(
 
@@ -91,19 +85,14 @@ class AuthCheck extends StatelessWidget {
 
           );
 
-
         }
 
 
-
-        if (snapshot.hasData) {
-
+        if (snapshot.data != null) {
 
           return const HomePage();
 
-
         }
-
 
 
         return const LoginPage();
@@ -111,12 +100,9 @@ class AuthCheck extends StatelessWidget {
 
       },
 
-
     );
 
-
   }
-
 
 }
 

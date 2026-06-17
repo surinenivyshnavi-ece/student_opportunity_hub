@@ -2,17 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
 
   const LoginPage({super.key});
 
+  @override
+  State<LoginPage> createState() => _LoginPageState();
 
-  Future<void> signInWithGoogle(BuildContext context) async {
+}
+
+
+class _LoginPageState extends State<LoginPage> {
+
+
+  bool isLoading = false;
+
+
+
+  Future<void> signInWithGoogle() async {
+
+
+    if(isLoading) return;
+
+
+    setState(() {
+
+      isLoading = true;
+
+    });
+
 
     try {
 
+
       GoogleAuthProvider googleProvider =
       GoogleAuthProvider();
+
 
 
       await FirebaseAuth.instance
@@ -20,20 +45,10 @@ class LoginPage extends StatelessWidget {
 
 
 
-      ScaffoldMessenger.of(context).showSnackBar(
-
-        const SnackBar(
-
-          content: Text("Login Successful"),
-
-        ),
-
-      );
+    }
 
 
-
-
-    } catch(e) {
+    catch(e){
 
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -41,7 +56,7 @@ class LoginPage extends StatelessWidget {
         SnackBar(
 
           content: Text(
-            "Login failed: $e",
+              "Login failed: $e"
           ),
 
         ),
@@ -51,7 +66,22 @@ class LoginPage extends StatelessWidget {
 
     }
 
+
+    finally{
+
+
+      setState(() {
+
+        isLoading = false;
+
+      });
+
+
+    }
+
+
   }
+
 
 
 
@@ -61,6 +91,7 @@ class LoginPage extends StatelessWidget {
 
     return Scaffold(
 
+
       appBar: AppBar(
 
         title: const Text("Login"),
@@ -68,31 +99,48 @@ class LoginPage extends StatelessWidget {
       ),
 
 
+
       body: Center(
+
+
 
         child: ElevatedButton.icon(
 
+
+
           icon: const Icon(Icons.login),
 
-          label: const Text(
-            "Sign in with Google",
-          ),
 
 
-          onPressed: () {
+          label: isLoading
 
-            signInWithGoogle(context);
+              ? const Text("Signing in...")
 
-          },
+              : const Text("Sign in with Google"),
+
+
+
+
+          onPressed: isLoading
+
+              ? null
+
+              : signInWithGoogle,
+
 
 
         ),
 
+
+
       ),
+
+
 
     );
 
 
   }
+
 
 }
