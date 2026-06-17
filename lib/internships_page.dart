@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'add_internship_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class InternshipsPage extends StatelessWidget {
 
@@ -10,6 +11,9 @@ class InternshipsPage extends StatelessWidget {
 
   final CollectionReference internshipsRef =
   FirebaseFirestore.instance.collection('internships');
+  bool get isAdmin =>
+      FirebaseAuth.instance.currentUser?.email ==
+          "surinenivyshnavi2006@gmail.com";
 
 
   Future<void> openLink(String link) async {
@@ -35,30 +39,18 @@ class InternshipsPage extends StatelessWidget {
         title: const Text("Internships"),
 
         actions: [
-
-          IconButton(
-
-            icon: const Icon(Icons.add),
-
-            onPressed: () {
-
-              Navigator.push(
-
-                context,
-
-                MaterialPageRoute(
-
-                  builder: (context) =>
-                  const AddInternshipPage(),
-
-                ),
-
-              );
-
-            },
-
-          ),
-
+          if (isAdmin)
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddInternshipPage(),
+                  ),
+                );
+              },
+            ),
         ],
 
       ),
@@ -159,21 +151,16 @@ class InternshipsPage extends StatelessWidget {
                   ),
 
 
-                  trailing: IconButton(
-
+                  trailing: isAdmin
+                      ? IconButton(
                     icon: const Icon(Icons.delete),
-
                     onPressed: () async {
-
-
                       await internshipsRef
                           .doc(docs[index].id)
                           .delete();
-
-
                     },
-
-                  ),
+                  )
+                      : null,
 
                 ),
 

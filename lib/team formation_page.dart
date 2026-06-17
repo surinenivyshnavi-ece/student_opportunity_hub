@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'add_team_formation_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class TeamFormationPage extends StatelessWidget {
 
@@ -9,6 +10,9 @@ class TeamFormationPage extends StatelessWidget {
 
   final CollectionReference teamRef =
   FirebaseFirestore.instance.collection('team_formations');
+  bool get isAdmin =>
+      FirebaseAuth.instance.currentUser?.email ==
+          "surinenivyshnavi2006@gmail.com";
 
 
 
@@ -26,42 +30,19 @@ class TeamFormationPage extends StatelessWidget {
 
 
         actions: [
-
-
-          IconButton(
-
-
-            icon: const Icon(Icons.add),
-
-
-            onPressed: () {
-
-
-              Navigator.push(
-
-
-                context,
-
-
-                MaterialPageRoute(
-
-
-                  builder: (context) =>
-                  const AddTeamFormationPage(),
-
-
-                ),
-
-
-              );
-
-
-            },
-
-
-          ),
-
-
+          if (isAdmin)
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                    const AddTeamFormationPage(),
+                  ),
+                );
+              },
+            ),
         ],
 
 
@@ -244,36 +225,16 @@ class TeamFormationPage extends StatelessWidget {
 
 
 
-                  trailing: IconButton(
-
-
-
+                  trailing: isAdmin
+                      ? IconButton(
                     icon: const Icon(Icons.delete),
-
-
-
-
                     onPressed: () async {
-
-
-
-
-                      await FirebaseFirestore.instance
-
-                          .collection('team_formations')
-
+                      await teamRef
                           .doc(docs[index].id)
-
                           .delete();
-
-
-
-
                     },
-
-
-
-                  ),
+                  )
+                      : null,
 
 
 
