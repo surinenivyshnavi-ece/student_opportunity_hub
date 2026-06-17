@@ -141,15 +141,37 @@ class _HackathonsPageState extends State<HackathonsPage> {
 
                         trailing: isAdmin
                             ? IconButton(
-                          icon: const Icon(
-                            Icons.delete,
-                          ),
+                          icon: const Icon(Icons.delete),
                           onPressed: () async {
-                            await hackathonsRef
-                                .doc(
-                              docs[index].id,
-                            )
-                                .delete();
+                            bool? confirm = await showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text("Confirm Delete"),
+                                content: const Text(
+                                  "Are you sure you want to delete this hackathon?",
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, false);
+                                    },
+                                    child: const Text("Cancel"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, true);
+                                    },
+                                    child: const Text("Delete"),
+                                  ),
+                                ],
+                              ),
+                            );
+
+                            if (confirm == true) {
+                              await hackathonsRef
+                                  .doc(docs[index].id)
+                                  .delete();
+                            }
                           },
                         )
                             : null,

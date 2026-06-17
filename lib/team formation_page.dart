@@ -156,19 +156,37 @@ class _TeamFormationPageState
 
                         trailing: isAdmin
                             ? IconButton(
-                          icon:
-                          const Icon(
-                            Icons
-                                .delete,
-                          ),
-                          onPressed:
-                              () async {
-                            await teamRef
-                                .doc(
-                              docs[index]
-                                  .id,
-                            )
-                                .delete();
+                          icon: const Icon(Icons.delete),
+                          onPressed: () async {
+                            bool? confirm = await showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text("Confirm Delete"),
+                                content: const Text(
+                                  "Are you sure you want to delete this team?",
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, false);
+                                    },
+                                    child: const Text("Cancel"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, true);
+                                    },
+                                    child: const Text("Delete"),
+                                  ),
+                                ],
+                              ),
+                            );
+
+                            if (confirm == true) {
+                              await teamRef
+                                  .doc(docs[index].id)
+                                  .delete();
+                            }
                           },
                         )
                             : null,

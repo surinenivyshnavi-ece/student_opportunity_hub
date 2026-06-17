@@ -148,15 +148,37 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
                         trailing: isAdmin
                             ? IconButton(
-                          icon: const Icon(
-                            Icons.delete,
-                          ),
+                          icon: const Icon(Icons.delete),
                           onPressed: () async {
-                            await internshipsRef
-                                .doc(
-                              docs[index].id,
-                            )
-                                .delete();
+                            bool? confirm = await showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text("Confirm Delete"),
+                                content: const Text(
+                                  "Are you sure you want to delete this internship?",
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, false);
+                                    },
+                                    child: const Text("Cancel"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context, true);
+                                    },
+                                    child: const Text("Delete"),
+                                  ),
+                                ],
+                              ),
+                            );
+
+                            if (confirm == true) {
+                              await internshipsRef
+                                  .doc(docs[index].id)
+                                  .delete();
+                            }
                           },
                         )
                             : null,
