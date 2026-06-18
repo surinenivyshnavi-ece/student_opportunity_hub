@@ -16,11 +16,21 @@ class OpportunityDetailsPage extends StatelessWidget {
     required this.description,
     required this.link,
   });
-  Future<void> openLink(String link) async {
-    final Uri url = Uri.parse(link);
 
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url);
+  Future<void> openLink(BuildContext context, String link) async {
+    try {
+      final Uri url = Uri.parse(link);
+
+      await launchUrl(
+        url,
+        mode: LaunchMode.externalApplication,
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Could not open link: $e"),
+        ),
+      );
     }
   }
 
@@ -30,15 +40,11 @@ class OpportunityDetailsPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Opportunity Details"),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(16),
-
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-
           children: [
-
             Text(
               title,
               style: const TextStyle(
@@ -49,24 +55,46 @@ class OpportunityDetailsPage extends StatelessWidget {
 
             const SizedBox(height: 15),
 
-            Text("Organization: $organization"),
+            Text(
+              "Organization: $organization",
+              style: const TextStyle(fontSize: 16),
+            ),
 
             const SizedBox(height: 10),
 
-            Text("Deadline: $deadline"),
+            Text(
+              "Deadline: $deadline",
+              style: const TextStyle(fontSize: 16),
+            ),
 
             const SizedBox(height: 15),
 
-            Text(description),
+            Text(
+              description,
+              style: const TextStyle(fontSize: 16),
+            ),
 
             const Spacer(),
 
-            ElevatedButton(
-              onPressed: () {
-                openLink(link);
-              },
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  print("Link = $link");
 
-              child: const Text("Apply Now"),
+                  if (link.trim().isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("No application link available"),
+                      ),
+                    );
+                    return;
+                  }
+
+                  openLink(context, link);
+                },
+                child: const Text("Apply Now"),
+              ),
             ),
           ],
         ),

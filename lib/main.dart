@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 
 
@@ -185,6 +186,7 @@ class HomePage extends StatelessWidget {
             onPressed: () async {
 
 
+              await GoogleSignIn().signOut();
               await FirebaseAuth.instance.signOut();
 
 

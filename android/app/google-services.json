@@ -12,7 +12,20 @@
           "package_name": "com.example.student_opportunity_hub"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "758376005903-4g5jsmuj7apt7k4nt0e43808n7lj04nd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.student_opportunity_hub",
+            "certificate_hash": "03dec5c8f3ebe04f8d37b3cdcecc3fcf41f3fc09"
+          }
+        },
+        {
+          "client_id": "758376005903-cm4hpllk211ap4lp31ra4ld9o7lprdim.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBpG4qpR10WM5q9dSOMrUvrT7S_GJFN2Fo"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "758376005903-cm4hpllk211ap4lp31ra4ld9o7lprdim.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "758376005903-h3f2rlpq1ffsqomm1n3458trn31l2b2c.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.studentOpportunityHub"
+              }
+            }
+          ]
         }
       }
     }
