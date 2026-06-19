@@ -6,185 +6,160 @@ import 'opportunity_details_page.dart';
 
 
 class HackathonsPage extends StatefulWidget {
-
   const HackathonsPage({super.key});
 
   @override
   State<HackathonsPage> createState() => _HackathonsPageState();
-
 }
-
 
 
 class _HackathonsPageState extends State<HackathonsPage> {
 
-
   final CollectionReference hackathonsRef =
   FirebaseFirestore.instance.collection('hackathons');
 
-
   String searchText = '';
 
+  bool isAdmin = false;
 
 
-  bool get isAdmin =>
-      FirebaseAuth.instance.currentUser?.email ==
-          "surinenivyshnavi2006@gmail.com";
+  @override
+  void initState() {
+    super.initState();
+    checkAdmin();
+  }
 
+
+  Future<void> checkAdmin() async {
+
+    final user = FirebaseAuth.instance.currentUser;
+
+    if(user == null) return;
+
+
+    final adminDoc = await FirebaseFirestore.instance
+        .collection('admins')
+        .doc(user.uid)
+        .get();
+
+
+    if(adminDoc.exists){
+
+      setState(() {
+        isAdmin = true;
+      });
+
+    }
+
+  }
 
 
 
   @override
   Widget build(BuildContext context) {
 
-
     return Scaffold(
-
 
       appBar: AppBar(
 
-
         title: const Text("Hackathons"),
-
 
         actions: [
 
-
           if(isAdmin)
-
 
             IconButton(
 
-
               icon: const Icon(Icons.add),
-
 
               onPressed: (){
 
-
                 Navigator.push(
-
 
                   context,
 
-
                   MaterialPageRoute(
 
-
                     builder:(context)=>
-
                     const AddHackathonPage(),
-
 
                   ),
 
-
                 );
-
 
               },
 
-
             ),
 
-
         ],
-
 
       ),
 
 
 
-
       body: Column(
-
 
         children: [
 
 
-
           Padding(
-
 
             padding: const EdgeInsets.all(10),
 
-
             child: TextField(
-
 
               decoration: const InputDecoration(
 
-
                 hintText: "Search Hackathons...",
-
 
                 prefixIcon: Icon(Icons.search),
 
-
                 border: OutlineInputBorder(),
-
 
               ),
 
 
               onChanged:(value){
 
-
                 setState((){
-
 
                   searchText=value.toLowerCase();
 
-
                 });
-
 
               },
 
 
             ),
 
-
           ),
-
 
 
 
 
           Expanded(
 
-
             child: StreamBuilder<QuerySnapshot>(
 
-
               stream: hackathonsRef.snapshots(),
-
 
 
               builder:(context,snapshot){
 
 
-
                 if(snapshot.connectionState ==
                     ConnectionState.waiting){
 
-
                   return const Center(
-
                     child:CircularProgressIndicator(),
-
                   );
-
 
                 }
 
 
 
-
-
                 final docs =
                 snapshot.data!.docs.where((doc){
-
 
 
                   final data =
@@ -208,30 +183,22 @@ class _HackathonsPageState extends State<HackathonsPage> {
 
 
 
-
-
                 if(docs.isEmpty){
-
 
                   return const Center(
 
                     child:Text(
-                        "No hackathons found"
+                      "No hackathons found",
                     ),
 
                   );
-
 
                 }
 
 
 
 
-
-
-
                 return ListView.builder(
-
 
 
                   padding: const EdgeInsets.all(16),
@@ -240,9 +207,7 @@ class _HackathonsPageState extends State<HackathonsPage> {
                   itemCount: docs.length,
 
 
-
                   itemBuilder:(context,index){
-
 
 
                     final data =
@@ -251,14 +216,10 @@ class _HackathonsPageState extends State<HackathonsPage> {
 
 
 
-
-
                     return Card(
 
 
-
                       child: ListTile(
-
 
 
                         leading:
@@ -266,13 +227,10 @@ class _HackathonsPageState extends State<HackathonsPage> {
 
 
 
-
                         title:
                         Text(
                           data['title'] ?? '',
                         ),
-
-
 
 
 
@@ -287,21 +245,16 @@ class _HackathonsPageState extends State<HackathonsPage> {
 
 
 
-
                         onTap:(){
-
 
 
                           Navigator.push(
 
 
-
                             context,
 
 
-
                             MaterialPageRoute(
-
 
 
                               builder:(context)=>
@@ -309,23 +262,16 @@ class _HackathonsPageState extends State<HackathonsPage> {
                                   OpportunityDetailsPage(
 
 
-
                                     title:
                                     data['title'] ?? '',
-
-
 
 
                                     organization:
                                     data['organizer'] ?? '',
 
 
-
-
                                     deadline:
                                     data['deadline'] ?? '',
-
-
 
 
                                     description:
@@ -333,23 +279,17 @@ class _HackathonsPageState extends State<HackathonsPage> {
                                         'No description available',
 
 
-
-
                                     link:
                                     data['link'] ?? '',
-
 
 
                                   ),
 
 
-
                             ),
 
 
-
                           );
-
 
 
                         },
@@ -358,14 +298,10 @@ class _HackathonsPageState extends State<HackathonsPage> {
 
 
 
-
-
                         trailing:isAdmin
 
 
-
                             ? IconButton(
-
 
 
                           icon:
@@ -373,9 +309,7 @@ class _HackathonsPageState extends State<HackathonsPage> {
 
 
 
-
                           onPressed:() async {
-
 
 
 
@@ -383,9 +317,7 @@ class _HackathonsPageState extends State<HackathonsPage> {
                             await showDialog(
 
 
-
                               context:context,
-
 
 
                               builder:(context)=>
@@ -393,12 +325,10 @@ class _HackathonsPageState extends State<HackathonsPage> {
                                   AlertDialog(
 
 
-
                                     title:
                                     const Text(
                                         "Confirm Delete"
                                     ),
-
 
 
                                     content:
@@ -415,16 +345,12 @@ class _HackathonsPageState extends State<HackathonsPage> {
                                       TextButton(
 
 
-
                                         onPressed:(){
-
 
                                           Navigator.pop(
                                               context,false);
 
-
                                         },
-
 
 
                                         child:
@@ -433,25 +359,19 @@ class _HackathonsPageState extends State<HackathonsPage> {
                                         ),
 
 
-
                                       ),
-
 
 
 
                                       TextButton(
 
 
-
                                         onPressed:(){
-
 
                                           Navigator.pop(
                                               context,true);
 
-
                                         },
-
 
 
                                         child:
@@ -460,27 +380,20 @@ class _HackathonsPageState extends State<HackathonsPage> {
                                         ),
 
 
-
                                       ),
-
 
 
                                     ],
 
 
-
                                   ),
-
 
 
                             );
 
 
 
-
-
-                            if(confirm==true){
-
+                            if(confirm == true){
 
 
                               await hackathonsRef
@@ -488,38 +401,29 @@ class _HackathonsPageState extends State<HackathonsPage> {
                                   .delete();
 
 
-
                             }
-
-
-
 
 
                           },
 
 
-
                         )
 
-                            : null,
 
+                            : null,
 
 
 
                       ),
 
 
-
                     );
-
 
 
                   },
 
 
-
                 );
-
 
 
               },
@@ -533,16 +437,11 @@ class _HackathonsPageState extends State<HackathonsPage> {
 
         ],
 
-
       ),
-
 
 
     );
 
-
-
   }
-
 
 }

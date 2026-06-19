@@ -29,11 +29,51 @@ class _TeamFormationPageState
 
   String searchText = '';
 
+  bool isAdmin = false;
 
 
-  bool get isAdmin =>
-      FirebaseAuth.instance.currentUser?.email ==
-          "surinenivyshnavi2006@gmail.com";
+
+  @override
+  void initState() {
+    super.initState();
+    checkAdmin();
+  }
+
+
+
+  Future<void> checkAdmin() async {
+
+
+    final user = FirebaseAuth.instance.currentUser;
+
+
+    if(user == null) return;
+
+
+
+    final adminDoc = await FirebaseFirestore.instance
+        .collection('admins')
+        .doc(user.uid)
+        .get();
+
+
+
+    if(adminDoc.exists){
+
+
+      setState(() {
+
+        isAdmin = true;
+
+      });
+
+
+    }
+
+
+  }
+
+
 
 
 
@@ -165,14 +205,11 @@ class _TeamFormationPageState
                 setState((){
 
 
-
                   searchText =
                       value.toLowerCase();
 
 
-
                 });
-
 
 
               },
@@ -210,9 +247,7 @@ class _TeamFormationPageState
                 if(snapshot.hasError){
 
 
-
                   return const Center(
-
 
 
                     child:Text(
@@ -220,12 +255,11 @@ class _TeamFormationPageState
                     ),
 
 
-
                   );
 
 
-
                 }
+
 
 
 
@@ -236,21 +270,16 @@ class _TeamFormationPageState
                     ConnectionState.waiting){
 
 
-
                   return const Center(
-
 
 
                     child:CircularProgressIndicator(),
 
 
-
                   );
 
 
-
                 }
-
 
 
 
@@ -263,13 +292,9 @@ class _TeamFormationPageState
 
 
 
-
-
                   final data =
                   doc.data()
                   as Map<String,dynamic>;
-
-
 
 
 
@@ -278,8 +303,6 @@ class _TeamFormationPageState
                   (data['team name'] ?? '')
                       .toString()
                       .toLowerCase();
-
-
 
 
 
@@ -293,13 +316,9 @@ class _TeamFormationPageState
 
 
 
-
                   return teamName.contains(searchText)
                       ||
                       skill.contains(searchText);
-
-
-
 
 
 
@@ -311,12 +330,11 @@ class _TeamFormationPageState
 
 
 
+
                 if(docs.isEmpty){
 
 
-
                   return const Center(
-
 
 
                     child:Text(
@@ -324,9 +342,7 @@ class _TeamFormationPageState
                     ),
 
 
-
                   );
-
 
 
                 }

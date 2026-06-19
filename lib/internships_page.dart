@@ -19,40 +19,80 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
   String searchText = '';
 
-  bool get isAdmin =>
-      FirebaseAuth.instance.currentUser?.email ==
-          "surinenivyshnavi2006@gmail.com";
+  bool isAdmin = false;
+
+
+  @override
+  void initState() {
+    super.initState();
+    checkAdmin();
+  }
+
+
+  Future<void> checkAdmin() async {
+
+    final user = FirebaseAuth.instance.currentUser;
+
+    if(user == null) return;
+
+
+    final adminDoc = await FirebaseFirestore.instance
+        .collection('admins')
+        .doc(user.uid)
+        .get();
+
+
+    if(adminDoc.exists &&
+        adminDoc.data()?['role'] == 'admin'){
+
+      setState((){
+
+        isAdmin = true;
+
+      });
+
+    }
+
+  }
+
 
 
   Future<void> openLink(String link) async {
 
     final Uri url = Uri.parse(link);
 
-    if (await canLaunchUrl(url)) {
+    if(await canLaunchUrl(url)){
       await launchUrl(url);
     }
 
   }
 
 
+
   @override
   Widget build(BuildContext context) {
 
+
     return Scaffold(
+
 
       appBar: AppBar(
 
+
         title: const Text("Internships"),
+
 
         actions: [
 
-          if (isAdmin)
+
+          if(isAdmin)
 
             IconButton(
 
               icon: const Icon(Icons.add),
 
-              onPressed: () {
+              onPressed: (){
+
 
                 Navigator.push(
 
@@ -60,16 +100,19 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
                   MaterialPageRoute(
 
-                    builder: (context)=>
+                    builder:(context)=>
+
                     const AddInternshipPage(),
 
                   ),
 
                 );
 
+
               },
 
             ),
+
 
         ],
 
@@ -77,7 +120,9 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
 
 
+
       body: Column(
+
 
         children: [
 
@@ -87,6 +132,7 @@ class _InternshipsPageState extends State<InternshipsPage> {
             padding: const EdgeInsets.all(10),
 
             child: TextField(
+
 
               decoration: const InputDecoration(
 
@@ -98,7 +144,8 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
               ),
 
-              onChanged: (value){
+
+              onChanged:(value){
 
                 setState((){
 
@@ -108,15 +155,19 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
               },
 
+
             ),
 
           ),
 
 
 
+
           Expanded(
 
+
             child: StreamBuilder<QuerySnapshot>(
+
 
               stream: internshipsRef.snapshots(),
 
@@ -134,6 +185,7 @@ class _InternshipsPageState extends State<InternshipsPage> {
                 }
 
 
+
                 final docs =
                 snapshot.data!.docs.where((doc){
 
@@ -143,19 +195,21 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
 
                   final company =
-                  (data['company']??'')
+                  (data['company'] ?? '')
                       .toString()
                       .toLowerCase();
+
 
 
                   final title =
-                  (data['title']??'')
+                  (data['title'] ?? '')
                       .toString()
                       .toLowerCase();
 
 
 
-                  return company.contains(searchText) ||
+                  return company.contains(searchText)
+                      ||
                       title.contains(searchText);
 
 
@@ -173,13 +227,15 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
 
 
+
+
                 return ListView.builder(
 
 
-                  padding: const EdgeInsets.all(12),
+                  itemCount:docs.length,
 
 
-                  itemCount: docs.length,
+                  padding:const EdgeInsets.all(12),
 
 
                   itemBuilder:(context,index){
@@ -196,8 +252,7 @@ class _InternshipsPageState extends State<InternshipsPage> {
                     return Card(
 
 
-                      child: ListTile(
-
+                      child:ListTile(
 
 
                         leading:
@@ -205,22 +260,24 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
 
 
-                        title:
-                        Text(
+                        title:Text(
                           data['company'] ?? '',
                         ),
 
 
 
-                        subtitle:
-                        Text(
+                        subtitle:Text(
+
                           "Title: ${data['title'] ?? ''}\n"
                               "Deadline: ${data['deadline'] ?? ''}",
+
                         ),
 
 
 
-                        onTap: (){
+
+
+                        onTap:(){
 
 
                           Navigator.push(
@@ -237,19 +294,15 @@ class _InternshipsPageState extends State<InternshipsPage> {
                                   OpportunityDetailsPage(
 
 
-                                    title:
-                                    data['title'] ?? '',
-
+                                    title:data['title'] ?? '',
 
 
                                     organization:
                                     data['company'] ?? '',
 
 
-
                                     deadline:
                                     data['deadline'] ?? '',
-
 
 
                                     description:
@@ -257,12 +310,12 @@ class _InternshipsPageState extends State<InternshipsPage> {
                                         'No description available',
 
 
-
                                     link:
                                     data['link'] ?? '',
 
 
                                   ),
+
 
                             ),
 
@@ -275,14 +328,16 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
 
 
-                        trailing: isAdmin
+
+                        trailing:isAdmin ?
 
 
-                            ? IconButton(
+                        IconButton(
 
 
                           icon:
                           const Icon(Icons.delete),
+
 
 
                           onPressed:() async {
@@ -290,7 +345,8 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
 
                             bool? confirm =
-                            await showDialog(
+
+                            await showDialog<bool>(
 
 
                               context:context,
@@ -303,20 +359,22 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
                                     title:
                                     const Text(
-                                      "Confirm Delete",
+                                        "Confirm Delete"
                                     ),
 
 
                                     content:
                                     const Text(
-                                      "Are you sure you want to delete this internship?",
+                                        "Are you sure you want to delete this internship?"
                                     ),
+
 
 
                                     actions:[
 
 
                                       TextButton(
+
 
                                         onPressed:(){
 
@@ -325,15 +383,17 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
                                         },
 
+
                                         child:
-                                        const Text(
-                                            "Cancel"),
+                                        const Text("Cancel"),
+
 
                                       ),
 
 
 
                                       TextButton(
+
 
                                         onPressed:(){
 
@@ -342,9 +402,10 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
                                         },
 
+
                                         child:
-                                        const Text(
-                                            "Delete"),
+                                        const Text("Delete"),
+
 
                                       ),
 
@@ -354,7 +415,9 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
                                   ),
 
+
                             );
+
 
 
 
@@ -375,7 +438,8 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
                         )
 
-                            : null,
+
+                            :null,
 
 
 
@@ -385,19 +449,21 @@ class _InternshipsPageState extends State<InternshipsPage> {
                     );
 
 
+
                   },
 
 
                 );
 
 
-              },
 
+              },
 
             ),
 
 
           ),
+
 
 
         ],
@@ -410,5 +476,6 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
 
   }
+
 
 }
