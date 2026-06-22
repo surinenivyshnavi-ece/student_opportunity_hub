@@ -234,12 +234,10 @@ class _HackathonsPageState extends State<HackathonsPage> {
 
 
 
-                        subtitle:
-                        Text(
-
+                        subtitle: Text(
                           "Organizer: ${data['organizer'] ?? ''}\n"
+                              "Prize: ${data['prizeMoney'] ?? data['prize'] ?? 'Not specified'}\n"
                               "Deadline: ${data['deadline'] ?? ''}",
-
                         ),
 
 
@@ -275,8 +273,11 @@ class _HackathonsPageState extends State<HackathonsPage> {
 
 
                                     description:
-                                    data['description'] ??
-                                        'No description available',
+                                    (data['description']?.toString().trim().isNotEmpty ?? false)
+                                        ? data['description']
+                                        : "Prize: ${data['prizeMoney'] ?? data['prize'] ?? 'Not specified'}\n"
+                                        "Organizer: ${data['organizer'] ?? ''}\n"
+                                        "Deadline: ${data['deadline'] ?? ''}",
 
 
                                     link:
