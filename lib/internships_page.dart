@@ -208,9 +208,14 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
 
 
-                  return company.contains(searchText)
-                      ||
-                      title.contains(searchText);
+                  final domain =
+                  (data['domain'] ?? '')
+                      .toString()
+                      .toLowerCase();
+
+                  return company.contains(searchText) ||
+                      title.contains(searchText) ||
+                      domain.contains(searchText);
 
 
                 }).toList();
@@ -250,6 +255,8 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
 
                     return Card(
+                      elevation: 3,
+                      margin: const EdgeInsets.only(bottom: 12),
 
 
                       child:ListTile(
@@ -260,17 +267,15 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
 
 
-                        title:Text(
-                          data['company'] ?? '',
+                        title: Text(
+                          data['title'] ?? '',
                         ),
 
-
-
-                        subtitle:Text(
-
+                        subtitle: Text(
                           "Title: ${data['title'] ?? ''}\n"
+                              "Location: ${data['location'] ?? ''}\n"
+                              "Stipend: ${data['stipend'] ?? ''}\n"
                               "Deadline: ${data['deadline'] ?? ''}",
-
                         ),
 
 
@@ -292,28 +297,7 @@ class _InternshipsPageState extends State<InternshipsPage> {
                               builder:(context)=>
 
                                   OpportunityDetailsPage(
-
-
-                                    title:data['title'] ?? '',
-
-
-                                    organization:
-                                    data['company'] ?? '',
-
-
-                                    deadline:
-                                    data['deadline'] ?? '',
-
-
-                                    description:
-                                    data['description'] ??
-                                        'No description available',
-
-
-                                    link:
-                                    data['link'] ?? '',
-
-
+                                    data: data,
                                   ),
 
 

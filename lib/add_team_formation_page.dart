@@ -13,31 +13,72 @@ class _AddTeamFormationPageState
     extends State<AddTeamFormationPage> {
 
   final teamNameController = TextEditingController();
-  final skillController = TextEditingController();
-  final membersController = TextEditingController();
-  final deadlineController = TextEditingController();
+  final requiredSkillController = TextEditingController();
+  final preferredRoleController = TextEditingController();
+  final membersNeededController = TextEditingController();
   final contactController = TextEditingController();
-  final descriptionController = TextEditingController();
+  final linkController = TextEditingController();
+
+  bool lookingForTeam = true;
+  bool availableForProjects = true;
+  bool availableForHackathons = true;
 
   Future<void> addTeam() async {
+
+    if (teamNameController.text.trim().isEmpty ||
+        requiredSkillController.text.trim().isEmpty) {
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Please fill all required fields",
+          ),
+        ),
+      );
+      return;
+    }
 
     await FirebaseFirestore.instance
         .collection('team_formations')
         .add({
 
-      'team name': teamNameController.text.trim(),
+      'teamName': teamNameController.text.trim(),
 
-      'requiredSkill': skillController.text.trim(),
+      'requiredSkill':
+      requiredSkillController.text.trim(),
 
-      'membersNeeded': membersController.text.trim(),
+      'preferredRole':
+      preferredRoleController.text.trim(),
 
-      'deadline': deadlineController.text.trim(),
+      'membersNeeded':
+      membersNeededController.text.trim(),
 
-      'contact': contactController.text.trim(),
+      'contact':
+      contactController.text.trim(),
 
-      'description': descriptionController.text.trim(),
+      'link':
+      linkController.text.trim(),
 
+      'lookingForTeam':
+      lookingForTeam,
+
+      'availableForProjects':
+      availableForProjects,
+
+      'availableForHackathons':
+      availableForHackathons,
+
+      'createdAt':
+      Timestamp.now(),
     });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          "Team Formation Added Successfully",
+        ),
+      ),
+    );
 
     Navigator.pop(context);
 
@@ -46,12 +87,28 @@ class _AddTeamFormationPageState
   @override
   void dispose() {
     teamNameController.dispose();
-    skillController.dispose();
-    membersController.dispose();
-    deadlineController.dispose();
+    requiredSkillController.dispose();
+    preferredRoleController.dispose();
+    membersNeededController.dispose();
     contactController.dispose();
-    descriptionController.dispose();
+    linkController.dispose();
     super.dispose();
+  }
+
+  Widget buildTextField(
+      TextEditingController controller,
+      String label,
+      ) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: label,
+          border: const OutlineInputBorder(),
+        ),
+      ),
+    );
   }
 
   @override
@@ -60,7 +117,9 @@ class _AddTeamFormationPageState
     return Scaffold(
 
       appBar: AppBar(
-        title: const Text("Add Team Formation"),
+        title: const Text(
+          "Add Team Formation",
+        ),
       ),
 
       body: SingleChildScrollView(
@@ -71,72 +130,82 @@ class _AddTeamFormationPageState
 
           children: [
 
-            TextField(
-              controller: teamNameController,
-              decoration: const InputDecoration(
-                labelText: "Team Name",
-                border: OutlineInputBorder(),
-              ),
+            buildTextField(
+              teamNameController,
+              "TeamName",
             ),
 
-            const SizedBox(height: 12),
-
-            TextField(
-              controller: skillController,
-              decoration: const InputDecoration(
-                labelText: "Required Skill",
-                border: OutlineInputBorder(),
-              ),
+            buildTextField(
+              requiredSkillController,
+              "Required Skill",
             ),
 
-            const SizedBox(height: 12),
-
-            TextField(
-              controller: membersController,
-              decoration: const InputDecoration(
-                labelText: "Members Needed",
-                border: OutlineInputBorder(),
-              ),
+            buildTextField(
+              preferredRoleController,
+              "Preferred Role",
             ),
 
-            const SizedBox(height: 12),
-
-            TextField(
-              controller: deadlineController,
-              decoration: const InputDecoration(
-                labelText: "Deadline",
-                border: OutlineInputBorder(),
-              ),
+            buildTextField(
+              membersNeededController,
+              "Members Needed",
             ),
 
-            const SizedBox(height: 12),
-
-            TextField(
-              controller: contactController,
-              decoration: const InputDecoration(
-                labelText: "Contact",
-                border: OutlineInputBorder(),
-              ),
+            buildTextField(
+              contactController,
+              "Contact",
             ),
 
-            const SizedBox(height: 12),
+            buildTextField(
+              linkController,
+              "Application/Contact Link",
+            ),
 
-            TextField(
-              controller: descriptionController,
-              maxLines: 4,
-              decoration: const InputDecoration(
-                labelText: "Description",
-                border: OutlineInputBorder(),
+            SwitchListTile(
+              title: const Text(
+                "Looking For Team",
               ),
+              value: lookingForTeam,
+              onChanged: (value) {
+                setState(() {
+                  lookingForTeam = value;
+                });
+              },
+            ),
+
+            SwitchListTile(
+              title: const Text(
+                "Available For Projects",
+              ),
+              value: availableForProjects,
+              onChanged: (value) {
+                setState(() {
+                  availableForProjects = value;
+                });
+              },
+            ),
+
+            SwitchListTile(
+              title: const Text(
+                "Available For Hackathons",
+              ),
+              value: availableForHackathons,
+              onChanged: (value) {
+                setState(() {
+                  availableForHackathons = value;
+                });
+              },
             ),
 
             const SizedBox(height: 20),
 
             SizedBox(
               width: double.infinity,
+              height: 50,
               child: ElevatedButton(
                 onPressed: addTeam,
-                child: const Text("Save"),
+                child: const Text(
+                  "Save Team Formation",
+                ),
               ),
             ),
 

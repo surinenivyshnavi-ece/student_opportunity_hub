@@ -165,16 +165,24 @@ class _HackathonsPageState extends State<HackathonsPage> {
                   final data =
                   doc.data() as Map<String,dynamic>;
 
-
-
                   final title =
                   (data['title'] ?? '')
                       .toString()
                       .toLowerCase();
 
+                  final organizer =
+                  (data['organizer'] ?? '')
+                      .toString()
+                      .toLowerCase();
 
+                  final domain =
+                  (data['domain'] ?? '')
+                      .toString()
+                      .toLowerCase();
 
-                  return title.contains(searchText);
+                  return title.contains(searchText) ||
+                      organizer.contains(searchText) ||
+                      domain.contains(searchText);
 
 
 
@@ -217,6 +225,8 @@ class _HackathonsPageState extends State<HackathonsPage> {
 
 
                     return Card(
+                      elevation: 3,
+                      margin: const EdgeInsets.only(bottom: 12),
 
 
                       child: ListTile(
@@ -227,16 +237,14 @@ class _HackathonsPageState extends State<HackathonsPage> {
 
 
 
-                        title:
-                        Text(
+                        title: Text(
                           data['title'] ?? '',
                         ),
 
-
-
                         subtitle: Text(
                           "Organizer: ${data['organizer'] ?? ''}\n"
-                              "Prize: ${data['prizeMoney'] ?? data['prize'] ?? 'Not specified'}\n"
+                              "Prize: ${data['prize'] ?? ''}\n"
+                              "Team Size: ${data['teamSize'] ?? ''}\n"
                               "Deadline: ${data['deadline'] ?? ''}",
                         ),
 
@@ -258,32 +266,7 @@ class _HackathonsPageState extends State<HackathonsPage> {
                               builder:(context)=>
 
                                   OpportunityDetailsPage(
-
-
-                                    title:
-                                    data['title'] ?? '',
-
-
-                                    organization:
-                                    data['organizer'] ?? '',
-
-
-                                    deadline:
-                                    data['deadline'] ?? '',
-
-
-                                    description:
-                                    (data['description']?.toString().trim().isNotEmpty ?? false)
-                                        ? data['description']
-                                        : "Prize: ${data['prizeMoney'] ?? data['prize'] ?? 'Not specified'}\n"
-                                        "Organizer: ${data['organizer'] ?? ''}\n"
-                                        "Deadline: ${data['deadline'] ?? ''}",
-
-
-                                    link:
-                                    data['link'] ?? '',
-
-
+                                    data: data,
                                   ),
 
 

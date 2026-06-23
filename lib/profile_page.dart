@@ -32,8 +32,8 @@ class ProfilePage extends StatelessWidget {
         ],
       ),
 
-      body: StreamBuilder<QuerySnapshot>(
-        stream: profilesRef.snapshots(),
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: profilesRef.doc('user_profile').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Center(
@@ -48,16 +48,14 @@ class ProfilePage extends StatelessWidget {
             );
           }
 
-          final docs = snapshot.data!.docs;
-
-          if (docs.isEmpty) {
+          if (!snapshot.data!.exists) {
             return const Center(
               child: Text("No profile found"),
             );
           }
 
           final data =
-          docs.first.data()
+          snapshot.data!.data()
           as Map<String, dynamic>;
 
           return ListView(
@@ -65,12 +63,19 @@ class ProfilePage extends StatelessWidget {
             children: [
               const SizedBox(height: 10),
 
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 50,
-                child: Icon(
+                backgroundImage:
+                (data['profilePhotoUrl'] ?? '').toString().isNotEmpty
+                    ? NetworkImage(data['profilePhotoUrl'])
+                    : null,
+                child:
+                (data['profilePhotoUrl'] ?? '').toString().isEmpty
+                    ? const Icon(
                   Icons.person,
                   size: 50,
-                ),
+                )
+                    : null,
               ),
 
               const SizedBox(height: 15),
@@ -105,6 +110,57 @@ class ProfilePage extends StatelessWidget {
                   ),
                   subtitle:
                   const Text("College"),
+                ),
+              ),
+              Card(
+                child: ListTile(
+                  leading: const Icon(Icons.location_city),
+                  title: Text(
+                    data['city'] ?? '',
+                  ),
+                  subtitle: const Text("City"),
+                ),
+              ),
+
+              Card(
+                child: ListTile(
+                  leading: const Icon(Icons.psychology),
+                  title: Text(
+                    data['skills'] != null
+                        ? (data['skills'] as List).join(', ')
+                        : '',
+                  ),
+                  subtitle: const Text("Skills"),
+                ),
+              ),
+
+              Card(
+                child: ListTile(
+                  leading: const Icon(Icons.info),
+                  title: Text(
+                    data['aboutMe'] ?? '',
+                  ),
+                  subtitle: const Text("About Me"),
+                ),
+              ),
+
+              Card(
+                child: ListTile(
+                  leading: const Icon(Icons.code),
+                  title: Text(
+                    data['githubLink'] ?? '',
+                  ),
+                  subtitle: const Text("GitHub"),
+                ),
+              ),
+
+              Card(
+                child: ListTile(
+                  leading: const Icon(Icons.work),
+                  title: Text(
+                    data['linkedInLink'] ?? '',
+                  ),
+                  subtitle: const Text("LinkedIn"),
                 ),
               ),
 

@@ -300,7 +300,7 @@ class _TeamFormationPageState
 
 
                   final teamName =
-                  (data['team name'] ?? '')
+                  (data['teamName'] ?? '')
                       .toString()
                       .toLowerCase();
 
@@ -316,9 +316,14 @@ class _TeamFormationPageState
 
 
 
-                  return teamName.contains(searchText)
-                      ||
-                      skill.contains(searchText);
+                  final preferredRole =
+                  (data['preferredRole'] ?? '')
+                      .toString()
+                      .toLowerCase();
+
+                  return teamName.contains(searchText) ||
+                      skill.contains(searchText) ||
+                      preferredRole.contains(searchText);
 
 
 
@@ -381,6 +386,8 @@ class _TeamFormationPageState
 
 
                     return Card(
+                      elevation: 3,
+                      margin: const EdgeInsets.only(bottom: 12),
 
 
 
@@ -398,9 +405,8 @@ class _TeamFormationPageState
 
 
 
-                        title:
-                        Text(
-                          data['team name'] ?? '',
+                        title: Text(
+                          data['teamName'] ?? '',
                         ),
 
 
@@ -408,16 +414,11 @@ class _TeamFormationPageState
 
 
 
-                        subtitle:
-                        Text(
-
-
+                        subtitle: Text(
                           "Required Skill: ${data['requiredSkill'] ?? ''}\n"
                               "Members Needed: ${data['membersNeeded'] ?? ''}\n"
+                              "Preferred Role: ${data['preferredRole'] ?? ''}\n"
                               "Contact: ${data['contact'] ?? ''}",
-
-
-
                         ),
 
 
@@ -452,54 +453,8 @@ class _TeamFormationPageState
                               builder:(context)=>
 
                                   OpportunityDetailsPage(
-
-
-
-
-
-                                    title:
-                                    data['team name'] ?? '',
-
-
-
-
-
-
-                                    organization:
-                                    "Team Formation",
-
-
-
-
-
-
-                                    deadline:
-                                    data['deadline'] ?? '',
-
-
-
-
-
-
-                                    description:
-                                    data['description'] ??
-                                        "Required Skill: ${data['requiredSkill'] ?? ''}\n"
-                                            "Members Needed: ${data['membersNeeded'] ?? ''}\n"
-                                            "Contact: ${data['contact'] ?? ''}",
-
-
-
-
-
-
-                                    link:
-                                    data['link'] ?? '',
-
-
-
-
-
-                                  ),
+                                    data: data,
+                                  )
 
 
 

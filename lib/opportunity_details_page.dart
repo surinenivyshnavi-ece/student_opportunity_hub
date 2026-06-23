@@ -2,22 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class OpportunityDetailsPage extends StatelessWidget {
-  final String title;
-  final String organization;
-  final String deadline;
-  final String description;
-  final String link;
+  final Map<String, dynamic> data;
 
   const OpportunityDetailsPage({
     super.key,
-    required this.title,
-    required this.organization,
-    required this.deadline,
-    required this.description,
-    required this.link,
+    required this.data,
   });
 
-  Future<void> openLink(BuildContext context, String link) async {
+  Future<void> openLink(
+      BuildContext context,
+      String link,
+      ) async {
     try {
       final Uri url = Uri.parse(link);
 
@@ -28,77 +23,265 @@ class OpportunityDetailsPage extends StatelessWidget {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Could not open link: $e"),
+          content: Text(
+            "Could not open link: $e",
+          ),
         ),
       );
     }
+
+  }
+
+  Widget buildDetail(
+      String label,
+      dynamic value,
+      ) {
+    if (value == null ||
+        value.toString().trim().isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Text(
+        "$label: $value",
+        style: const TextStyle(
+          fontSize: 16,
+        ),
+      ),
+    );
+
   }
 
   @override
   Widget build(BuildContext context) {
+
+    final String link =
+        data['link']?.toString() ?? '';
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Opportunity Details"),
+        title: const Text(
+          "Opportunity Details",
+        ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment:
+          CrossAxisAlignment.start,
           children: [
+
             Text(
-              title,
+              data['title'] ??
+                  data['teamName'] ??
+                  data['name'] ??
+                  'Details',
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
 
+            const SizedBox(height: 20),
+
+            buildDetail(
+              "Company",
+              data['company'],
+            ),
+
+            buildDetail(
+              "Organizer",
+              data['organizer'],
+            ),
+
+            buildDetail(
+              "Domain",
+              data['domain'],
+            ),
+
+            buildDetail(
+              "Location",
+              data['location'],
+            ),
+
+            buildDetail(
+              "Mode",
+              data['mode'],
+            ),
+
+            buildDetail(
+              "Duration",
+              data['duration'],
+            ),
+
+            buildDetail(
+              "Stipend",
+              data['stipend'],
+            ),
+
+            buildDetail(
+              "Eligibility",
+              data['eligibility'],
+            ),
+
+            buildDetail(
+              "Skills Required",
+              data['skillsRequired'],
+            ),
+
+            buildDetail(
+              "Team Size",
+              data['teamSize'],
+            ),
+
+            buildDetail(
+              "Registration Fee",
+              data['registrationFee'],
+            ),
+
+            buildDetail(
+              "Prize",
+              data['prize'],
+            ),
+
+            buildDetail(
+              "Deadline",
+              data['deadline'],
+            ),
+
+            buildDetail(
+              "Required Skill",
+              data['requiredSkill'],
+            ),
+
+            buildDetail(
+              "Preferred Role",
+              data['preferredRole'],
+            ),
+
+            buildDetail(
+              "Members Needed",
+              data['membersNeeded'],
+            ),
+
+            buildDetail(
+              "Contact",
+              data['contact'],
+            ),
+
+            buildDetail(
+              "Looking For Team",
+              data['lookingForTeam'],
+            ),
+
+            buildDetail(
+              "Available For Projects",
+              data['availableForProjects'],
+            ),
+
+            buildDetail(
+              "Available For Hackathons",
+              data['availableForHackathons'],
+            ),
+
+            buildDetail(
+              "About Me",
+              data['aboutMe'],
+            ),
+
+            buildDetail(
+              "Branch",
+              data['branch'],
+            ),
+
+            buildDetail(
+              "Career Goal",
+              data['careerGoal'],
+            ),
+
+            buildDetail(
+              "City",
+              data['city'],
+            ),
+
+            buildDetail(
+              "College",
+              data['college'],
+            ),
+
+            buildDetail(
+              "Skills",
+              data['skills'],
+            ),
+
+            buildDetail(
+              "Year",
+              data['year'],
+            ),
+
+            buildDetail(
+              "GitHub",
+              data['githubLink'],
+            ),
+
+            buildDetail(
+              "LinkedIn",
+              data['linkedInLink'],
+            ),
+
             const SizedBox(height: 15),
 
-            Text(
-              "Organization: $organization",
-              style: const TextStyle(fontSize: 16),
-            ),
+            if ((data['description'] ?? '')
+                .toString()
+                .isNotEmpty)
+              Column(
+                crossAxisAlignment:
+                CrossAxisAlignment.start,
+                children: [
 
-            const SizedBox(height: 10),
+                  const Text(
+                    "Description",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight:
+                      FontWeight.bold,
+                    ),
+                  ),
 
-            Text(
-              "Deadline: $deadline",
-              style: const TextStyle(fontSize: 16),
-            ),
+                  const SizedBox(height: 8),
 
-            const SizedBox(height: 15),
-
-            Text(
-              description,
-              style: const TextStyle(fontSize: 16),
-            ),
-
-            const Spacer(),
-
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  print("Link = $link");
-
-                  if (link.trim().isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("No application link available"),
-                      ),
-                    );
-                    return;
-                  }
-
-                  openLink(context, link);
-                },
-                child: const Text("Apply Now"),
+                  Text(
+                    data['description'],
+                    style:
+                    const TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
               ),
-            ),
+
+            const SizedBox(height: 30),
+
+            if (link.isNotEmpty)
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    openLink(
+                      context,
+                      link,
+                    );
+                  },
+                  child: const Text(
+                    "Open Link",
+                  ),
+                ),
+              ),
           ],
         ),
       ),
     );
+
   }
 }

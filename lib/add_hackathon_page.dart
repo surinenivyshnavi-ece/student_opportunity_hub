@@ -10,33 +10,59 @@ class AddHackathonPage extends StatefulWidget {
 }
 
 class _AddHackathonPageState extends State<AddHackathonPage> {
-
   final titleController = TextEditingController();
   final organizerController = TextEditingController();
+  final domainController = TextEditingController();
+  final locationController = TextEditingController();
+  final modeController = TextEditingController();
+  final teamSizeController = TextEditingController();
+  final eligibilityController = TextEditingController();
+  final registrationFeeController = TextEditingController();
   final deadlineController = TextEditingController();
   final prizeController = TextEditingController();
   final descriptionController = TextEditingController();
   final linkController = TextEditingController();
 
   Future<void> addHackathon() async {
+    if (titleController.text.trim().isEmpty ||
+        organizerController.text.trim().isEmpty ||
+        deadlineController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Please fill all required fields",
+          ),
+        ),
+      );
+      return;
+    }
 
     await FirebaseFirestore.instance
         .collection('hackathons')
         .add({
-
       'title': titleController.text.trim(),
-
       'organizer': organizerController.text.trim(),
-
+      'domain': domainController.text.trim(),
+      'location': locationController.text.trim(),
+      'mode': modeController.text.trim(),
+      'teamSize': teamSizeController.text.trim(),
+      'eligibility': eligibilityController.text.trim(),
+      'registrationFee':
+      registrationFeeController.text.trim(),
       'deadline': deadlineController.text.trim(),
-
       'prize': prizeController.text.trim(),
-
       'description': descriptionController.text.trim(),
-
       'link': linkController.text.trim(),
-
+      'createdAt': Timestamp.now(),
     });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          "Hackathon added successfully",
+        ),
+      ),
+    );
 
     Navigator.pop(context);
 
@@ -46,6 +72,12 @@ class _AddHackathonPageState extends State<AddHackathonPage> {
   void dispose() {
     titleController.dispose();
     organizerController.dispose();
+    domainController.dispose();
+    locationController.dispose();
+    modeController.dispose();
+    teamSizeController.dispose();
+    eligibilityController.dispose();
+    registrationFeeController.dispose();
     deadlineController.dispose();
     prizeController.dispose();
     descriptionController.dispose();
@@ -53,100 +85,97 @@ class _AddHackathonPageState extends State<AddHackathonPage> {
     super.dispose();
   }
 
+  Widget buildTextField(
+      TextEditingController controller,
+      String label, {
+        int maxLines = 1,
+      }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TextField(
+        controller: controller,
+        maxLines: maxLines,
+        decoration: InputDecoration(
+          labelText: label,
+          border: const OutlineInputBorder(),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       appBar: AppBar(
         title: const Text("Add Hackathon"),
       ),
-
       body: SingleChildScrollView(
-
         padding: const EdgeInsets.all(16),
-
         child: Column(
-
           children: [
-
-            TextField(
-              controller: titleController,
-              decoration: const InputDecoration(
-                labelText: "Hackathon Title",
-                border: OutlineInputBorder(),
-              ),
+            buildTextField(
+              titleController,
+              "Hackathon Title",
             ),
-
-            const SizedBox(height: 12),
-
-            TextField(
-              controller: organizerController,
-              decoration: const InputDecoration(
-                labelText: "Organizer",
-                border: OutlineInputBorder(),
-              ),
+            buildTextField(
+              organizerController,
+              "Organizer",
             ),
-
-            const SizedBox(height: 12),
-
-            TextField(
-              controller: deadlineController,
-              decoration: const InputDecoration(
-                labelText: "Deadline",
-                border: OutlineInputBorder(),
-              ),
+            buildTextField(
+              domainController,
+              "Domain",
             ),
-
-            const SizedBox(height: 12),
-
-            TextField(
-              controller: prizeController,
-              decoration: const InputDecoration(
-                labelText: "Prize Money",
-                border: OutlineInputBorder(),
-              ),
+            buildTextField(
+              locationController,
+              "Location",
             ),
-
-            const SizedBox(height: 12),
-
-            TextField(
-              controller: descriptionController,
-              maxLines: 4,
-              decoration: const InputDecoration(
-                labelText: "Description",
-                border: OutlineInputBorder(),
-              ),
+            buildTextField(
+              modeController,
+              "Mode (Online/Offline)",
             ),
-
-            const SizedBox(height: 12),
-
-            TextField(
-              controller: linkController,
-              decoration: const InputDecoration(
-                labelText: "Application Link",
-                border: OutlineInputBorder(),
-              ),
+            buildTextField(
+              teamSizeController,
+              "Team Size",
             ),
-
+            buildTextField(
+              eligibilityController,
+              "Eligibility",
+            ),
+            buildTextField(
+              registrationFeeController,
+              "Registration Fee",
+            ),
+            buildTextField(
+              deadlineController,
+              "Deadline",
+            ),
+            buildTextField(
+              prizeController,
+              "Prize Money",
+            ),
+            buildTextField(
+              descriptionController,
+              "Description",
+              maxLines: 5,
+            ),
+            buildTextField(
+              linkController,
+              "Application Link",
+            ),
             const SizedBox(height: 20),
-
             SizedBox(
               width: double.infinity,
+              height: 50,
               child: ElevatedButton(
                 onPressed: addHackathon,
-                child: const Text("Save"),
+                child: const Text(
+                  "Save Hackathon",
+                ),
               ),
             ),
-
           ],
-
         ),
-
       ),
-
     );
-
   }
-
 }
