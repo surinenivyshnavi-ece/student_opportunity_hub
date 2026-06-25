@@ -18,6 +18,8 @@ class _InternshipsPageState extends State<InternshipsPage> {
   FirebaseFirestore.instance.collection('internships');
 
   String searchText = '';
+  String selectedMode = "All";
+  String selectedDomain = "All";
 
   bool isAdmin = false;
 
@@ -122,46 +124,116 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
 
       body: Column(
-
-
         children: [
 
-
           Padding(
-
             padding: const EdgeInsets.all(10),
-
             child: TextField(
-
-
               decoration: const InputDecoration(
-
                 hintText: "Search Internships...",
-
                 prefixIcon: Icon(Icons.search),
-
                 border: OutlineInputBorder(),
-
               ),
-
-
-              onChanged:(value){
-
-                setState((){
-
-                  searchText=value.toLowerCase();
-
+              onChanged: (value) {
+                setState(() {
+                  searchText = value.toLowerCase();
                 });
-
               },
-
-
             ),
-
           ),
 
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              children: [
 
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    isExpanded: true,
+                    value: selectedMode,
+                    decoration: const InputDecoration(
+                      labelText: "Mode",
+                      border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 12,
+                      ),
+                    ),
+                    items: const [
+                      DropdownMenuItem(
+                        value: "All",
+                        child: Text("All"),
+                      ),
+                      DropdownMenuItem(
+                        value: "Online",
+                        child: Text("Online"),
+                      ),
+                      DropdownMenuItem(
+                        value: "Offline",
+                        child: Text("Offline"),
+                      ),
+                      DropdownMenuItem(
+                        value: "Hybrid",
+                        child: Text("Hybrid"),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        selectedMode = value!;
+                      });
+                    },
+                  ),
+                ),
 
+                const SizedBox(width: 10),
+
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    isExpanded: true,
+                    value: selectedDomain,
+                    decoration: const InputDecoration(
+                      labelText: "Domain",
+                      border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 12,
+                      ),
+                    ),
+                    items: const [
+                      DropdownMenuItem(
+                        value: "All",
+                        child: Text("All"),
+                      ),
+                      DropdownMenuItem(
+                        value: "AI/ML",
+                        child: Text("AI/ML"),
+                      ),
+                      DropdownMenuItem(
+                        value: "Web Development",
+                        child: Text("Web Development"),
+                      ),
+                      DropdownMenuItem(
+                        value: "Data Science",
+                        child: Text("Data Science"),
+                      ),
+                      DropdownMenuItem(
+                        value: "Embedded Systems",
+                        child: Text("Embedded Systems"),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        selectedDomain = value!;
+                      });
+                    },
+                  ),
+                ),
+
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 10),
 
           Expanded(
 
@@ -210,12 +282,28 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
                   final domain =
                   (data['domain'] ?? '')
-                      .toString()
-                      .toLowerCase();
+                      .toString();
 
-                  return company.contains(searchText) ||
-                      title.contains(searchText) ||
-                      domain.contains(searchText);
+                  final mode =
+                  (data['mode'] ?? '')
+                      .toString();
+
+                  bool searchMatch =
+                      company.contains(searchText) ||
+                          title.contains(searchText) ||
+                          domain.toLowerCase().contains(searchText);
+
+                  bool modeMatch =
+                      selectedMode == "All" ||
+                          mode == selectedMode;
+
+                  bool domainMatch =
+                      selectedDomain == "All" ||
+                          domain == selectedDomain;
+
+                  return searchMatch &&
+                      modeMatch &&
+                      domainMatch;
 
 
                 }).toList();

@@ -19,6 +19,8 @@ class _HackathonsPageState extends State<HackathonsPage> {
   FirebaseFirestore.instance.collection('hackathons');
 
   String searchText = '';
+  String selectedMode = "All";
+  String selectedDomain = "All";
 
   bool isAdmin = false;
 
@@ -133,6 +135,67 @@ class _HackathonsPageState extends State<HackathonsPage> {
             ),
 
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: [
+
+                SizedBox(
+                  width: 140,
+                  child: DropdownButtonFormField<String>(
+                    isExpanded: true,
+                    value: selectedMode,
+                    decoration: const InputDecoration(
+                      labelText: "Mode",
+                      border: OutlineInputBorder(),
+                    ),
+                    items: const [
+                      DropdownMenuItem(value: "All", child: Text("All")),
+                      DropdownMenuItem(value: "Online", child: Text("Online")),
+                      DropdownMenuItem(value: "Offline", child: Text("Offline")),
+                      DropdownMenuItem(value: "Hybrid", child: Text("Hybrid")),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        selectedMode = value!;
+                      });
+                    },
+                  ),
+                ),
+
+                SizedBox(
+                  width: 140,
+                  child: DropdownButtonFormField<String>(
+                    isExpanded:true,
+                    value: selectedDomain,
+                    decoration: const InputDecoration(
+                      labelText: "Domain",
+                      border: OutlineInputBorder(),
+                    ),
+                    items: const [
+                      DropdownMenuItem(value: "All", child: Text("All")),
+                      DropdownMenuItem(value: "AI/ML", child: Text("AI/ML")),
+                      DropdownMenuItem(value: "Web Development", child: Text("Web Dev")),
+                      DropdownMenuItem(value: "Data Science", child: Text("Data Science")),
+                      DropdownMenuItem(value: "Cyber Security", child: Text("Cyber Security")),
+                      DropdownMenuItem(value: "Embedded Systems", child: Text("Embedded")),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        selectedDomain = value!;
+                      });
+                    },
+                  ),
+                ),
+
+              ],
+            ),
+          ),
+
+
+          const SizedBox(height: 10),
 
 
 
@@ -180,9 +243,27 @@ class _HackathonsPageState extends State<HackathonsPage> {
                       .toString()
                       .toLowerCase();
 
-                  return title.contains(searchText) ||
-                      organizer.contains(searchText) ||
-                      domain.contains(searchText);
+                  final mode =
+                  (data['mode'] ?? '')
+                      .toString();
+
+                  bool searchMatch =
+                      title.contains(searchText) ||
+                          organizer.contains(searchText) ||
+                          domain.contains(searchText);
+
+                  bool modeMatch =
+                      selectedMode == "All" ||
+                          mode == selectedMode;
+
+                  bool domainMatch =
+                      selectedDomain == "All" ||
+                          domain.toLowerCase() ==
+                              selectedDomain.toLowerCase();
+
+                  return searchMatch &&
+                      modeMatch &&
+                      domainMatch;
 
 
 
@@ -241,11 +322,15 @@ class _HackathonsPageState extends State<HackathonsPage> {
                           data['title'] ?? '',
                         ),
 
-                        subtitle: Text(
-                          "Organizer: ${data['organizer'] ?? ''}\n"
-                              "Prize: ${data['prize'] ?? ''}\n"
-                              "Team Size: ${data['teamSize'] ?? ''}\n"
-                              "Deadline: ${data['deadline'] ?? ''}",
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Organizer: ${data['organizer'] ?? ''}"),
+                            Text("Mode: ${data['mode'] ?? ''}"),
+                            Text("Team Size: ${data['teamSize'] ?? ''}"),
+                            Text("Prize: ${data['prize'] ?? ''}"),
+                            Text("Deadline: ${data['deadline'] ?? ''}"),
+                          ],
                         ),
 
 
