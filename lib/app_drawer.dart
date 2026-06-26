@@ -5,6 +5,9 @@ import 'team formation_page.dart';
 import 'profile_page.dart';
 import 'bookmarks_page.dart';
 import 'certification_page.dart';
+import 'events_page.dart';
+import 'workshops_page.dart';
+import 'feedback_page.dart';
 
 
 class AppDrawer extends StatelessWidget {
@@ -183,7 +186,21 @@ class AppDrawer extends StatelessWidget {
 
             title: const Text("Events"),
 
-            onTap: (){},
+            onTap: () {
+
+              Navigator.push(
+
+                context,
+
+                MaterialPageRoute(
+
+                  builder: (context) => const EventsPage(),
+
+                ),
+
+              );
+
+            },
 
           ),
 
@@ -195,7 +212,21 @@ class AppDrawer extends StatelessWidget {
 
             title: const Text("Workshops & Webinars"),
 
-            onTap: (){},
+            onTap: () {
+
+              Navigator.push(
+
+                context,
+
+                MaterialPageRoute(
+
+                  builder: (context) => const WorkshopsPage(),
+
+                ),
+
+              );
+
+            },
 
           ),
 
@@ -234,7 +265,21 @@ class AppDrawer extends StatelessWidget {
 
             title: const Text("Feedback"),
 
-            onTap: (){},
+            onTap: () {
+
+              Navigator.push(
+
+                context,
+
+                MaterialPageRoute(
+
+                  builder: (context) => const FeedbackPage(),
+
+                ),
+
+              );
+
+            },
 
           ),
 

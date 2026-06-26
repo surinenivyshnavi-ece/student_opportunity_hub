@@ -208,12 +208,22 @@ class _CertificationPageState extends State<CertificationPage>{
               builder:(context,snapshot){
 
 
-                if(!snapshot.hasData){
-
+                if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
-                    child:CircularProgressIndicator(),
+                    child: CircularProgressIndicator(),
                   );
+                }
 
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text("Error: ${snapshot.error}"),
+                  );
+                }
+
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child: Text("No data"),
+                  );
                 }
 
 
