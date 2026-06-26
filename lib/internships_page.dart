@@ -16,6 +16,7 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
   final CollectionReference internshipsRef =
   FirebaseFirestore.instance.collection('internships');
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
   String searchText = '';
   String selectedMode = "All";
@@ -28,6 +29,51 @@ class _InternshipsPageState extends State<InternshipsPage> {
   void initState() {
     super.initState();
     checkAdmin();
+  }
+  Future<void> toggleBookmark(
+      String docId,
+      Map<String, dynamic> data,
+      ) async {
+    final user = auth.currentUser;
+
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please login first"),
+        ),
+      );
+      return;
+    }
+
+    final bookmarkRef = FirebaseFirestore.instance
+        .collection('bookmarks')
+        .doc(user.uid)
+        .collection('saved')
+        .doc(docId);
+
+    final bookmark = await bookmarkRef.get();
+
+    if (bookmark.exists) {
+      await bookmarkRef.delete();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Removed from bookmarks"),
+        ),
+      );
+    } else {
+      await bookmarkRef.set({
+        ...data,
+        'type': 'internship',
+        'bookmarkedAt': FieldValue.serverTimestamp(),
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Added to bookmarks"),
+        ),
+      );
+    }
   }
 
 
@@ -401,117 +447,77 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
 
 
-                        trailing:isAdmin ?
+                        trailing: SizedBox(
+                          width: isAdmin ? 96 : 48,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
 
+                              StreamBuilder<DocumentSnapshot>(
+                                stream: FirebaseFirestore.instance
+                                    .collection('bookmarks')
+                                    .doc(auth.currentUser!.uid)
+                                    .collection('saved')
+                                    .doc(docs[index].id)
+                                    .snapshots(),
 
-                        IconButton(
+                                builder: (context, snapshot) {
 
+                                  bool isBookmarked = snapshot.data?.exists ?? false;
 
-                          icon:
-                          const Icon(Icons.delete),
-
-
-
-                          onPressed:() async {
-
-
-
-                            bool? confirm =
-
-                            await showDialog<bool>(
-
-
-                              context:context,
-
-
-                              builder:(context)=>
-
-                                  AlertDialog(
-
-
-                                    title:
-                                    const Text(
-                                        "Confirm Delete"
+                                  return IconButton(
+                                    icon: Icon(
+                                      isBookmarked
+                                          ? Icons.bookmark
+                                          : Icons.bookmark_border,
                                     ),
 
+                                    onPressed: () {
+                                      toggleBookmark(
+                                        docs[index].id,
+                                        data,
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
 
-                                    content:
-                                    const Text(
-                                        "Are you sure you want to delete this internship?"
+                            if (isAdmin)
+                              IconButton(
+                                icon: const Icon(Icons.delete),
+                                onPressed: () async {
+
+                                  bool? confirm = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const Text("Confirm Delete"),
+                                      content: const Text(
+                                          "Are you sure you want to delete this internship?"),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context, false);
+                                          },
+                                          child: const Text("Cancel"),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context, true);
+                                          },
+                                          child: const Text("Delete"),
+                                        ),
+                                      ],
                                     ),
+                                  );
 
-
-
-                                    actions:[
-
-
-                                      TextButton(
-
-
-                                        onPressed:(){
-
-                                          Navigator.pop(
-                                              context,false);
-
-                                        },
-
-
-                                        child:
-                                        const Text("Cancel"),
-
-
-                                      ),
-
-
-
-                                      TextButton(
-
-
-                                        onPressed:(){
-
-                                          Navigator.pop(
-                                              context,true);
-
-                                        },
-
-
-                                        child:
-                                        const Text("Delete"),
-
-
-                                      ),
-
-
-                                    ],
-
-
-                                  ),
-
-
-                            );
-
-
-
-
-                            if(confirm==true){
-
-
-                              await internshipsRef
-                                  .doc(docs[index].id)
-                                  .delete();
-
-
-                            }
-
-
-
-                          },
-
-
-                        )
-
-
-                            :null,
+                                  if (confirm == true) {
+                                    await internshipsRef.doc(docs[index].id).delete();
+                                  }
+                                },
+                              ),
+                          ],
+                          ),
+                        ),
 
 
 
