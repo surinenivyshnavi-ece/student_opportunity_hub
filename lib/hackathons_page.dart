@@ -30,6 +30,70 @@ class _HackathonsPageState extends State<HackathonsPage> {
     super.initState();
     checkAdmin();
   }
+  Future<void> toggleBookmark(
+      String docId,
+      Map<String, dynamic> data,
+      ) async {
+
+    final user = FirebaseAuth.instance.currentUser;
+
+    if(user == null) return;
+
+
+    final bookmarkRef = FirebaseFirestore.instance
+        .collection('bookmarks')
+        .doc(user.uid)
+        .collection('saved')
+        .doc(docId);
+
+
+    final bookmark = await bookmarkRef.get();
+
+
+    if(bookmark.exists){
+
+      await bookmarkRef.delete();
+
+
+      ScaffoldMessenger.of(context).showSnackBar(
+
+        const SnackBar(
+          content: Text("Removed from bookmarks"),
+        ),
+
+      );
+
+
+    }
+
+    else{
+
+
+      await bookmarkRef.set({
+
+        ...data,
+
+        'type':'hackathon',
+
+        'bookmarkedAt':
+        FieldValue.serverTimestamp(),
+
+      });
+
+
+
+      ScaffoldMessenger.of(context).showSnackBar(
+
+        const SnackBar(
+          content: Text("Added to bookmarks"),
+        ),
+
+      );
+
+
+    }
+
+  }
 
 
   Future<void> checkAdmin() async {
@@ -367,119 +431,194 @@ class _HackathonsPageState extends State<HackathonsPage> {
 
 
 
-                        trailing:isAdmin
+                        trailing: SizedBox(
 
+                          width: isAdmin ? 96 : 48,
 
-                            ? IconButton(
+                          child: Row(
 
+                            mainAxisSize: MainAxisSize.min,
 
-                          icon:
-                          const Icon(Icons.delete),
-
-
-
-                          onPressed:() async {
+                            children: [
 
 
 
-                            bool? confirm =
-                            await showDialog(
+                              StreamBuilder<DocumentSnapshot>(
 
 
-                              context:context,
+                                stream: FirebaseFirestore.instance
+
+                                    .collection('bookmarks')
+
+                                    .doc(FirebaseAuth.instance.currentUser?.uid ?? '')
+
+                                    .collection('saved')
+
+                                    .doc(docs[index].id)
+
+                                    .snapshots(),
 
 
-                              builder:(context)=>
 
-                                  AlertDialog(
+                                builder:(context,snapshot){
 
 
-                                    title:
-                                    const Text(
-                                        "Confirm Delete"
+                                  bool isBookmarked =
+                                      snapshot.data?.exists ?? false;
+
+
+
+                                  return IconButton(
+
+
+                                    icon: Icon(
+
+                                      isBookmarked
+
+                                          ? Icons.bookmark
+
+                                          : Icons.bookmark_border,
+
                                     ),
 
 
-                                    content:
-                                    const Text(
-                                      "Are you sure you want to delete this hackathon?",
-                                    ),
+
+                                    onPressed:(){
+
+
+                                      toggleBookmark(
+
+                                        docs[index].id,
+
+                                        data,
+
+                                      );
+
+
+                                    },
 
 
 
-                                    actions:[
+                                  );
+
+
+                                },
 
 
 
-                                      TextButton(
+                              ),
 
 
-                                        onPressed:(){
-
-                                          Navigator.pop(
-                                              context,false);
-
-                                        },
 
 
-                                        child:
+                              if(isAdmin)
+
+
+                                IconButton(
+
+
+                                  icon: const Icon(Icons.delete),
+
+
+
+                                  onPressed:() async {
+
+
+
+                                    bool? confirm = await showDialog<bool>(
+
+
+                                      context:context,
+
+
+                                      builder:(context)=>AlertDialog(
+
+
+                                        title:
+                                        const Text("Confirm Delete"),
+
+
+
+                                        content:
                                         const Text(
-                                            "Cancel"
+                                            "Are you sure you want to delete this hackathon?"
                                         ),
+
+
+
+                                        actions:[
+
+
+                                          TextButton(
+
+                                            onPressed:(){
+
+                                              Navigator.pop(context,false);
+
+                                            },
+
+                                            child:
+                                            const Text("Cancel"),
+
+                                          ),
+
+
+
+                                          TextButton(
+
+                                            onPressed:(){
+
+                                              Navigator.pop(context,true);
+
+                                            },
+
+                                            child:
+                                            const Text("Delete"),
+
+                                          ),
+
+
+
+                                        ],
+
 
 
                                       ),
 
 
-
-                                      TextButton(
-
-
-                                        onPressed:(){
-
-                                          Navigator.pop(
-                                              context,true);
-
-                                        },
-
-
-                                        child:
-                                        const Text(
-                                            "Delete"
-                                        ),
-
-
-                                      ),
-
-
-                                    ],
-
-
-                                  ),
-
-
-                            );
+                                    );
 
 
 
-                            if(confirm == true){
+                                    if(confirm == true){
 
 
-                              await hackathonsRef
-                                  .doc(docs[index].id)
-                                  .delete();
+                                      await hackathonsRef
+                                          .doc(docs[index].id)
+                                          .delete();
 
 
-                            }
+                                    }
 
 
-                          },
+
+                                  },
 
 
-                        )
+                                ),
 
 
-                            : null,
+
+                            ],
+
+
+                          ),
+
+
+                        ),
+
+
+
 
 
 

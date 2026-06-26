@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'opportunity_details_page.dart';
 
 class BookmarksPage extends StatelessWidget {
   const BookmarksPage({super.key});
@@ -91,9 +92,30 @@ class BookmarksPage extends StatelessWidget {
                   ),
 
 
+                  onTap: () {
+
+                    Navigator.push(
+
+                      context,
+
+                      MaterialPageRoute(
+
+                        builder: (context) =>
+                            OpportunityDetailsPage(
+                              data: data,
+                            ),
+
+                      ),
+
+                    );
+
+                  },
+
+
                   subtitle: Text(
-                    "Company: ${data['company'] ?? ''}\n"
-                        "Deadline: ${data['deadline'] ?? ''}",
+                    data['type'] == 'internship'
+                        ? "Company: ${data['company'] ?? ''}\nDeadline: ${data['deadline'] ?? ''}"
+                        : "Organizer: ${data['organizer'] ?? ''}\nDeadline: ${data['deadline'] ?? ''}",
                   ),
 
 

@@ -8,6 +8,8 @@ import 'firebase_options.dart';
 import 'login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'bookmarks_page.dart';
+import 'app_drawer.dart';
 
 
 
@@ -128,6 +130,7 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
 
+      drawer: const AppDrawer(),
 
       backgroundColor: const Color(0xffE3F2FD),
 
@@ -321,35 +324,6 @@ class HomePage extends StatelessWidget {
 
 
 
-                buildButton(
-
-                  context,
-
-                  "📚 Internships",
-
-                  InternshipsPage(),
-
-                ),
-
-
-
-
-
-                const SizedBox(height:15),
-
-
-
-
-
-                buildButton(
-
-                  context,
-
-                  "🏆 Hackathons",
-
-                  HackathonsPage(),
-
-                ),
 
 
 
@@ -363,15 +337,6 @@ class HomePage extends StatelessWidget {
 
 
 
-                buildButton(
-
-                  context,
-
-                  "👥 Team Formation",
-
-                  TeamFormationPage(),
-
-                ),
 
 
 
@@ -384,15 +349,20 @@ class HomePage extends StatelessWidget {
 
 
 
-                buildButton(
 
-                  context,
 
-                  "👤 Profile",
 
-                  ProfilePage(),
 
-                ),
+
+
+
+
+                const SizedBox(height:15),
+
+
+
+
+
 
 
 
