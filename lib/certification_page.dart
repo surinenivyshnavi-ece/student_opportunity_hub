@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'opportunity_details_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'add_certification_page.dart';
 
 
 class CertificationPage extends StatefulWidget {
@@ -28,6 +30,30 @@ class _CertificationPageState extends State<CertificationPage>{
   String selectedDomain = "All";
 
   String selectedMode = "All";
+  bool isAdmin = false;
+
+  @override
+  void initState() {
+    super.initState();
+    checkAdmin();
+  }
+
+  Future<void> checkAdmin() async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) return;
+
+    final adminDoc = await FirebaseFirestore.instance
+        .collection("admins")
+        .doc(user.uid)
+        .get();
+
+    if (adminDoc.exists) {
+      setState(() {
+        isAdmin = true;
+      });
+    }
+  }
 
 
 
@@ -38,9 +64,22 @@ class _CertificationPageState extends State<CertificationPage>{
     return Scaffold(
 
       appBar: AppBar(
-
         title: const Text("Certification Courses"),
-
+        actions: [
+          if (isAdmin)
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                    const AddCertificationPage(),
+                  ),
+                );
+              },
+            ),
+        ],
       ),
 
 
@@ -307,35 +346,73 @@ class _CertificationPageState extends State<CertificationPage>{
 
 
 
-                        subtitle:Text(
-
-                          "Platform: ${data['platform']??''}\n"
-                              "Domain: ${data['domain']??''}\n"
-                              "Duration: ${data['duration']??''}",
-
+                        subtitle: Text(
+                          "Platform: ${data['platform'] ?? ''}\n"
+                              "Domain: ${data['domain'] ?? ''}\n"
+                              "Duration: ${data['duration'] ?? ''}",
                         ),
 
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
 
+                            IconButton(
+                              icon: const Icon(Icons.bookmark_add),
+                              onPressed: () async {
+                                final user = FirebaseAuth.instance.currentUser;
 
-                        onTap:(){
+                                if (user == null) return;
 
+                                await FirebaseFirestore.instance
+                                    .collection('bookmarks')
+                                    .doc(user.uid)
+                                    .collection('saved')
+                                    .doc(docs[index].id)
+                                    .set({
+                                  ...data,
+                                  "type": "certification",
+                                });
 
-                          Navigator.push(
-
-                            context,
-
-                            MaterialPageRoute(
-
-                              builder:(context)=>
-                                  OpportunityDetailsPage(
-                                    data:data,
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Certification bookmarked"),
                                   ),
-
+                                );
+                              },
                             ),
 
+                            if (isAdmin)
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                                onPressed: () async {
+                                  await FirebaseFirestore.instance
+                                      .collection('certifications')
+                                      .doc(docs[index].id)
+                                      .delete();
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("Certification deleted"),
+                                    ),
+                                  );
+                                },
+                              ),
+
+                          ],
+                        ),
+
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => OpportunityDetailsPage(
+                                data: data,
+                              ),
+                            ),
                           );
-
-
                         },
 
 

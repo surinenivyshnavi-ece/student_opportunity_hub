@@ -57,12 +57,17 @@ class OpportunityDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final String link =
-        data['link']?.toString() ?? '';
+    data['registrationLink']?.toString().isNotEmpty == true
+        ? data['registrationLink']
+        : data['link']?.toString() ?? '';
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Opportunity Details",
+        title: Text(
+          data['title'] ??
+              data['teamName'] ??
+              data['name'] ??
+              "Details",
         ),
       ),
       body: SingleChildScrollView(
@@ -94,6 +99,51 @@ class OpportunityDetailsPage extends StatelessWidget {
               "Organizer",
               data['organizer'],
             ),
+            buildDetail(
+              "Platform",
+              data['platform'],
+            ),
+
+            buildDetail(
+              "Category",
+              data['category'],
+            ),
+
+            buildDetail(
+              "Type",
+              data['type'],
+            ),
+
+            buildDetail(
+              "Date",
+              data['date'],
+            ),
+
+            buildDetail(
+              "Venue",
+              data['venue'],
+            ),
+
+            buildDetail(
+              "Speaker",
+              data['speaker'],
+            ),
+
+            buildDetail(
+              "Certificate",
+              data['certificate'],
+            ),
+
+            buildDetail(
+              "Event Fee",
+              data['eventFee'],
+            ),
+
+            buildDetail(
+              "Course Level",
+              data['level'],
+            ),
+
 
             buildDetail(
               "Domain",

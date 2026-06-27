@@ -113,9 +113,27 @@ class BookmarksPage extends StatelessWidget {
 
 
                   subtitle: Text(
+
                     data['type'] == 'internship'
                         ? "Company: ${data['company'] ?? ''}\nDeadline: ${data['deadline'] ?? ''}"
-                        : "Organizer: ${data['organizer'] ?? ''}\nDeadline: ${data['deadline'] ?? ''}",
+
+                        : data['type'] == 'hackathon'
+                        ? "Organizer: ${data['organizer'] ?? ''}\nPrize: ${data['prize'] ?? ''}"
+
+                        : data['type'] == 'team'
+                        ? "Required Skill: ${data['requiredSkill'] ?? ''}\nMembers Needed: ${data['membersNeeded'] ?? ''}"
+
+                        : data['type'] == 'certification'
+                        ? "Platform: ${data['platform'] ?? ''}\nDuration: ${data['duration'] ?? ''}"
+
+                        : data['type'] == 'event'
+                        ? "Organizer: ${data['organizer'] ?? ''}\nDate: ${data['date'] ?? ''}"
+
+                        : data['type'] == 'workshop'
+                        ? "Organizer: ${data['organizer'] ?? ''}\nDate: ${data['date'] ?? ''}"
+
+                        : "",
+
                   ),
 
 

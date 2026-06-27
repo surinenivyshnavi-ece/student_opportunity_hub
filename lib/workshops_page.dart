@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'opportunity_details_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'add_workshop_page.dart';
 
 class WorkshopsPage extends StatefulWidget {
   const WorkshopsPage({super.key});
@@ -17,6 +19,28 @@ class _WorkshopsPageState extends State<WorkshopsPage> {
   String searchText = "";
   String selectedMode = "All";
   String selectedCategory = "All";
+  bool isAdmin = false;
+  @override
+  void initState() {
+    super.initState();
+    checkAdmin();
+  }
+
+  Future<void> checkAdmin() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final adminDoc = await FirebaseFirestore.instance
+        .collection('admins')
+        .doc(user.uid)
+        .get();
+
+    if (adminDoc.exists) {
+      setState(() {
+        isAdmin = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +49,20 @@ class _WorkshopsPageState extends State<WorkshopsPage> {
 
       appBar: AppBar(
         title: const Text("Workshops & Webinars"),
+        actions: [
+          if (isAdmin)
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddWorkshopPage(),
+                  ),
+                );
+              },
+            ),
+        ],
       ),
 
       body: Column(
@@ -265,23 +303,67 @@ class _WorkshopsPageState extends State<WorkshopsPage> {
                               "Date: ${data['date'] ?? ""}",
                         ),
 
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+
+                            IconButton(
+                              icon: const Icon(Icons.bookmark_add),
+                              onPressed: () async {
+                                final user = FirebaseAuth.instance.currentUser;
+
+                                if (user == null) return;
+
+                                await FirebaseFirestore.instance
+                                    .collection('bookmarks')
+                                    .doc(user.uid)
+                                    .collection('saved')
+                                    .doc(docs[index].id)
+                                    .set({
+                                  ...data,
+                                  "type": "workshop",
+                                });
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Workshop bookmarked"),
+                                  ),
+                                );
+                              },
+                            ),
+
+                            if (isAdmin)
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                                onPressed: () async {
+                                  await FirebaseFirestore.instance
+                                      .collection('workshops')
+                                      .doc(docs[index].id)
+                                      .delete();
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("Workshop deleted"),
+                                    ),
+                                  );
+                                },
+                              ),
+
+                          ],
+                        ),
                         onTap: () {
-
                           Navigator.push(
-
                             context,
-
                             MaterialPageRoute(
-
                               builder: (context) =>
                                   OpportunityDetailsPage(
                                     data: data,
                                   ),
-
                             ),
-
                           );
-
                         },
 
                       ),
