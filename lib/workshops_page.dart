@@ -339,16 +339,42 @@ class _WorkshopsPageState extends State<WorkshopsPage> {
                                   color: Colors.red,
                                 ),
                                 onPressed: () async {
-                                  await FirebaseFirestore.instance
-                                      .collection('workshops')
-                                      .doc(docs[index].id)
-                                      .delete();
-
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Workshop deleted"),
+                                  final confirm = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const Text("Delete Workshop"),
+                                      content: const Text(
+                                        "Are you sure you want to delete this workshop?",
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context, false);
+                                          },
+                                          child: const Text("Cancel"),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.pop(context, true);
+                                          },
+                                          child: const Text("Delete"),
+                                        ),
+                                      ],
                                     ),
                                   );
+
+                                  if (confirm == true) {
+                                    await FirebaseFirestore.instance
+                                        .collection('workshops')
+                                        .doc(docs[index].id)
+                                        .delete();
+
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text("Workshop deleted"),
+                                      ),
+                                    );
+                                  }
                                 },
                               ),
 

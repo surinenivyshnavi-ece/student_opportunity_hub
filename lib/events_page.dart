@@ -352,16 +352,52 @@ class _EventsPageState extends State<EventsPage> {
                                   color: Colors.red,
                                 ),
                                 onPressed: () async {
-                                  await FirebaseFirestore.instance
-                                      .collection('events')
-                                      .doc(docs[index].id)
-                                      .delete();
 
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Event deleted"),
-                                    ),
+                                  bool? confirm = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: const Text("Delete Event"),
+                                        content: const Text(
+                                          "Are you sure you want to delete this event?",
+                                        ),
+                                        actions: [
+
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context, false);
+                                            },
+                                            child: const Text("Cancel"),
+                                          ),
+
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.pop(context, true);
+                                            },
+                                            child: const Text("Delete"),
+                                          ),
+
+                                        ],
+                                      );
+                                    },
                                   );
+
+                                  if (confirm == true) {
+
+                                    await FirebaseFirestore.instance
+                                        .collection('events')
+                                        .doc(docs[index].id)
+                                        .delete();
+
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text("Event deleted successfully"),
+                                        ),
+                                      );
+                                    }
+
+                                  }
                                 },
                               ),
 

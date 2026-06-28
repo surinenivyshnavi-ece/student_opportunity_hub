@@ -380,7 +380,6 @@ class _CertificationPageState extends State<CertificationPage>{
                                 );
                               },
                             ),
-
                             if (isAdmin)
                               IconButton(
                                 icon: const Icon(
@@ -388,16 +387,52 @@ class _CertificationPageState extends State<CertificationPage>{
                                   color: Colors.red,
                                 ),
                                 onPressed: () async {
-                                  await FirebaseFirestore.instance
-                                      .collection('certifications')
-                                      .doc(docs[index].id)
-                                      .delete();
 
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Certification deleted"),
-                                    ),
+                                  bool? confirm = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: const Text("Delete Certification"),
+                                        content: const Text(
+                                          "Are you sure you want to delete this certification?",
+                                        ),
+                                        actions: [
+
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context, false);
+                                            },
+                                            child: const Text("Cancel"),
+                                          ),
+
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.pop(context, true);
+                                            },
+                                            child: const Text("Delete"),
+                                          ),
+
+                                        ],
+                                      );
+                                    },
                                   );
+
+                                  if (confirm == true) {
+
+                                    await FirebaseFirestore.instance
+                                        .collection('certifications')
+                                        .doc(docs[index].id)
+                                        .delete();
+
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text("Certification deleted successfully"),
+                                        ),
+                                      );
+                                    }
+
+                                  }
                                 },
                               ),
 
