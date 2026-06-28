@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddEventPage extends StatefulWidget {
-  const AddEventPage({super.key});
+  final String? documentId;
+  final Map<String, dynamic>? eventData;
+
+  const AddEventPage({
+    super.key,
+    this.documentId,
+    this.eventData,
+  });
 
   @override
   State<AddEventPage> createState() => _AddEventPageState();
@@ -23,13 +30,31 @@ class _AddEventPageState extends State<AddEventPage> {
 
   String selectedType = "Technical";
   String selectedMode = "Offline";
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.eventData != null) {
+      titleController.text = widget.eventData!['title'] ?? '';
+      organizerController.text = widget.eventData!['organizer'] ?? '';
+      dateController.text = widget.eventData!['date'] ?? '';
+      venueController.text = widget.eventData!['venue'] ?? '';
+      deadlineController.text = widget.eventData!['deadline'] ?? '';
+      feeController.text = widget.eventData!['eventFee'] ?? '';
+      descriptionController.text = widget.eventData!['description'] ?? '';
+      registrationLinkController.text =
+          widget.eventData!['registrationLink'] ?? '';
+
+      selectedType = widget.eventData!['type'] ?? "Technical";
+      selectedMode = widget.eventData!['mode'] ?? "Offline";
+    }
+  }
 
   Future<void> addEvent() async {
 
     if (!_formKey.currentState!.validate()) return;
 
-    await FirebaseFirestore.instance.collection('events').add({
-
+    Map<String, dynamic> eventData ={
       'title': titleController.text.trim(),
       'organizer': organizerController.text.trim(),
       'type': selectedType,
@@ -40,24 +65,37 @@ class _AddEventPageState extends State<AddEventPage> {
       'eventFee': feeController.text.trim(),
       'description': descriptionController.text.trim(),
       'registrationLink': registrationLinkController.text.trim(),
-      'createdAt': FieldValue.serverTimestamp(),
+    };
 
-    });
+    if (widget.documentId == null) {
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Event Added Successfully"),
-      ),
-    );
+      eventData['createdAt'] = FieldValue.serverTimestamp();
 
-    titleController.clear();
-    organizerController.clear();
-    dateController.clear();
-    venueController.clear();
-    deadlineController.clear();
-    feeController.clear();
-    descriptionController.clear();
-    registrationLinkController.clear();
+      await FirebaseFirestore.instance
+          .collection('events')
+          .add(eventData);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Event Added Successfully"),
+        ),
+      );
+
+    } else {
+
+      await FirebaseFirestore.instance
+          .collection('events')
+          .doc(widget.documentId)
+          .update(eventData);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Event Updated Successfully"),
+        ),
+      );
+    }
+
+    Navigator.pop(context,true);
   }
 
   Widget buildTextField(
@@ -102,7 +140,11 @@ class _AddEventPageState extends State<AddEventPage> {
     return Scaffold(
 
       appBar: AppBar(
-        title: const Text("Add Event"),
+        title: Text(
+          widget.documentId == null
+              ? "Add Event"
+              : "Edit Event",
+        ),
       ),
 
       body: SingleChildScrollView(
@@ -243,9 +285,11 @@ class _AddEventPageState extends State<AddEventPage> {
                     padding: const EdgeInsets.all(16),
                   ),
 
-                  child: const Text(
-                    "Add Event",
-                    style: TextStyle(fontSize: 18),
+                  child: Text(
+                    widget.documentId == null
+                        ? "Add Event"
+                        : "Update Event",
+                    style: const TextStyle(fontSize: 18),
                   ),
 
                 ),

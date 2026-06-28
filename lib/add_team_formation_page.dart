@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AddTeamFormationPage extends StatefulWidget {
-  const AddTeamFormationPage({super.key});
+
+  final String? documentId;
+  final Map<String, dynamic>? teamData;
+
+  const AddTeamFormationPage({
+    super.key,
+    this.documentId,
+    this.teamData,
+  });
 
   @override
   State<AddTeamFormationPage> createState() =>
@@ -22,6 +31,40 @@ class _AddTeamFormationPageState
   bool lookingForTeam = true;
   bool availableForProjects = true;
   bool availableForHackathons = true;
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.teamData != null) {
+
+      teamNameController.text =
+          widget.teamData!['teamName'] ?? '';
+
+      requiredSkillController.text =
+          widget.teamData!['requiredSkill'] ?? '';
+
+      preferredRoleController.text =
+          widget.teamData!['preferredRole'] ?? '';
+
+      membersNeededController.text =
+          widget.teamData!['membersNeeded'] ?? '';
+
+      contactController.text =
+          widget.teamData!['contact'] ?? '';
+
+      linkController.text =
+          widget.teamData!['link'] ?? '';
+
+      lookingForTeam =
+          widget.teamData!['lookingForTeam'] ?? true;
+
+      availableForProjects =
+          widget.teamData!['availableForProjects'] ?? true;
+
+      availableForHackathons =
+          widget.teamData!['availableForHackathons'] ?? true;
+    }
+  }
 
   Future<void> addTeam() async {
 
@@ -30,17 +73,13 @@ class _AddTeamFormationPageState
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-            "Please fill all required fields",
-          ),
+          content: Text("Please fill all required fields"),
         ),
       );
       return;
     }
 
-    await FirebaseFirestore.instance
-        .collection('team_formations')
-        .add({
+    final teamData = {
 
       'teamName': teamNameController.text.trim(),
 
@@ -68,20 +107,39 @@ class _AddTeamFormationPageState
       'availableForHackathons':
       availableForHackathons,
 
-      'createdAt':
-      Timestamp.now(),
-    });
+      'createdBy': FirebaseAuth.instance.currentUser!.uid,
+    };
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          "Team Formation Added Successfully",
+    if (widget.documentId == null) {
+
+      teamData['createdAt'] =
+          FieldValue.serverTimestamp();
+
+      await FirebaseFirestore.instance
+          .collection('team_formations')
+          .add(teamData);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Team Formation Added Successfully"),
         ),
-      ),
-    );
+      );
+
+    } else {
+
+      await FirebaseFirestore.instance
+          .collection('team_formations')
+          .doc(widget.documentId)
+          .update(teamData);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Team Formation Updated Successfully"),
+        ),
+      );
+    }
 
     Navigator.pop(context);
-
   }
 
   @override
@@ -117,8 +175,10 @@ class _AddTeamFormationPageState
     return Scaffold(
 
       appBar: AppBar(
-        title: const Text(
-          "Add Team Formation",
+        title: Text(
+          widget.documentId == null
+              ? "Add Team Formation"
+              : "Edit Team Formation",
         ),
       ),
 
@@ -203,8 +263,10 @@ class _AddTeamFormationPageState
               height: 50,
               child: ElevatedButton(
                 onPressed: addTeam,
-                child: const Text(
-                  "Save Team Formation",
+                child: Text(
+                  widget.documentId == null
+                      ? "Save Team Formation"
+                      : "Update Team Formation",
                 ),
               ),
             ),

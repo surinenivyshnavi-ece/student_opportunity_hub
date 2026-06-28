@@ -2,11 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddWorkshopPage extends StatefulWidget {
-  const AddWorkshopPage({super.key});
+  final String? documentId;
+  final Map<String, dynamic>? workshopData;
+
+  const AddWorkshopPage({
+    super.key,
+    this.documentId,
+    this.workshopData,
+  });
 
   @override
-  State<AddWorkshopPage> createState() => _AddWorkshopPageState();
+  State<AddWorkshopPage> createState() =>
+      _AddWorkshopPageState();
 }
+
+
 
 class _AddWorkshopPageState extends State<AddWorkshopPage> {
   final _formKey = GlobalKey<FormState>();
@@ -24,11 +34,39 @@ class _AddWorkshopPageState extends State<AddWorkshopPage> {
 
   String category = "Workshop";
   String mode = "Offline";
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.workshopData != null) {
+      titleController.text = widget.workshopData!['title'] ?? '';
+      organizerController.text = widget.workshopData!['organizer'] ?? '';
+      dateController.text = widget.workshopData!['date'] ?? '';
+      durationController.text = widget.workshopData!['duration'] ?? '';
+      locationController.text = widget.workshopData!['location'] ?? '';
+      eligibilityController.text =
+          widget.workshopData!['eligibility'] ?? '';
+      registrationFeeController.text =
+          widget.workshopData!['registrationFee'] ?? '';
+      deadlineController.text =
+          widget.workshopData!['deadline'] ?? '';
+      descriptionController.text =
+          widget.workshopData!['description'] ?? '';
+      linkController.text =
+          widget.workshopData!['link'] ?? '';
+
+      category =
+          widget.workshopData!['category'] ?? "Workshop";
+      mode =
+          widget.workshopData!['mode'] ?? "Offline";
+    }
+  }
 
   Future<void> addWorkshop() async {
+
     if (!_formKey.currentState!.validate()) return;
 
-    await FirebaseFirestore.instance.collection('workshops').add({
+    final Map<String, dynamic> workshopData = {
       "title": titleController.text.trim(),
       "organizer": organizerController.text.trim(),
       "category": category,
@@ -41,14 +79,36 @@ class _AddWorkshopPageState extends State<AddWorkshopPage> {
       "deadline": deadlineController.text.trim(),
       "description": descriptionController.text.trim(),
       "link": linkController.text.trim(),
-      "createdAt": FieldValue.serverTimestamp(),
-    });
+    };
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Workshop Added Successfully"),
-      ),
-    );
+    if (widget.documentId == null) {
+
+      workshopData["createdAt"] =
+          FieldValue.serverTimestamp();
+
+      await FirebaseFirestore.instance
+          .collection("workshops")
+          .add(workshopData);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Workshop Added Successfully"),
+        ),
+      );
+
+    } else {
+
+      await FirebaseFirestore.instance
+          .collection("workshops")
+          .doc(widget.documentId)
+          .update(workshopData);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Workshop Updated Successfully"),
+        ),
+      );
+    }
 
     Navigator.pop(context);
   }
@@ -94,7 +154,11 @@ class _AddWorkshopPageState extends State<AddWorkshopPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Workshop/Webinar"),
+        title: Text(
+          widget.documentId == null
+              ? "Add Workshop/Webinar"
+              : "Edit Workshop/Webinar",
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -183,9 +247,11 @@ class _AddWorkshopPageState extends State<AddWorkshopPage> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: addWorkshop,
-                  child: const Text(
-                    "Add Workshop",
-                    style: TextStyle(fontSize: 16),
+                  child: Text(
+                    widget.documentId == null
+                        ? "Add Workshop"
+                        : "Update Workshop",
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ),
               ),

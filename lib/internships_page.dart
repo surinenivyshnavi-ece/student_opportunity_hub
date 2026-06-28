@@ -448,7 +448,7 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
 
                         trailing: SizedBox(
-                          width: isAdmin ? 96 : 48,
+                          width: isAdmin ? 160 : 60,
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -481,6 +481,24 @@ class _InternshipsPageState extends State<InternshipsPage> {
                                   );
                                 },
                               ),
+                              if (isAdmin)
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    color: Colors.blue,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => AddInternshipPage(
+                                          documentId: docs[index].id,
+                                          internshipData: data,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
 
                             if (isAdmin)
                               IconButton(

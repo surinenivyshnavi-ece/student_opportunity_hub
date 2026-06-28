@@ -2,10 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddInternshipPage extends StatefulWidget {
-  const AddInternshipPage({super.key});
+  final String? documentId;
+  final Map<String, dynamic>? internshipData;
+
+  const AddInternshipPage({
+    super.key,
+    this.documentId,
+    this.internshipData,
+  });
 
   @override
-  State<AddInternshipPage> createState() => _AddInternshipPageState();
+  State<AddInternshipPage> createState() =>
+      _AddInternshipPageState();
 }
 
 class _AddInternshipPageState extends State<AddInternshipPage> {
@@ -22,8 +30,53 @@ class _AddInternshipPageState extends State<AddInternshipPage> {
   final descriptionController = TextEditingController();
   final linkController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.internshipData != null) {
+      companyController.text =
+          widget.internshipData!['company'] ?? '';
+
+      titleController.text =
+          widget.internshipData!['title'] ?? '';
+
+      domainController.text =
+          widget.internshipData!['domain'] ?? '';
+
+      locationController.text =
+          widget.internshipData!['location'] ?? '';
+
+      modeController.text =
+          widget.internshipData!['mode'] ?? '';
+
+      durationController.text =
+          widget.internshipData!['duration'] ?? '';
+
+      stipendController.text =
+          widget.internshipData!['stipend'] ?? '';
+
+      eligibilityController.text =
+          widget.internshipData!['eligibility'] ?? '';
+
+      skillsRequiredController.text =
+          widget.internshipData!['skillsRequired'] ?? '';
+
+      deadlineController.text =
+          widget.internshipData!['deadline'] ?? '';
+
+      descriptionController.text =
+          widget.internshipData!['description'] ?? '';
+
+      linkController.text =
+          widget.internshipData!['link'] ?? '';
+    }
+  }
+
   Future<void> addInternship() async {
-    await FirebaseFirestore.instance.collection('internships').add({
+
+    final Map<String, dynamic> internshipData = {
+
       'company': companyController.text.trim(),
       'title': titleController.text.trim(),
       'domain': domainController.text.trim(),
@@ -36,11 +89,28 @@ class _AddInternshipPageState extends State<AddInternshipPage> {
       'deadline': deadlineController.text.trim(),
       'description': descriptionController.text.trim(),
       'link': linkController.text.trim(),
-      'createdAt': Timestamp.now(),
-    });
+
+    };
+
+    if (widget.documentId == null) {
+
+      internshipData['createdAt'] =
+          FieldValue.serverTimestamp();
+
+      await FirebaseFirestore.instance
+          .collection('internships')
+          .add(internshipData);
+
+    } else {
+
+      await FirebaseFirestore.instance
+          .collection('internships')
+          .doc(widget.documentId)
+          .update(internshipData);
+
+    }
 
     Navigator.pop(context);
-
   }
 
   @override
@@ -82,7 +152,11 @@ class _AddInternshipPageState extends State<AddInternshipPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Internship"),
+        title: Text(
+          widget.documentId == null
+              ? "Add Internship"
+              : "Edit Internship",
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -115,8 +189,10 @@ class _AddInternshipPageState extends State<AddInternshipPage> {
               height: 50,
               child: ElevatedButton(
                 onPressed: addInternship,
-                child: const Text(
-                  "Save Internship",
+                child: Text(
+                  widget.documentId == null
+                      ? "Save Internship"
+                      : "Update Internship",
                 ),
               ),
             ),

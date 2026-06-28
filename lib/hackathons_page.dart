@@ -433,7 +433,7 @@ class _HackathonsPageState extends State<HackathonsPage> {
 
                         trailing: SizedBox(
 
-                          width: isAdmin ? 96 : 48,
+                          width: isAdmin ? 160 : 60,
 
                           child: Row(
 
@@ -507,6 +507,24 @@ class _HackathonsPageState extends State<HackathonsPage> {
 
 
                               ),
+                              if (isAdmin)
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    color: Colors.blue,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => AddHackathonPage(
+                                          documentId: docs[index].id,
+                                          hackathonData: data,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
 
 
 

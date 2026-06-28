@@ -383,6 +383,24 @@ class _CertificationPageState extends State<CertificationPage>{
                             if (isAdmin)
                               IconButton(
                                 icon: const Icon(
+                                  Icons.edit,
+                                  color: Colors.blue,
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => AddCertificationPage(
+                                        documentId: docs[index].id,
+                                        certificationData: data,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            if (isAdmin)
+                              IconButton(
+                                icon: const Icon(
                                   Icons.delete,
                                   color: Colors.red,
                                 ),

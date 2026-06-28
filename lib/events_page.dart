@@ -344,6 +344,24 @@ class _EventsPageState extends State<EventsPage> {
                                 );
                               },
                             ),
+                            if (isAdmin)
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.edit,
+                                  color: Colors.blue,
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AddEventPage(
+                                        documentId: docs[index].id,
+                                        eventData: data,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
 
                             if (isAdmin)
                               IconButton(

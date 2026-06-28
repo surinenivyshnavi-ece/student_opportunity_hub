@@ -331,6 +331,24 @@ class _WorkshopsPageState extends State<WorkshopsPage> {
                                 );
                               },
                             ),
+                            if (isAdmin)
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.edit,
+                                  color: Colors.blue,
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => AddWorkshopPage(
+                                        documentId: docs[index].id,
+                                        workshopData: data,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
 
                             if (isAdmin)
                               IconButton(

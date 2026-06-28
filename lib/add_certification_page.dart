@@ -2,12 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddCertificationPage extends StatefulWidget {
-  const AddCertificationPage({super.key});
+  final String? documentId;
+  final Map<String, dynamic>? certificationData;
+
+  const AddCertificationPage({
+    super.key,
+    this.documentId,
+    this.certificationData,
+  });
 
   @override
   State<AddCertificationPage> createState() =>
       _AddCertificationPageState();
 }
+
+
 
 class _AddCertificationPageState
     extends State<AddCertificationPage> {
@@ -23,15 +32,41 @@ class _AddCertificationPageState
 
   String domain = "Programming";
   String mode = "Online";
+  @override
+  void initState() {
+    super.initState();
 
+    if (widget.certificationData != null) {
+      titleController.text =
+          widget.certificationData!['title'] ?? '';
+
+      platformController.text =
+          widget.certificationData!['platform'] ?? '';
+
+      durationController.text =
+          widget.certificationData!['duration'] ?? '';
+
+      eligibilityController.text =
+          widget.certificationData!['eligibility'] ?? '';
+
+      descriptionController.text =
+          widget.certificationData!['description'] ?? '';
+
+      linkController.text =
+          widget.certificationData!['link'] ?? '';
+
+      domain =
+          widget.certificationData!['domain'] ?? "Programming";
+
+      mode =
+          widget.certificationData!['mode'] ?? "Online";
+    }
+  }
   Future<void> addCertification() async {
 
     if (!_formKey.currentState!.validate()) return;
 
-    await FirebaseFirestore.instance
-        .collection("certifications")
-        .add({
-
+    final  Map<String,dynamic>certificationData = {
       "title": titleController.text.trim(),
       "platform": platformController.text.trim(),
       "domain": domain,
@@ -40,15 +75,36 @@ class _AddCertificationPageState
       "eligibility": eligibilityController.text.trim(),
       "description": descriptionController.text.trim(),
       "link": linkController.text.trim(),
-      "createdAt": FieldValue.serverTimestamp(),
+    };
 
-    });
+    if (widget.documentId == null) {
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Certification Added Successfully"),
-      ),
-    );
+      certificationData["createdAt"] =
+          FieldValue.serverTimestamp();
+
+      await FirebaseFirestore.instance
+          .collection("certifications")
+          .add(certificationData);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Certification Added Successfully"),
+        ),
+      );
+
+    } else {
+
+      await FirebaseFirestore.instance
+          .collection("certifications")
+          .doc(widget.documentId)
+          .update(certificationData);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Certification Updated Successfully"),
+        ),
+      );
+    }
 
     Navigator.pop(context);
   }
@@ -92,7 +148,11 @@ class _AddCertificationPageState
     return Scaffold(
 
       appBar: AppBar(
-        title: const Text("Add Certification"),
+        title: Text(
+          widget.documentId == null
+              ? "Add Certification"
+              : "Edit Certification",
+        ),
       ),
 
       body: SingleChildScrollView(
@@ -208,8 +268,10 @@ class _AddCertificationPageState
 
                   onPressed: addCertification,
 
-                  child: const Text(
-                    "Add Certification",
+                  child: Text(
+                    widget.documentId == null
+                        ? "Add Certification"
+                        : "Update Certification",
                   ),
 
                 ),

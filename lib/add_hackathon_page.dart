@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddHackathonPage extends StatefulWidget {
-  const AddHackathonPage({super.key});
+  final String? documentId;
+  final Map<String, dynamic>? hackathonData;
+
+  const AddHackathonPage({
+    super.key,
+    this.documentId,
+    this.hackathonData,
+  });
 
   @override
   State<AddHackathonPage> createState() =>
@@ -23,23 +30,62 @@ class _AddHackathonPageState extends State<AddHackathonPage> {
   final descriptionController = TextEditingController();
   final linkController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.hackathonData != null) {
+      titleController.text =
+          widget.hackathonData!['title'] ?? '';
+
+      organizerController.text =
+          widget.hackathonData!['organizer'] ?? '';
+
+      domainController.text =
+          widget.hackathonData!['domain'] ?? '';
+
+      locationController.text =
+          widget.hackathonData!['location'] ?? '';
+
+      modeController.text =
+          widget.hackathonData!['mode'] ?? '';
+
+      teamSizeController.text =
+          widget.hackathonData!['teamSize'] ?? '';
+
+      eligibilityController.text =
+          widget.hackathonData!['eligibility'] ?? '';
+
+      registrationFeeController.text =
+          widget.hackathonData!['registrationFee'] ?? '';
+
+      deadlineController.text =
+          widget.hackathonData!['deadline'] ?? '';
+
+      prizeController.text =
+          widget.hackathonData!['prize'] ?? '';
+
+      descriptionController.text =
+          widget.hackathonData!['description'] ?? '';
+
+      linkController.text =
+          widget.hackathonData!['link'] ?? '';
+    }
+  }
+
   Future<void> addHackathon() async {
     if (titleController.text.trim().isEmpty ||
         organizerController.text.trim().isEmpty ||
         deadlineController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-            "Please fill all required fields",
-          ),
+          content: Text("Please fill all required fields"),
         ),
       );
       return;
     }
 
-    await FirebaseFirestore.instance
-        .collection('hackathons')
-        .add({
+    final  Map<String, dynamic>hackathonData = {
       'title': titleController.text.trim(),
       'organizer': organizerController.text.trim(),
       'domain': domainController.text.trim(),
@@ -53,19 +99,38 @@ class _AddHackathonPageState extends State<AddHackathonPage> {
       'prize': prizeController.text.trim(),
       'description': descriptionController.text.trim(),
       'link': linkController.text.trim(),
-      'createdAt': Timestamp.now(),
-    });
+    };
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          "Hackathon added successfully",
+    if (widget.documentId == null) {
+
+      hackathonData['createdAt'] =
+          FieldValue.serverTimestamp();
+
+      await FirebaseFirestore.instance
+          .collection('hackathons')
+          .add(hackathonData);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Hackathon added successfully"),
         ),
-      ),
-    );
+      );
+
+    } else {
+
+      await FirebaseFirestore.instance
+          .collection('hackathons')
+          .doc(widget.documentId)
+          .update(hackathonData);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Hackathon updated successfully"),
+        ),
+      );
+    }
 
     Navigator.pop(context);
-
   }
 
   @override
@@ -107,7 +172,11 @@ class _AddHackathonPageState extends State<AddHackathonPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Hackathon"),
+        title: Text(
+          widget.documentId == null
+              ? "Add Hackathon"
+              : "Edit Hackathon",
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -168,8 +237,10 @@ class _AddHackathonPageState extends State<AddHackathonPage> {
               height: 50,
               child: ElevatedButton(
                 onPressed: addHackathon,
-                child: const Text(
-                  "Save Hackathon",
+                child: Text(
+                  widget.documentId == null
+                      ? "Save Hackathon"
+                      : "Update Hackathon",
                 ),
               ),
             ),

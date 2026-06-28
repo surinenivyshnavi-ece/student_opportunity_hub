@@ -94,59 +94,17 @@ class _TeamFormationPageState
 
 
         actions: [
-
-
-
-          if(isAdmin)
-
-
-
-            IconButton(
-
-
-
-              icon: const Icon(Icons.add),
-
-
-
-              onPressed:(){
-
-
-
-                Navigator.push(
-
-
-
-                  context,
-
-
-
-                  MaterialPageRoute(
-
-
-
-                    builder:(context)=>
-
-                    const AddTeamFormationPage(),
-
-
-
-                  ),
-
-
-
-                );
-
-
-
-              },
-
-
-
-            ),
-
-
-
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddTeamFormationPage(),
+                ),
+              );
+            },
+          ),
         ],
 
 
@@ -290,11 +248,11 @@ class _TeamFormationPageState
                 final docs =
                 snapshot.data!.docs.where((doc){
 
-
-
                   final data =
-                  doc.data()
-                  as Map<String,dynamic>;
+                  doc.data() as Map<String, dynamic>;
+
+
+
 
 
 
@@ -378,6 +336,11 @@ class _TeamFormationPageState
                     final data =
                     docs[index].data()
                     as Map<String,dynamic>;
+                    final currentUser = FirebaseAuth.instance.currentUser;
+
+                    final isOwner =
+                    currentUser != null &&
+                    currentUser.uid == data['createdBy'];
 
 
 
@@ -482,211 +445,77 @@ class _TeamFormationPageState
 
 
 
-                        trailing:isAdmin
+                        trailing: (isAdmin || isOwner)
+                            ? SizedBox(
+                          width: 96,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
 
-
-
-
-
-                            ? IconButton(
-
-
-
-
-
-                          icon:
-                          const Icon(Icons.delete),
-
-
-
-
-
-
-                          onPressed:() async {
-
-
-
-
-
-
-
-                            bool? confirm =
-                            await showDialog(
-
-
-
-
-
-                              context:context,
-
-
-
-
-
-                              builder:(context)=>
-
-                                  AlertDialog(
-
-
-
-
-
-                                    title:
-                                    const Text(
-                                        "Confirm Delete"
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.edit,
+                                  color: Colors.blue,
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AddTeamFormationPage(
+                                        documentId: docs[index].id,
+                                        teamData: data,
+                                      ),
                                     ),
+                                  );
+                                },
+                              ),
 
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                                onPressed: () async {
 
+                                  bool? confirm = await showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const Text("Confirm Delete"),
+                                      content: const Text(
+                                        "Are you sure you want to delete this team?",
+                                      ),
+                                      actions: [
 
-
-
-
-                                    content:
-                                    const Text(
-                                      "Are you sure you want to delete this team?",
-                                    ),
-
-
-
-
-
-
-                                    actions:[
-
-
-
-
-
-
-                                      TextButton(
-
-
-
-
-
-                                        onPressed:(){
-
-
-
-                                          Navigator.pop(
-                                              context,false);
-
-
-
-                                        },
-
-
-
-
-
-                                        child:
-                                        const Text(
-                                            "Cancel"
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context, false);
+                                          },
+                                          child: const Text("Cancel"),
                                         ),
 
-
-
-
-
-                                      ),
-
-
-
-
-
-
-
-                                      TextButton(
-
-
-
-
-
-                                        onPressed:(){
-
-
-
-                                          Navigator.pop(
-                                              context,true);
-
-
-
-                                        },
-
-
-
-
-
-                                        child:
-                                        const Text(
-                                            "Delete"
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context, true);
+                                          },
+                                          child: const Text("Delete"),
                                         ),
 
+                                      ],
+                                    ),
+                                  );
 
+                                  if (confirm == true) {
+                                    await teamRef
+                                        .doc(docs[index].id)
+                                        .delete();
+                                  }
+                                },
+                              ),
 
-
-
-                                      ),
-
-
-
-
-
-                                    ],
-
-
-
-
-
-                                  ),
-
-
-
-
-
-
-                            );
-
-
-
-
-
-
-
-                            if(confirm==true){
-
-
-
-
-
-                              await teamRef
-                                  .doc(docs[index].id)
-                                  .delete();
-
-
-
-
-
-                            }
-
-
-
-
-
-
-                          },
-
-
-
-
-
+                            ],
+                          ),
                         )
-
-
-
-
-
-                            :null,
+                            : null,
 
 
 
