@@ -10,50 +10,106 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'bookmarks_page.dart';
 import 'app_drawer.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+FlutterLocalNotificationsPlugin();
 
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+}
 void main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
 
-
   await Firebase.initializeApp(
-
     options: DefaultFirebaseOptions.currentPlatform,
+  );
 
+  FirebaseMessaging.onBackgroundMessage(
+    firebaseMessagingBackgroundHandler,
+  );
+
+  const AndroidInitializationSettings initializationSettingsAndroid =
+  AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  const InitializationSettings initializationSettings =
+  InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
   );
 
 
   runApp(const MyApp());
-
 }
 
 
 
 
 
-class MyApp extends StatelessWidget {
-
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+  @override
+  void initState() {
+    super.initState();
+    requestPermission();
+    setupForegroundNotifications();
+  }
+
+  Future<void> requestPermission() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+  }
+  void setupForegroundNotifications() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              'student_opportunity_channel',
+              'Student Opportunity Notifications',
+              importance: Importance.high,
+              priority: Priority.high,
+            ),
+          ),
+        );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-
-
     return MaterialApp(
-
       debugShowCheckedModeBanner: false,
-
       title: 'Student Opportunity Hub',
-
       home: const AuthCheck(),
-
     );
-
   }
-
 }
 
 
