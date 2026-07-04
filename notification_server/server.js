@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const admin = require("firebase-admin");
-console.log("Firebase Admin Version:", require("firebase-admin/package.json").version);
+
 console.log("FIREBASE_SERVICE_ACCOUNT exists:", !!process.env.FIREBASE_SERVICE_ACCOUNT);
 console.log("Admin object:", admin);
 
