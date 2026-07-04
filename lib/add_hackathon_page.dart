@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class AddHackathonPage extends StatefulWidget {
   final String? documentId;
@@ -109,7 +111,19 @@ class _AddHackathonPageState extends State<AddHackathonPage> {
       await FirebaseFirestore.instance
           .collection('hackathons')
           .add(hackathonData);
-
+      await http.post(
+        Uri.parse(
+          "https://student-opportunity-hub-4hkx.onrender.com/sendNotification",
+        ),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({
+          "title": "🚀 New Hackathon",
+          "body":
+          "${organizerController.text.trim()} has announced ${titleController.text.trim()}.",
+        }),
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Hackathon added successfully"),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class AddTeamFormationPage extends StatefulWidget {
 
@@ -118,6 +120,19 @@ class _AddTeamFormationPageState
       await FirebaseFirestore.instance
           .collection('team_formations')
           .add(teamData);
+      await http.post(
+        Uri.parse(
+          "https://student-opportunity-hub-4hkx.onrender.com/sendNotification",
+        ),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({
+          "title": "👥 Team Formation",
+          "body":
+          "Team members are required for ${teamNameController.text.trim()}.",
+        }),
+      );
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

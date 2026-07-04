@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class AddInternshipPage extends StatefulWidget {
   final String? documentId;
@@ -97,9 +99,19 @@ class _AddInternshipPageState extends State<AddInternshipPage> {
       internshipData['createdAt'] =
           FieldValue.serverTimestamp();
 
-      await FirebaseFirestore.instance
-          .collection('internships')
-          .add(internshipData);
+      await http.post(
+        Uri.parse(
+          "https://student-opportunity-hub-4hkx.onrender.com/sendNotification",
+        ),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({
+          "title": "New Internship",
+          "body":
+          "${companyController.text.trim()} has posted ${titleController.text.trim()}.",
+        }),
+      );
 
     } else {
 

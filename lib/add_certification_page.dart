@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class AddCertificationPage extends StatefulWidget {
   final String? documentId;
@@ -85,7 +87,19 @@ class _AddCertificationPageState
       await FirebaseFirestore.instance
           .collection("certifications")
           .add(certificationData);
-
+      await http.post(
+        Uri.parse(
+          "https://student-opportunity-hub-4hkx.onrender.com/sendNotification",
+        ),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({
+          "title": "📜 New Certification",
+          "body":
+          "${platformController.text.trim()} has released ${titleController.text.trim()}.",
+        }),
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Certification Added Successfully"),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class AddWorkshopPage extends StatefulWidget {
   final String? documentId;
@@ -89,11 +91,18 @@ class _AddWorkshopPageState extends State<AddWorkshopPage> {
       await FirebaseFirestore.instance
           .collection("workshops")
           .add(workshopData);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Workshop Added Successfully"),
+      await http.post(
+        Uri.parse(
+          "https://student-opportunity-hub-4hkx.onrender.com/sendNotification",
         ),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: jsonEncode({
+          "title": "🎓 New Workshop",
+          "body":
+          "${organizerController.text.trim()} is conducting ${titleController.text.trim()}.",
+        }),
       );
 
     } else {
