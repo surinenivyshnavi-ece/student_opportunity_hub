@@ -77,6 +77,10 @@ class _MyAppState extends State<MyApp> {
       badge: true,
       sound: true,
     );
+
+    await FirebaseMessaging.instance.subscribeToTopic("allUsers");
+
+    print("Subscribed to allUsers topic successfully");
   }
   void setupForegroundNotifications() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {

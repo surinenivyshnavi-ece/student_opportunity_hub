@@ -1,0 +1,48 @@
+const express = require("express");
+const cors = require("cors");
+const admin = require("firebase-admin");
+
+
+const serviceAccount = require("./serviceAccountKey.json");
+
+admin.initializeApp({
+  credential: admin.cert(serviceAccount),
+});
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+app.post("/sendNotification", async (req, res) => {
+  try {
+    const { title, body } = req.body;
+
+    const message = {
+      notification: {
+        title: title,
+        body: body,
+      },
+      topic: "allUsers",
+    };
+
+    await admin.messaging().send(message);
+
+    res.json({
+      success: true,
+      message: "Notification sent successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
