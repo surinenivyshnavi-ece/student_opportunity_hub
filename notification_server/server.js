@@ -2,13 +2,12 @@ const express = require("express");
 const cors = require("cors");
 const admin = require("firebase-admin");
 
-console.log("FIREBASE_SERVICE_ACCOUNT exists:", !!process.env.FIREBASE_SERVICE_ACCOUNT);
-console.log("Admin object:", admin);
+
 
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: admin.cert(serviceAccount),
 });
 
 const app = express();
