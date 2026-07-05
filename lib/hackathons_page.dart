@@ -127,39 +127,36 @@ class _HackathonsPageState extends State<HackathonsPage> {
     return Scaffold(
 
       appBar: AppBar(
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        title: const Text(
+          "🏆 Hackathons",
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
 
-        title: const Text("Hackathons"),
 
-        actions: [
 
-          if(isAdmin)
-
-            IconButton(
-
-              icon: const Icon(Icons.add),
-
-              onPressed: (){
-
-                Navigator.push(
-
-                  context,
-
-                  MaterialPageRoute(
-
-                    builder:(context)=>
-                    const AddHackathonPage(),
-
-                  ),
-
-                );
-
-              },
-
-            ),
-
-        ],
 
       ),
+      floatingActionButton: isAdmin
+          ? FloatingActionButton.extended(
+        icon: const Icon(Icons.add),
+        label: const Text("Add"),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const AddHackathonPage(),
+            ),
+          );
+        },
+      )
+          : null,
 
 
 
@@ -168,37 +165,37 @@ class _HackathonsPageState extends State<HackathonsPage> {
         children: [
 
 
-          Padding(
-
-            padding: const EdgeInsets.all(10),
-
-            child: TextField(
-
-              decoration: const InputDecoration(
-
-                hintText: "Search Hackathons...",
-
-                prefixIcon: Icon(Icons.search),
-
-                border: OutlineInputBorder(),
-
-              ),
-
-
-              onChanged:(value){
-
-                setState((){
-
-                  searchText=value.toLowerCase();
-
-                });
-
-              },
-
-
+      Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade300,
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
-
+          ],
+        ),
+        child: TextField(
+          decoration: const InputDecoration(
+            hintText: "Search Hackathons",
+            prefixIcon: Icon(Icons.search),
+            border: InputBorder.none,
+            contentPadding: EdgeInsets.symmetric(vertical: 16),
           ),
+          onChanged: (value) {
+            setState(() {
+              searchText = value.toLowerCase();
+            });
+          },
+        ),
+      ),
+    ),
+
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Wrap(
@@ -211,9 +208,13 @@ class _HackathonsPageState extends State<HackathonsPage> {
                   child: DropdownButtonFormField<String>(
                     isExpanded: true,
                     value: selectedMode,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: "Mode",
-                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
                     ),
                     items: const [
                       DropdownMenuItem(value: "All", child: Text("All")),
@@ -234,9 +235,13 @@ class _HackathonsPageState extends State<HackathonsPage> {
                   child: DropdownButtonFormField<String>(
                     isExpanded:true,
                     value: selectedDomain,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: "Domain",
-                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
                     ),
                     items: const [
                       DropdownMenuItem(value: "All", child: Text("All")),
@@ -368,35 +373,105 @@ class _HackathonsPageState extends State<HackathonsPage> {
                     as Map<String,dynamic>;
 
 
-
                     return Card(
-                      elevation: 3,
-                      margin: const EdgeInsets.only(bottom: 12),
+                      color: Colors.white,
+                      elevation: 2,
+                      shadowColor: Colors.black12,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+
 
 
                       child: ListTile(
 
 
-                        leading:
-                        const Icon(Icons.emoji_events),
+                        leading: CircleAvatar(
+                          radius: 28,
+                          backgroundColor: Colors.orange.shade100,
+                          child: Icon(
+                            Icons.emoji_events,
+                            color: Colors.orange.shade700,
+                          ),
+                        ),
 
 
 
                         title: Text(
                           data['title'] ?? '',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                          ),
                         ),
 
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Organizer: ${data['organizer'] ?? ''}"),
-                            Text("Mode: ${data['mode'] ?? ''}"),
-                            Text("Team Size: ${data['teamSize'] ?? ''}"),
-                            Text("Prize: ${data['prize'] ?? ''}"),
-                            Text("Deadline: ${data['deadline'] ?? ''}"),
-                          ],
-                        ),
+                        subtitle: Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
 
+                              Text(
+                                data['organizer'] ?? '',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                ),
+                              ),
+
+                              const SizedBox(height: 10),
+
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: [
+
+                                  Chip(
+                                    avatar: const Icon(Icons.public, size: 18),
+                                    label: Text(data['mode'] ?? ''),
+                                  ),
+
+                                  Chip(
+                                    avatar: const Icon(Icons.group, size: 18),
+                                    label: Text(data['teamSize'] ?? ''),
+                                  ),
+
+                                  Chip(
+                                    avatar: const Icon(Icons.workspace_premium, size: 18),
+                                    label: Text(data['prize'] ?? ''),
+                                  ),
+
+                                ],
+                              ),
+
+                              const SizedBox(height: 10),
+
+                              Row(
+                                children: [
+
+                                  const Icon(
+                                    Icons.calendar_today,
+                                    color: Colors.red,
+                                    size: 16,
+                                  ),
+
+                                  const SizedBox(width: 6),
+
+                                  Text(
+                                    data['deadline'] ?? '',
+                                    style: const TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+
+                            ],
+                          ),
+                        ),
 
 
 
@@ -475,9 +550,9 @@ class _HackathonsPageState extends State<HackathonsPage> {
 
                                       isBookmarked
 
-                                          ? Icons.bookmark
+                                          ? Icons.bookmark_rounded
 
-                                          : Icons.bookmark_border,
+                                          : Icons.bookmark_border_rounded,
 
                                     ),
 

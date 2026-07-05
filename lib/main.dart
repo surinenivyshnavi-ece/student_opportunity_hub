@@ -111,6 +111,36 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Student Opportunity Hub',
+
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.indigo,
+        scaffoldBackgroundColor: const Color(0xffF5F7FA),
+
+        appBarTheme: const AppBarTheme(
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          elevation: 0,
+        ),
+
+        cardTheme: CardThemeData(
+          color: Colors.white,
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+        ),
+
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+        ),
+      ),
+
       home: const AuthCheck(),
     );
   }
@@ -192,79 +222,40 @@ class HomePage extends StatelessWidget {
 
       drawer: const AppDrawer(),
 
-      backgroundColor: const Color(0xffE3F2FD),
+      backgroundColor: const Color(0xffF5F7FA),
 
 
 
 
       appBar: AppBar(
-
-
         centerTitle: true,
-
-
         backgroundColor: Colors.white,
-
-
         elevation: 0,
-
-
-
         title: const Text(
-
-          'Student Opportunity Hub',
-
+          "Student Opportunity Hub",
           style: TextStyle(
-
             fontWeight: FontWeight.bold,
-
+            fontSize: 22,
             color: Colors.black,
-
           ),
-
         ),
-
-
-
-
         iconTheme: const IconThemeData(
-
           color: Colors.black,
-
         ),
-
-
-
-
         actions: [
-
-
-
           IconButton(
-
-
-            icon: const Icon(Icons.logout),
-
-
+            icon: const Icon(Icons.logout_rounded),
+            tooltip: "Logout",
             onPressed: () async {
-
-
               await GoogleSignIn().signOut();
               await FirebaseAuth.instance.signOut();
-
-
             },
-
-
           ),
-
-
-
         ],
-
-
-
       ),
+
+
+
 
 
 
@@ -300,14 +291,24 @@ class HomePage extends StatelessWidget {
 
 
 
-                Image.asset(
-
-                  'assets/images/logo.png',
-
-                  height:120,
-
+                Container(
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.shade300,
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Image.asset(
+                    'assets/images/logo.png',
+                    height: 90,
+                  ),
                 ),
-
 
 
 
@@ -319,35 +320,15 @@ class HomePage extends StatelessWidget {
 
 
 
-                const Text(
-
-
-
-                  "🎓 Welcome to Student Opportunity Hub",
-
-
-
-                  style: TextStyle(
-
-
-
-                    fontSize:22,
-
-
-
-                    fontWeight: FontWeight.bold,
-
-
-
-                  ),
-
-
-
-                  textAlign: TextAlign.center,
-
-
-
-                ),
+          const Text(
+            "Welcome to\nStudent Opportunity Hub",
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              height: 1.3,
+            ),
+            textAlign: TextAlign.center,
+          ),
 
 
 
@@ -359,108 +340,72 @@ class HomePage extends StatelessWidget {
 
 
 
-                const Text(
+        const Text(
+          "Discover internships, hackathons, jobs, certifications and more—all in one place.",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.black54,
+            height: 1.5,
+          ),
+        ),
+
+        const SizedBox(height: 30),
+
+        Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Column(
+                children: [
+                  Icon(Icons.work, color: Colors.blue),
+                  SizedBox(height: 5),
+                  Text("Jobs"),
+                ],
+              ),
+              Column(
+                children: [
+                  Icon(Icons.school, color: Colors.green),
+                  SizedBox(height: 5),
+                  Text("Internships"),
+                ],
+              ),
+              Column(
+                children: [
+                  Icon(Icons.emoji_events, color: Colors.orange),
+                  SizedBox(height: 5),
+                  Text("Hackathons"),
+                ],
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 30),
+
+        const Text(
+          "Built by Team Student Opportunity Hub",
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey,
+          ),
+        ),
 
 
 
-                  "Find internships, hackathons, teammates and opportunities.",
 
-
-
-                  textAlign: TextAlign.center,
-
-
-
-                ),
-
-
-
-
-
-
-                const SizedBox(height:30),
-
-
-
-
-
-
-
-
-
-
-
-                const SizedBox(height:15),
-
-
-
-
-
-
-
-
-
-
-
-
-                const SizedBox(height:15),
-
-
-
-
-
-
-
-
-
-
-
-
-
-                const SizedBox(height:15),
-
-
-
-
-
-
-
-
-
-
-
-                const SizedBox(height:30),
-
-
-
-
-
-
-                const Text(
-
-
-
-                  "Built by Team Student Opportunity Hub",
-
-
-
-                  style: TextStyle(
-
-
-
-                    fontSize:12,
-
-
-
-                    color:Colors.grey,
-
-
-
-                  ),
-
-
-
-                ),
 
 
 
