@@ -111,19 +111,23 @@ class _AddHackathonPageState extends State<AddHackathonPage> {
       await FirebaseFirestore.instance
           .collection('hackathons')
           .add(hackathonData);
-      await http.post(
-        Uri.parse(
-          "https://student-opportunity-hub-4hkx.onrender.com/sendNotification",
-        ),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: jsonEncode({
-          "title": "🚀 New Hackathon",
-          "body":
-          "${organizerController.text.trim()} has announced ${titleController.text.trim()}.",
-        }),
-      );
+      try {
+        await http.post(
+          Uri.parse(
+            "https://student-opportunity-hub-4hkx.onrender.com/sendNotification",
+          ),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: jsonEncode({
+            "title": "🚀 New Hackathon",
+            "body":
+            "${organizerController.text.trim()} has announced ${titleController.text.trim()}.",
+          }),
+        );
+      } catch (e) {
+        debugPrint(e.toString());
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Hackathon added successfully"),

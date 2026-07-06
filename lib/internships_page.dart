@@ -122,6 +122,7 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
 
     return Scaffold(
+      backgroundColor: const Color(0xFF9EB294),
 
 
       appBar: AppBar(
@@ -130,41 +131,23 @@ class _InternshipsPageState extends State<InternshipsPage> {
         title: const Text("Internships"),
 
 
-        actions: [
 
-
-          if(isAdmin)
-
-            IconButton(
-
-              icon: const Icon(Icons.add),
-
-              onPressed: (){
-
-
-                Navigator.push(
-
-                  context,
-
-                  MaterialPageRoute(
-
-                    builder:(context)=>
-
-                    const AddInternshipPage(),
-
-                  ),
-
-                );
-
-
-              },
-
-            ),
-
-
-        ],
 
       ),
+      floatingActionButton: isAdmin
+          ? FloatingActionButton.extended(
+        icon: const Icon(Icons.add),
+        label: const Text("Add"),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const AddInternshipPage(),
+            ),
+          );
+        },
+      )
+          : null,
 
 
 
@@ -389,156 +372,206 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
 
                     return Card(
-                      elevation: 3,
-                      margin: const EdgeInsets.only(bottom: 12),
+                      color: const Color(0xFFE9F5DB),
+                      elevation: 2,
+                      shadowColor: Colors.black12,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
 
 
-                      child:ListTile(
-
-
-                        leading:
-                        const Icon(Icons.work),
-
-
-
-                        title: Text(
-                          data['title'] ?? '',
-                        ),
-
-                        subtitle: Text(
-                          "Title: ${data['title'] ?? ''}\n"
-                              "Location: ${data['location'] ?? ''}\n"
-                              "Stipend: ${data['stipend'] ?? ''}\n"
-                              "Deadline: ${data['deadline'] ?? ''}",
-                        ),
-
-
-
-
-
-                        onTap:(){
-
-
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        onTap: () {
                           Navigator.push(
-
-
                             context,
-
-
                             MaterialPageRoute(
-
-
-                              builder:(context)=>
-
-                                  OpportunityDetailsPage(
-                                    data: data,
-                                  ),
-
-
+                              builder: (context) => OpportunityDetailsPage(
+                                data: data,
+                              ),
                             ),
-
-
                           );
-
-
                         },
-
-
-
-
-
-                        trailing: SizedBox(
-                          width: isAdmin ? 160 : 60,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
 
-                              StreamBuilder<DocumentSnapshot>(
-                                stream: FirebaseFirestore.instance
-                                    .collection('bookmarks')
-                                    .doc(auth.currentUser!.uid)
-                                    .collection('saved')
-                                    .doc(docs[index].id)
-                                    .snapshots(),
+                              Row(
+                                children: [
 
-                                builder: (context, snapshot) {
-
-                                  bool isBookmarked = snapshot.data?.exists ?? false;
-
-                                  return IconButton(
-                                    icon: Icon(
-                                      isBookmarked
-                                          ? Icons.bookmark
-                                          : Icons.bookmark_border,
+                                  CircleAvatar(
+                                    radius: 28,
+                                    backgroundColor: Colors.blue.shade100,
+                                    child: Icon(
+                                      Icons.work,
+                                      color: Colors.blue.shade700,
                                     ),
+                                  ),
 
-                                    onPressed: () {
-                                      toggleBookmark(
-                                        docs[index].id,
-                                        data,
+                                  const SizedBox(width: 12),
+
+                                  Expanded(
+                                    child: Text(
+                                      data['title'] ?? '',
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+
+                                  StreamBuilder<DocumentSnapshot>(
+                                    stream: FirebaseFirestore.instance
+                                        .collection('bookmarks')
+                                        .doc(auth.currentUser?.uid ?? '')
+                                        .collection('saved')
+                                        .doc(docs[index].id)
+                                        .snapshots(),
+                                    builder: (context, snapshot) {
+
+                                      bool isBookmarked =
+                                          snapshot.data?.exists ?? false;
+
+                                      return IconButton(
+                                        icon: Icon(
+                                          isBookmarked
+                                              ? Icons.bookmark_rounded
+                                              : Icons.bookmark_border_rounded,
+                                        ),
+                                        onPressed: () {
+                                          toggleBookmark(
+                                            docs[index].id,
+                                            data,
+                                          );
+                                        },
                                       );
                                     },
-                                  );
-                                },
-                              ),
-                              if (isAdmin)
-                                IconButton(
-                                  icon: const Icon(
-                                    Icons.edit,
-                                    color: Colors.blue,
                                   ),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => AddInternshipPage(
-                                          documentId: docs[index].id,
-                                          internshipData: data,
-                                        ),
+
+                                  if (isAdmin)
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.edit,
+                                        color: Colors.blue,
                                       ),
-                                    );
-                                  },
-                                ),
-
-                            if (isAdmin)
-                              IconButton(
-                                icon: const Icon(Icons.delete),
-                                onPressed: () async {
-
-                                  bool? confirm = await showDialog<bool>(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: const Text("Confirm Delete"),
-                                      content: const Text(
-                                          "Are you sure you want to delete this internship?"),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context, false);
-                                          },
-                                          child: const Text("Cancel"),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context, true);
-                                          },
-                                          child: const Text("Delete"),
-                                        ),
-                                      ],
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => AddInternshipPage(
+                                              documentId: docs[index].id,
+                                              internshipData: data,
+                                            ),
+                                          ),
+                                        );
+                                      },
                                     ),
-                                  );
 
-                                  if (confirm == true) {
-                                    await internshipsRef.doc(docs[index].id).delete();
-                                  }
-                                },
+                                  if (isAdmin)
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.black38,
+                                      ),
+                                      onPressed: () async {
+
+                                        bool? confirm = await showDialog<bool>(
+                                          context: context,
+                                          builder: (_) => AlertDialog(
+                                            title: const Text("Confirm Delete"),
+                                            content: const Text(
+                                                "Are you sure you want to delete this internship?"),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.pop(context, false),
+                                                child: const Text("Cancel"),
+                                              ),
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.pop(context, true),
+                                                child: const Text("Delete"),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+
+                                        if (confirm == true) {
+                                          await internshipsRef
+                                              .doc(docs[index].id)
+                                              .delete();
+                                        }
+                                      },
+                                    ),
+
+                                ],
                               ),
-                          ],
+
+                              const SizedBox(height: 12),
+
+                              Text(
+                                data['company'] ?? '',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                ),
+                              ),
+
+                              const SizedBox(height: 10),
+
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: [
+
+                                  Chip(
+                                    avatar: const Icon(Icons.location_on, size: 18),
+                                    label: Text(data['location'] ?? ''),
+                                  ),
+
+                                  Chip(
+                                    avatar: const Icon(Icons.currency_rupee, size: 18),
+                                    label: Text(data['stipend'] ?? ''),
+                                  ),
+
+                                  Chip(
+                                    avatar: const Icon(Icons.public, size: 18),
+                                    label: Text(data['mode'] ?? ''),
+                                  ),
+
+                                ],
+                              ),
+
+                              const SizedBox(height: 10),
+
+                              Row(
+                                children: [
+
+                                  const Icon(
+                                    Icons.calendar_today,
+                                    color: Colors.red,
+                                    size: 16,
+                                  ),
+
+                                  const SizedBox(width: 6),
+
+                                  Text(
+                                    data['deadline'] ?? '',
+                                    style: const TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+
+                            ],
                           ),
                         ),
-
-
-
                       ),
 
 

@@ -21,9 +21,20 @@ class BookmarksPage extends StatelessWidget {
 
 
     return Scaffold(
+      backgroundColor: const Color(0xFF9EB294),
 
       appBar: AppBar(
-        title: const Text("Bookmarks"),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        title: const Text(
+          "🔖 Bookmarks",
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
 
 
@@ -80,82 +91,142 @@ class BookmarksPage extends StatelessWidget {
 
 
               return Card(
+                color: const Color(0xFFE9F5DB),
+                elevation: 2,
+                shadowColor: Colors.black12,
+                margin: const EdgeInsets.only(bottom: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
 
-                child: ListTile(
-
-                  leading:
-                  const Icon(Icons.bookmark),
-
-
-                  title: Text(
-                    data['title'] ?? '',
-                  ),
-
-
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(20),
                   onTap: () {
-
                     Navigator.push(
-
                       context,
-
                       MaterialPageRoute(
+                        builder: (_) => OpportunityDetailsPage(
+                          data: data,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
 
-                        builder: (context) =>
-                            OpportunityDetailsPage(
-                              data: data,
+                        Row(
+                          children: [
+
+                            CircleAvatar(
+                              radius: 28,
+                              backgroundColor: Colors.amber.shade100,
+                              child: Icon(
+                                Icons.bookmark,
+                                color: Colors.amber.shade800,
+                              ),
                             ),
 
-                      ),
+                            const SizedBox(width: 12),
 
-                    );
+                            Expanded(
+                              child: Text(
+                                data['title'] ?? '',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
 
-                  },
+                            IconButton(
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.black38,
+                              ),
+                              onPressed: () async {
+                                await FirebaseFirestore.instance
+                                    .collection('bookmarks')
+                                    .doc(user.uid)
+                                    .collection('saved')
+                                    .doc(docs[index].id)
+                                    .delete();
+                              },
+                            ),
+                          ],
+                        ),
 
+                        const SizedBox(height: 12),
 
-                  subtitle: Text(
+                        Text(
+                          data['type']?.toString().toUpperCase() ?? "",
+                          style: TextStyle(
+                            color: Colors.blue.shade700,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
 
-                    data['type'] == 'internship'
-                        ? "Company: ${data['company'] ?? ''}\nDeadline: ${data['deadline'] ?? ''}"
+                        const SizedBox(height: 10),
 
-                        : data['type'] == 'hackathon'
-                        ? "Organizer: ${data['organizer'] ?? ''}\nPrize: ${data['prize'] ?? ''}"
+                        if (data['type'] == 'internship')
+                          Wrap(
+                            spacing: 8,
+                            children: [
+                              Chip(label: Text(data['company'] ?? "")),
+                              Chip(label: Text(data['deadline'] ?? "")),
+                            ],
+                          ),
 
-                        : data['type'] == 'team'
-                        ? "Required Skill: ${data['requiredSkill'] ?? ''}\nMembers Needed: ${data['membersNeeded'] ?? ''}"
+                        if (data['type'] == 'hackathon')
+                          Wrap(
+                            spacing: 8,
+                            children: [
+                              Chip(label: Text(data['organizer'] ?? "")),
+                              Chip(label: Text(data['prize'] ?? "")),
+                            ],
+                          ),
 
-                        : data['type'] == 'certification'
-                        ? "Platform: ${data['platform'] ?? ''}\nDuration: ${data['duration'] ?? ''}"
+                        if (data['type'] == 'team')
+                          Wrap(
+                            spacing: 8,
+                            children: [
+                              Chip(label: Text(data['requiredSkill'] ?? "")),
+                              Chip(label: Text(data['membersNeeded'] ?? "")),
+                            ],
+                          ),
 
-                        : data['type'] == 'event'
-                        ? "Organizer: ${data['organizer'] ?? ''}\nDate: ${data['date'] ?? ''}"
+                        if (data['type'] == 'certification')
+                          Wrap(
+                            spacing: 8,
+                            children: [
+                              Chip(label: Text(data['platform'] ?? "")),
+                              Chip(label: Text(data['duration'] ?? "")),
+                            ],
+                          ),
 
-                        : data['type'] == 'workshop'
-                        ? "Organizer: ${data['organizer'] ?? ''}\nDate: ${data['date'] ?? ''}"
+                        if (data['type'] == 'event')
+                          Wrap(
+                            spacing: 8,
+                            children: [
+                              Chip(label: Text(data['organizer'] ?? "")),
+                              Chip(label: Text(data['date'] ?? "")),
+                            ],
+                          ),
 
-                        : "",
+                        if (data['type'] == 'workshop')
+                          Wrap(
+                            spacing: 8,
+                            children: [
+                              Chip(label: Text(data['organizer'] ?? "")),
+                              Chip(label: Text(data['date'] ?? "")),
+                            ],
+                          ),
 
+                      ],
+                    ),
                   ),
-
-
-                  trailing: IconButton(
-
-                    icon:
-                    const Icon(Icons.delete),
-
-
-                    onPressed: () async {
-
-                      await FirebaseFirestore.instance
-                          .collection('bookmarks')
-                          .doc(user.uid)
-                          .collection('saved')
-                          .doc(docs[index].id)
-                          .delete();
-
-                    },
-
-                  ),
-
                 ),
 
               );

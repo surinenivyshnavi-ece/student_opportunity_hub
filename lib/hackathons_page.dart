@@ -125,6 +125,7 @@ class _HackathonsPageState extends State<HackathonsPage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      backgroundColor: const Color(0xFF9EB294),
 
       appBar: AppBar(
         centerTitle: true,
@@ -374,7 +375,7 @@ class _HackathonsPageState extends State<HackathonsPage> {
 
 
                     return Card(
-                      color: Colors.white,
+                      color: const Color(0xFFE9F5DB),
                       elevation: 2,
                       shadowColor: Colors.black12,
                       margin: const EdgeInsets.only(bottom: 16),
@@ -383,69 +384,108 @@ class _HackathonsPageState extends State<HackathonsPage> {
                       ),
 
 
-
-                      child: ListTile(
-
-
-                        leading: CircleAvatar(
-                          radius: 28,
-                          backgroundColor: Colors.orange.shade100,
-                          child: Icon(
-                            Icons.emoji_events,
-                            color: Colors.orange.shade700,
-                          ),
-                        ),
-
-
-
-                        title: Text(
-                          data['title'] ?? '',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17,
-                          ),
-                        ),
-
-                        subtitle: Padding(
-                          padding: const EdgeInsets.only(top: 8),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => OpportunityDetailsPage(data: data),
+                            ),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
 
-                              Text(
-                                data['organizer'] ?? '',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15,
-                                ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+
+                                  CircleAvatar(
+                                    radius: 28,
+                                    backgroundColor: Colors.orange.shade100,
+                                    child: Icon(
+                                      Icons.emoji_events,
+                                      color: Colors.orange.shade700,
+                                    ),
+                                  ),
+
+                                  const SizedBox(width: 12),
+
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+
+                                        Text(
+                                          data['title'] ?? '',
+                                          style: const TextStyle(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+
+                                        const SizedBox(height: 4),
+
+                                        Text(
+                                          data['organizer'] ?? '',
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  StreamBuilder<DocumentSnapshot>(
+                                    stream: FirebaseFirestore.instance
+                                        .collection('bookmarks')
+                                        .doc(FirebaseAuth.instance.currentUser?.uid ?? '')
+                                        .collection('saved')
+                                        .doc(docs[index].id)
+                                        .snapshots(),
+                                    builder: (context, snapshot) {
+
+                                      bool isBookmarked = snapshot.data?.exists ?? false;
+
+                                      return IconButton(
+                                        icon: Icon(
+                                          isBookmarked
+                                              ? Icons.bookmark
+                                              : Icons.bookmark_border,
+                                        ),
+                                        onPressed: () {
+                                          toggleBookmark(
+                                            docs[index].id,
+                                            data,
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ],
                               ),
 
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 12),
 
                               Wrap(
                                 spacing: 8,
                                 runSpacing: 8,
                                 children: [
 
-                                  Chip(
-                                    avatar: const Icon(Icons.public, size: 18),
-                                    label: Text(data['mode'] ?? ''),
-                                  ),
+                                  Chip(label: Text(data['mode'] ?? '')),
 
-                                  Chip(
-                                    avatar: const Icon(Icons.group, size: 18),
-                                    label: Text(data['teamSize'] ?? ''),
-                                  ),
+                                  Chip(label: Text(data['teamSize'] ?? '')),
 
-                                  Chip(
-                                    avatar: const Icon(Icons.workspace_premium, size: 18),
-                                    label: Text(data['prize'] ?? ''),
-                                  ),
+                                  Chip(label: Text(data['prize'] ?? '')),
 
                                 ],
                               ),
 
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 12),
 
                               Row(
                                 children: [
@@ -466,255 +506,62 @@ class _HackathonsPageState extends State<HackathonsPage> {
                                     ),
                                   ),
 
-                                ],
-                              ),
+                                  const Spacer(),
 
-                            ],
-                          ),
-                        ),
-
-
-
-                        onTap:(){
-
-
-                          Navigator.push(
-
-
-                            context,
-
-
-                            MaterialPageRoute(
-
-
-                              builder:(context)=>
-
-                                  OpportunityDetailsPage(
-                                    data: data,
-                                  ),
-
-
-                            ),
-
-
-                          );
-
-
-                        },
-
-
-
-
-
-                        trailing: SizedBox(
-
-                          width: isAdmin ? 160 : 60,
-
-                          child: Row(
-
-                            mainAxisSize: MainAxisSize.min,
-
-                            children: [
-
-
-
-                              StreamBuilder<DocumentSnapshot>(
-
-
-                                stream: FirebaseFirestore.instance
-
-                                    .collection('bookmarks')
-
-                                    .doc(FirebaseAuth.instance.currentUser?.uid ?? '')
-
-                                    .collection('saved')
-
-                                    .doc(docs[index].id)
-
-                                    .snapshots(),
-
-
-
-                                builder:(context,snapshot){
-
-
-                                  bool isBookmarked =
-                                      snapshot.data?.exists ?? false;
-
-
-
-                                  return IconButton(
-
-
-                                    icon: Icon(
-
-                                      isBookmarked
-
-                                          ? Icons.bookmark_rounded
-
-                                          : Icons.bookmark_border_rounded,
-
+                                  if (isAdmin)
+                                    IconButton(
+                                      icon: const Icon(Icons.edit, color: Colors.blue),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => AddHackathonPage(
+                                              documentId: docs[index].id,
+                                              hackathonData: data,
+                                            ),
+                                          ),
+                                        );
+                                      },
                                     ),
 
+                                  if (isAdmin)
+                                    IconButton(
+                                      icon: const Icon(Icons.delete),
+                                      onPressed: () async {
+                                        bool? confirm = await showDialog<bool>(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: const Text("Confirm Delete"),
+                                            content: const Text(
+                                              "Are you sure you want to delete this hackathon?",
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context, false);
+                                                },
+                                                child: const Text("Cancel"),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context, true);
+                                                },
+                                                child: const Text("Delete"),
+                                              ),
+                                            ],
+                                          ),
+                                        );
 
-
-                                    onPressed:(){
-
-
-                                      toggleBookmark(
-
-                                        docs[index].id,
-
-                                        data,
-
-                                      );
-
-
-                                    },
-
-
-
-                                  );
-
-
-                                },
-
-
-
+                                        if (confirm == true) {
+                                          await hackathonsRef.doc(docs[index].id).delete();
+                                        }
+                                      },
+                                    ),
+                                ],
                               ),
-                              if (isAdmin)
-                                IconButton(
-                                  icon: const Icon(
-                                    Icons.edit,
-                                    color: Colors.blue,
-                                  ),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => AddHackathonPage(
-                                          documentId: docs[index].id,
-                                          hackathonData: data,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-
-
-
-
-                              if(isAdmin)
-
-
-                                IconButton(
-
-
-                                  icon: const Icon(Icons.delete),
-
-
-
-                                  onPressed:() async {
-
-
-
-                                    bool? confirm = await showDialog<bool>(
-
-
-                                      context:context,
-
-
-                                      builder:(context)=>AlertDialog(
-
-
-                                        title:
-                                        const Text("Confirm Delete"),
-
-
-
-                                        content:
-                                        const Text(
-                                            "Are you sure you want to delete this hackathon?"
-                                        ),
-
-
-
-                                        actions:[
-
-
-                                          TextButton(
-
-                                            onPressed:(){
-
-                                              Navigator.pop(context,false);
-
-                                            },
-
-                                            child:
-                                            const Text("Cancel"),
-
-                                          ),
-
-
-
-                                          TextButton(
-
-                                            onPressed:(){
-
-                                              Navigator.pop(context,true);
-
-                                            },
-
-                                            child:
-                                            const Text("Delete"),
-
-                                          ),
-
-
-
-                                        ],
-
-
-
-                                      ),
-
-
-                                    );
-
-
-
-                                    if(confirm == true){
-
-
-                                      await hackathonsRef
-                                          .doc(docs[index].id)
-                                          .delete();
-
-
-                                    }
-
-
-
-                                  },
-
-
-                                ),
-
-
-
                             ],
-
-
                           ),
-
-
                         ),
-
-
-
-
-
-
                       ),
 
 
