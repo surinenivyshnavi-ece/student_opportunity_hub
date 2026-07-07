@@ -46,18 +46,29 @@ class _WorkshopsPageState extends State<WorkshopsPage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      backgroundColor: const Color(0xFF9EB294),
 
       appBar: AppBar(
-        title: const Text("Workshops & Webinars"),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        title: const Text(
+          "🎓 Workshops & Webinars",
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
           if (isAdmin)
             IconButton(
-              icon: const Icon(Icons.add),
+              icon: const Icon(Icons.add_circle_outline),
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const AddWorkshopPage(),
+                    builder: (_) => const AddWorkshopPage(),
                   ),
                 );
               },
@@ -70,25 +81,32 @@ class _WorkshopsPageState extends State<WorkshopsPage> {
         children: [
 
           Padding(
-            padding: const EdgeInsets.all(10),
-            child: TextField(
-
-              decoration: const InputDecoration(
-                hintText: "Search Workshops",
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+            padding: const EdgeInsets.fromLTRB(16,16,16,10),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.shade300,
+                    blurRadius: 8,
+                    offset: const Offset(0,4),
+                  ),
+                ],
               ),
-
-              onChanged: (value) {
-
-                setState(() {
-
-                  searchText = value.toLowerCase();
-
-                });
-
-              },
-
+              child: TextField(
+                decoration: const InputDecoration(
+                  hintText: "Search Workshops",
+                  prefixIcon: Icon(Icons.search),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(vertical: 16),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    searchText = value.toLowerCase();
+                  });
+                },
+              ),
             ),
           ),
 
@@ -287,131 +305,209 @@ class _WorkshopsPageState extends State<WorkshopsPage> {
                     as Map<String, dynamic>;
 
                     return Card(
-
-                      margin: const EdgeInsets.all(8),
-
-                      child: ListTile(
-
-                        leading: const Icon(Icons.school),
-
-                        title: Text(data['title'] ?? ""),
-
-                        subtitle: Text(
-                          "Organizer: ${data['organizer'] ?? ""}\n"
-                              "Category: ${data['category'] ?? ""}\n"
-                              "Mode: ${data['mode'] ?? ""}\n"
-                              "Date: ${data['date'] ?? ""}",
-                        ),
-
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-
-                            IconButton(
-                              icon: const Icon(Icons.bookmark_add),
-                              onPressed: () async {
-                                final user = FirebaseAuth.instance.currentUser;
-
-                                if (user == null) return;
-
-                                await FirebaseFirestore.instance
-                                    .collection('bookmarks')
-                                    .doc(user.uid)
-                                    .collection('saved')
-                                    .doc(docs[index].id)
-                                    .set({
-                                  ...data,
-                                  "type": "workshop",
-                                });
-
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("Workshop bookmarked"),
-                                  ),
-                                );
-                              },
-                            ),
-                            if (isAdmin)
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.edit,
-                                  color: Colors.blue,
-                                ),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => AddWorkshopPage(
-                                        documentId: docs[index].id,
-                                        workshopData: data,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-
-                            if (isAdmin)
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.delete,
-                                  color: Colors.red,
-                                ),
-                                onPressed: () async {
-                                  final confirm = await showDialog<bool>(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: const Text("Delete Workshop"),
-                                      content: const Text(
-                                        "Are you sure you want to delete this workshop?",
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context, false);
-                                          },
-                                          child: const Text("Cancel"),
-                                        ),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.pop(context, true);
-                                          },
-                                          child: const Text("Delete"),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-
-                                  if (confirm == true) {
-                                    await FirebaseFirestore.instance
-                                        .collection('workshops')
-                                        .doc(docs[index].id)
-                                        .delete();
-
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text("Workshop deleted"),
-                                      ),
-                                    );
-                                  }
-                                },
-                              ),
-
-                          ],
-                        ),
+                      color:  const Color(0xFFE9F5DB),
+                      elevation: 3,
+                      shadowColor: Colors.black12,
+                      margin: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(20),
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  OpportunityDetailsPage(
-                                    data: data,
-                                  ),
+                              builder: (_) => OpportunityDetailsPage(data: data),
                             ),
                           );
                         },
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
 
+                              Row(
+                                children: [
+
+                                  CircleAvatar(
+                                    radius: 28,
+                                    backgroundColor: Colors.orange.shade100,
+                                    child: const Icon(
+                                      Icons.school,
+                                      color: Colors.orange,
+                                    ),
+                                  ),
+
+                                  const SizedBox(width: 14),
+
+                                  Expanded(
+                                    child: Text(
+                                      data['title'] ?? '',
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 14),
+
+                              Text(
+                                data['organizer'] ?? '',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+
+                              const SizedBox(height: 10),
+
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: [
+
+                                  Chip(
+                                    avatar: const Icon(Icons.category,size:18),
+                                    label: Text(data['category'] ?? ''),
+                                  ),
+
+                                  Chip(
+                                    avatar: const Icon(Icons.public,size:18),
+                                    label: Text(data['mode'] ?? ''),
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 12),
+
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.calendar_today,
+                                    color: Colors.red,
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      data['date'] ?? '',
+                                      style: const TextStyle(
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 12),
+
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+
+                                  IconButton(
+                                    icon: const Icon(Icons.bookmark_border),
+                                    onPressed: () async {
+                                      final user = FirebaseAuth.instance.currentUser;
+                                      if (user == null) return;
+
+                                      await FirebaseFirestore.instance
+                                          .collection('bookmarks')
+                                          .doc(user.uid)
+                                          .collection('saved')
+                                          .doc(docs[index].id)
+                                          .set({
+                                        ...data,
+                                        "type": "workshop",
+                                      });
+
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text("Workshop bookmarked"),
+                                        ),
+                                      );
+                                    },
+                                  ),
+
+                                  if (isAdmin)
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.edit,
+                                        color: Colors.blue,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => AddWorkshopPage(
+                                              documentId: docs[index].id,
+                                              workshopData: data,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+
+                                  if (isAdmin)
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      ),
+                                      onPressed: () async {
+                                        bool? confirm = await showDialog<bool>(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: const Text("Delete Workshop"),
+                                            content: const Text(
+                                              "Are you sure you want to delete this workshop?",
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context, false);
+                                                },
+                                                child: const Text("Cancel"),
+                                              ),
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context, true);
+                                                },
+                                                child: const Text("Delete"),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+
+                                        if (confirm == true) {
+                                          await FirebaseFirestore.instance
+                                              .collection('workshops')
+                                              .doc(docs[index].id)
+                                              .delete();
+
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(
+                                              content: Text("Workshop deleted"),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-
                     );
 
                   },

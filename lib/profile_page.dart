@@ -11,11 +11,20 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffE3F2FD),
+      backgroundColor: const Color(0xFF9EB294),
 
       appBar: AppBar(
-        title: const Text("Profile"),
-
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        title: const Text(
+          "👤 Profile",
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -102,101 +111,407 @@ class ProfilePage extends StatelessWidget {
               const SizedBox(height: 20),
 
               Card(
-                child: ListTile(
-                  leading:
-                  const Icon(Icons.school),
-                  title: Text(
-                    data['college'] ?? '',
+                color:const Color(0xFFE9F5DB),
+                elevation: 3,
+                shadowColor: Colors.black12,
+                margin: const EdgeInsets.only(bottom: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.school,
+                        color: Colors.blue,
+                        size: 30,
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "College",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 13,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              data['college'] ?? '',
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  subtitle:
-                  const Text("College"),
                 ),
               ),
               Card(
-                child: ListTile(
-                  leading: const Icon(Icons.location_city),
-                  title: Text(
-                    data['city'] ?? '',
+              color:const Color(0xFFE9F5DB),
+                elevation: 3,
+                shadowColor: Colors.black12,
+                margin: const EdgeInsets.only(bottom: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.location_city,
+                        color: Colors.blue,
+                        size: 30,
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "City",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 13,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              data['city'] ?? '',
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  subtitle: const Text("City"),
                 ),
               ),
 
               Card(
-                child: ListTile(
-                  leading: const Icon(Icons.psychology),
-                  title: Text(
-                    data['skills'] != null
-                        ? (data['skills'] as List).join(', ')
-                        : '',
+                color:const Color(0xFFE9F5DB),
+                elevation: 3,
+                shadowColor: Colors.black12,
+                margin: const EdgeInsets.only(bottom: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.psychology,
+                        color: Colors.blue,
+                        size: 30,
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "skills",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 13,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              data['skills'] != null
+                                  ? (data['skills'] as List).join(', ')
+                                  : '',
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  subtitle: const Text("Skills"),
                 ),
               ),
 
               Card(
-                child: ListTile(
-                  leading: const Icon(Icons.info),
-                  title: Text(
-                    data['aboutMe'] ?? '',
+                color:const Color(0xFFE9F5DB),
+                elevation: 3,
+                shadowColor: Colors.black12,
+                margin: const EdgeInsets.only(bottom: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.info,
+                        color: Colors.blue,
+                        size: 30,
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "About Me",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 13,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              data['aboutMe'] ?? '',
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  subtitle: const Text("About Me"),
                 ),
               ),
 
               Card(
-                child: ListTile(
-                  leading: const Icon(Icons.code),
-                  title: Text(
-                    data['githubLink'] ?? '',
+                color:const Color(0xFFE9F5DB),
+                elevation: 3,
+                shadowColor: Colors.black12,
+                margin: const EdgeInsets.only(bottom: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.code,
+                        color: Colors.blue,
+                        size: 30,
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Github",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 13,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              data['githubLink'] ?? '',
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  subtitle: const Text("GitHub"),
                 ),
               ),
 
               Card(
-                child: ListTile(
-                  leading: const Icon(Icons.work),
-                  title: Text(
-                    data['linkedInLink'] ?? '',
+                color:const Color(0xFFE9F5DB),
+                elevation: 3,
+                shadowColor: Colors.black12,
+                margin: const EdgeInsets.only(bottom: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.work,
+                        color: Colors.blue,
+                        size: 30,
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "LinkedIn",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 13,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              data['linkedInLink'] ?? '',
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  subtitle: const Text("LinkedIn"),
+                ),
+              ),
+              Card(
+                color:const Color(0xFFE9F5DB),
+                elevation: 3,
+                shadowColor: Colors.black12,
+                margin: const EdgeInsets.only(bottom: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.memory,
+                        color: Colors.blue,
+                        size: 30,
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Branch",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 13,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              data['branch'] ?? '',
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
 
               Card(
-                child: ListTile(
-                  leading:
-                  const Icon(Icons.memory),
-                  title: Text(
-                    data['branch'] ?? '',
+                color:const Color(0xFFE9F5DB),
+                elevation: 3,
+                shadowColor: Colors.black12,
+                margin: const EdgeInsets.only(bottom: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.calendar_today,
+                        color: Colors.blue,
+                        size: 30,
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Year",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 13,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              data['year'] ?? '',
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  subtitle:
-                  const Text("Branch"),
                 ),
               ),
 
               Card(
-                child: ListTile(
-                  leading:
-                  const Icon(Icons.calendar_today),
-                  title: Text(
-                    data['year'] ?? '',
-                  ),
-                  subtitle:
-                  const Text("Year"),
+                color:const Color(0xFFE9F5DB),
+                elevation: 3,
+                shadowColor: Colors.black12,
+                margin: const EdgeInsets.only(bottom: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
                 ),
-              ),
-
-              Card(
-                child: ListTile(
-                  leading:
-                  const Icon(Icons.flag),
-                  title: Text(
-                    data['careerGoal'] ?? '',
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.flag,
+                        color: Colors.blue,
+                        size: 30,
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Career Goal",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 13,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              data['careerGoal'] ?? '',
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  subtitle:
-                  const Text("Career Goal"),
                 ),
               ),
             ],

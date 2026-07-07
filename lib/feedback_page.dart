@@ -65,9 +65,20 @@ class _FeedbackPageState extends State<FeedbackPage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      backgroundColor: const Color(0xFF9EB294),
 
       appBar: AppBar(
-        title: const Text("Feedback"),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        title: const Text(
+          "💬 Feedback",
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
 
       body: SingleChildScrollView(
@@ -75,105 +86,116 @@ class _FeedbackPageState extends State<FeedbackPage> {
         padding: const EdgeInsets.all(16),
 
         child: Column(
-
           children: [
 
-            TextField(
-
-              controller: nameController,
-
-              decoration: const InputDecoration(
-
-                labelText: "Your Name",
-
-                border: OutlineInputBorder(),
-
+            Card(
+              color:  const Color(0xFFE9F5DB),
+              elevation: 3,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
               ),
-
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: "Your Name",
+                    prefixIcon: Icon(Icons.person),
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
             ),
 
             const SizedBox(height: 15),
 
-            DropdownButtonFormField<String>(
-
-              value: selectedType,
-
-              decoration: const InputDecoration(
-
-                labelText: "Feedback Type",
-
-                border: OutlineInputBorder(),
-
+            Card(
+              color: const Color(0xFFE9F5DB),
+              elevation: 3,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
               ),
-
-              items: const [
-
-                DropdownMenuItem(
-                  value: "Suggestion",
-                  child: Text("Suggestion"),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: DropdownButtonFormField<String>(
+                  value: selectedType,
+                  decoration: const InputDecoration(
+                    labelText: "Feedback Type",
+                    border: InputBorder.none,
+                    prefixIcon: Icon(Icons.category),
+                  ),
+                  items: const [
+                    DropdownMenuItem(
+                      value: "Suggestion",
+                      child: Text("Suggestion"),
+                    ),
+                    DropdownMenuItem(
+                      value: "Bug Report",
+                      child: Text("Bug Report"),
+                    ),
+                    DropdownMenuItem(
+                      value: "Feature Request",
+                      child: Text("Feature Request"),
+                    ),
+                    DropdownMenuItem(
+                      value: "Other",
+                      child: Text("Other"),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      selectedType = value!;
+                    });
+                  },
                 ),
-
-                DropdownMenuItem(
-                  value: "Bug Report",
-                  child: Text("Bug Report"),
-                ),
-
-                DropdownMenuItem(
-                  value: "Feature Request",
-                  child: Text("Feature Request"),
-                ),
-
-                DropdownMenuItem(
-                  value: "Other",
-                  child: Text("Other"),
-                ),
-
-              ],
-
-              onChanged: (value) {
-
-                setState(() {
-
-                  selectedType = value!;
-
-                });
-
-              },
-
+              ),
             ),
 
             const SizedBox(height: 15),
 
-            TextField(
-
-              controller: feedbackController,
-
-              maxLines: 6,
-
-              decoration: const InputDecoration(
-
-                labelText: "Write your feedback",
-
-                border: OutlineInputBorder(),
-
+            Card(
+              color:  const Color(0xFFE9F5DB),
+              elevation: 3,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
               ),
-
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: TextField(
+                  controller: feedbackController,
+                  maxLines: 6,
+                  decoration: const InputDecoration(
+                    labelText: "Write your feedback",
+                    prefixIcon: Icon(Icons.feedback),
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
             ),
 
             const SizedBox(height: 25),
 
             SizedBox(
-
               width: double.infinity,
-
-              child: ElevatedButton(
-
+              height: 55,
+              child: ElevatedButton.icon(
                 onPressed: submitFeedback,
-
-                child: const Text("Submit Feedback"),
-
+                icon: const Icon(Icons.send),
+                label: const Text(
+                  "Submit Feedback",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
               ),
-
             ),
 
           ],
