@@ -145,9 +145,9 @@ class _HackathonsPageState extends State<HackathonsPage> {
 
       ),
       floatingActionButton: isAdmin
-          ? FloatingActionButton.extended(
-        icon: const Icon(Icons.add),
-        label: const Text("Add"),
+          ? FloatingActionButton(
+        backgroundColor: Colors.green.shade700,
+        foregroundColor: Colors.white,
         onPressed: () {
           Navigator.push(
             context,
@@ -156,6 +156,7 @@ class _HackathonsPageState extends State<HackathonsPage> {
             ),
           );
         },
+        child: const Icon(Icons.add),
       )
           : null,
 

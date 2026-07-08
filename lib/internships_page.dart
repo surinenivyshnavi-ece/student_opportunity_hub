@@ -135,9 +135,9 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
       ),
       floatingActionButton: isAdmin
-          ? FloatingActionButton.extended(
-        icon: const Icon(Icons.add),
-        label: const Text("Add"),
+          ? FloatingActionButton(
+        backgroundColor: Colors.green.shade700,
+        foregroundColor: Colors.white,
         onPressed: () {
           Navigator.push(
             context,
@@ -146,6 +146,7 @@ class _InternshipsPageState extends State<InternshipsPage> {
             ),
           );
         },
+        child: const Icon(Icons.add),
       )
           : null,
 

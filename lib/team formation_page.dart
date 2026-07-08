@@ -84,31 +84,21 @@ class _TeamFormationPageState
 
 
     return Scaffold(
+      backgroundColor: const Color(0xFF9EB294),
 
 
       appBar: AppBar(
-
-
-        title: const Text("Team Formation"),
-
-
-
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const AddTeamFormationPage(),
-                ),
-              );
-            },
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        title: const Text(
+          "👥 Team Formation",
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
           ),
-        ],
-
-
-
+        ),
       ),
 
 
@@ -125,59 +115,33 @@ class _TeamFormationPageState
 
 
           Padding(
-
-
-
-            padding: const EdgeInsets.all(10),
-
-
-
-            child: TextField(
-
-
-
-              decoration: const InputDecoration(
-
-
-
-                hintText: "Search Teams...",
-
-
-
-                prefixIcon: Icon(Icons.search),
-
-
-
-                border: OutlineInputBorder(),
-
-
-
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.shade300,
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
-
-
-
-              onChanged:(value){
-
-
-
-                setState((){
-
-
-                  searchText =
-                      value.toLowerCase();
-
-
-                });
-
-
-              },
-
-
-
+              child: TextField(
+                decoration: const InputDecoration(
+                  hintText: "Search Teams...",
+                  prefixIcon: Icon(Icons.search),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(vertical: 16),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    searchText = value.toLowerCase();
+                  });
+                },
+              ),
             ),
-
-
-
           ),
 
 
@@ -349,185 +313,195 @@ class _TeamFormationPageState
 
 
                     return Card(
+                      color: const Color(0xFFE9F5DB),
                       elevation: 3,
-                      margin: const EdgeInsets.only(bottom: 12),
-
-
-
-                      child: ListTile(
-
-
-
-                        leading:
-                        const Icon(
-                          Icons.groups,
-                        ),
-
-
-
-
-
-
-                        title: Text(
-                          data['teamName'] ?? '',
-                        ),
-
-
-
-
-
-
-                        subtitle: Text(
-                          "Required Skill: ${data['requiredSkill'] ?? ''}\n"
-                              "Members Needed: ${data['membersNeeded'] ?? ''}\n"
-                              "Preferred Role: ${data['preferredRole'] ?? ''}\n"
-                              "Contact: ${data['contact'] ?? ''}",
-                        ),
-
-
-
-
-
-
-                        onTap:(){
-
-
-
-
-
+                      shadowColor: Colors.black12,
+                      margin: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 16,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        onTap: () {
                           Navigator.push(
-
-
-
-
-
                             context,
-
-
-
-
-
                             MaterialPageRoute(
-
-
-
-
-
-                              builder:(context)=>
-
-                                  OpportunityDetailsPage(
-                                    data: data,
-                                  )
-
-
-
-
-
+                              builder: (_) => OpportunityDetailsPage(data: data),
                             ),
-
-
-
-
-
                           );
-
-
-
-
-
                         },
-
-
-
-
-
-
-
-
-
-                        trailing: (isAdmin || isOwner)
-                            ? SizedBox(
-                          width: 96,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
 
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.edit,
-                                  color: Colors.blue,
-                                ),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => AddTeamFormationPage(
-                                        documentId: docs[index].id,
-                                        teamData: data,
+                              Row(
+                                children: [
+
+                                  CircleAvatar(
+                                    radius: 28,
+                                    backgroundColor: Colors.blue.shade100,
+                                    child: const Icon(
+                                      Icons.groups,
+                                      color: Colors.blue,
+                                    ),
+                                  ),
+
+                                  const SizedBox(width: 14),
+
+                                  Expanded(
+                                    child: Text(
+                                      data['teamName'] ?? '',
+                                      style: const TextStyle(
+                                        fontSize: 19,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                  );
-                                },
+                                  ),
+                                ],
                               ),
 
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.delete,
-                                  color: Colors.red,
-                                ),
-                                onPressed: () async {
+                              const SizedBox(height: 15),
 
-                                  bool? confirm = await showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: const Text("Confirm Delete"),
-                                      content: const Text(
-                                        "Are you sure you want to delete this team?",
-                                      ),
-                                      actions: [
+                              Text(
+                                "Required Skill: ${data['requiredSkill'] ?? ''}",
+                                style: const TextStyle(fontWeight: FontWeight.w600),
+                              ),
 
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context, false);
-                                          },
-                                          child: const Text("Cancel"),
-                                        ),
+                              const SizedBox(height: 10),
 
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context, true);
-                                          },
-                                          child: const Text("Delete"),
-                                        ),
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: [
 
-                                      ],
+                                  Chip(
+                                    avatar: const Icon(Icons.code, size: 18),
+                                    label: Text(data['requiredSkill'] ?? ''),
+                                  ),
+
+                                  Chip(
+                                    avatar: const Icon(Icons.people, size: 18),
+                                    label: Text(
+                                      "${data['membersNeeded'] ?? ''} Members",
                                     ),
-                                  );
+                                  ),
 
-                                  if (confirm == true) {
-                                    await teamRef
-                                        .doc(docs[index].id)
-                                        .delete();
-                                  }
-                                },
+                                ],
                               ),
 
+                              const SizedBox(height: 12),
+
+                              Row(
+                                children: [
+
+                                  const Icon(
+                                    Icons.person,
+                                    color: Colors.green,
+                                    size: 18,
+                                  ),
+
+                                  const SizedBox(width: 6),
+
+                                  Expanded(
+                                    child: Text(
+                                      data['preferredRole'] ?? '',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 8),
+
+                              Row(
+                                children: [
+
+                                  const Icon(
+                                    Icons.phone,
+                                    color: Colors.orange,
+                                    size: 18,
+                                  ),
+
+                                  const SizedBox(width: 6),
+
+                                  Expanded(
+                                    child: Text(data['contact'] ?? ''),
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 12),
+
+                              if (isAdmin || isOwner)
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.edit,
+                                        color: Colors.blue,
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => AddTeamFormationPage(
+                                              documentId: docs[index].id,
+                                              teamData: data,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      ),
+                                      onPressed: () async {
+                                        bool? confirm = await showDialog(
+                                          context: context,
+                                          builder: (_) => AlertDialog(
+                                            title: const Text("Confirm Delete"),
+                                            content: const Text(
+                                              "Are you sure you want to delete this team?",
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.pop(context, false),
+                                                child: const Text("Cancel"),
+                                              ),
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.pop(context, true),
+                                                child: const Text("Delete"),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+
+                                        if (confirm == true) {
+                                          await teamRef.doc(docs[index].id).delete();
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
                             ],
                           ),
-                        )
-                            : null,
-
-
-
-
-
-
+                        ),
                       ),
-
-
-
-
-
                     );
 
 
@@ -565,6 +539,22 @@ class _TeamFormationPageState
 
 
       ),
+      floatingActionButton: isAdmin
+          ? FloatingActionButton(
+        backgroundColor: Colors.green.shade700,
+        foregroundColor: Colors.white,
+        child: const Icon(Icons.add),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddTeamFormationPage(),
+            ),
+          );
+        },
+      )
+          : null,
+
 
 
 

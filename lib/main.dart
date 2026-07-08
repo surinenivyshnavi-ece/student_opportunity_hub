@@ -222,7 +222,7 @@ class HomePage extends StatelessWidget {
 
       drawer: const AppDrawer(),
 
-      backgroundColor: const Color(0xffF5F7FA),
+      backgroundColor: const Color(0xFF9EB294),
 
 
 

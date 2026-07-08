@@ -60,20 +60,7 @@ class _WorkshopsPageState extends State<WorkshopsPage> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          if (isAdmin)
-            IconButton(
-              icon: const Icon(Icons.add_circle_outline),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const AddWorkshopPage(),
-                  ),
-                );
-              },
-            ),
-        ],
+
       ),
 
       body: Column(
@@ -523,6 +510,21 @@ class _WorkshopsPageState extends State<WorkshopsPage> {
         ],
 
       ),
+      floatingActionButton: isAdmin
+          ? FloatingActionButton(
+        backgroundColor: Colors.green.shade700,
+        foregroundColor: Colors.white,
+        child: const Icon(Icons.add),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddWorkshopPage(),
+            ),
+          );
+        },
+      )
+          : null,
 
     );
 

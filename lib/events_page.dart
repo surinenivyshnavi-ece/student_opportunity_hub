@@ -519,6 +519,21 @@ class _EventsPageState extends State<EventsPage> {
         ],
 
       ),
+      floatingActionButton: isAdmin
+          ? FloatingActionButton(
+        backgroundColor: Colors.green.shade700,
+        foregroundColor: Colors.white,
+        child: const Icon(Icons.add),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddEventPage(),
+            ),
+          );
+        },
+      )
+          : null,
 
     );
 
