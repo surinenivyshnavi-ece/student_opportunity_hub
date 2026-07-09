@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'add_internship_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'opportunity_details_page.dart';
+import 'package:share_plus/share_plus.dart';
 
 class InternshipsPage extends StatefulWidget {
   const InternshipsPage({super.key});
@@ -448,6 +449,30 @@ class _InternshipsPageState extends State<InternshipsPage> {
                                             data,
                                           );
                                         },
+                                      );
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.share,
+                                      color: Colors.green,
+                                    ),
+                                    onPressed: () {
+                                      SharePlus.instance.share(
+                                        ShareParams(
+                                          text: '''
+🏆 ${data['title']}
+
+Platform: ${data['platform']}
+Domain: ${data['domain']}
+Duration: ${data['duration']}
+
+${data['description']}
+
+Apply Here:
+${data['link']}
+''',
+                                        ),
                                       );
                                     },
                                   ),

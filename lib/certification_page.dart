@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'opportunity_details_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'add_certification_page.dart';
+import 'package:share_plus/share_plus.dart';
 
 
 
@@ -465,6 +466,30 @@ class _CertificationPageState extends State<CertificationPage>{
                                           ),
                                         );
                                       }
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.share,
+                                      color: Colors.green,
+                                    ),
+                                    onPressed: () {
+                                      SharePlus.instance.share(
+                                        ShareParams(
+                                          text: '''
+🏆 ${data['title']}
+
+Platform: ${data['platform']}
+Domain: ${data['domain']}
+Duration: ${data['duration']}
+
+${data['description']}
+
+Apply Here:
+${data['link']}
+''',
+                                        ),
+                                      );
                                     },
                                   ),
 

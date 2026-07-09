@@ -12,6 +12,9 @@ import 'bookmarks_page.dart';
 import 'app_drawer.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'certification_page.dart';
+import 'workshops_page.dart';
+import 'events_page.dart';
 
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -150,6 +153,8 @@ class _MyAppState extends State<MyApp> {
 
 
 
+
+
 class AuthCheck extends StatelessWidget {
 
   const AuthCheck({super.key});
@@ -213,18 +218,13 @@ class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
 
-
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
 
-      drawer: const AppDrawer(),
+      //drawer: const AppDrawer(),
 
       backgroundColor: const Color(0xFF9EB294),
-
-
 
 
       appBar: AppBar(
@@ -242,55 +242,91 @@ class HomePage extends StatelessWidget {
         iconTheme: const IconThemeData(
           color: Colors.black,
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout_rounded),
-            tooltip: "Logout",
-            onPressed: () async {
+        leading: PopupMenuButton<String>(
+          icon: const Icon(
+            Icons.account_circle,
+            size: 30,
+            color: Colors.black,
+          ),
+          onSelected: (value) async {
+            if (value == "profile") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ProfilePage(),
+                ),
+              );
+            } else if (value == "settings") {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Settings page coming soon"),
+                ),
+              );
+            } else if (value == "logout") {
               await GoogleSignIn().signOut();
               await FirebaseAuth.instance.signOut();
-            },
-          ),
-        ],
+            }
+          },
+          itemBuilder: (context) =>
+          [
+            const PopupMenuItem(
+              value: "profile",
+              child: Row(
+                children: [
+                  Icon(Icons.person),
+                  SizedBox(width: 10),
+                  Text("Profile"),
+                ],
+              ),
+            ),
+            const PopupMenuItem(
+              value: "settings",
+              child: Row(
+                children: [
+                  Icon(Icons.settings),
+                  SizedBox(width: 10),
+                  Text("Settings"),
+                ],
+              ),
+            ),
+            const PopupMenuItem(
+              value: "logout",
+              child: Row(
+                children: [
+                  Icon(Icons.logout),
+                  SizedBox(width: 10),
+                  Text("Logout"),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
-
-
-
-
-
-
 
 
       body: Center(
 
 
-
         child: SingleChildScrollView(
-
 
 
           child: Padding(
 
 
-
             padding: const EdgeInsets.all(20),
 
 
-
             child: Column(
-
 
 
               mainAxisAlignment:
               MainAxisAlignment.center,
 
 
-
               children: [
 
 
-
-
+                const SizedBox(height: 15),
                 Container(
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
@@ -310,103 +346,73 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
 
+                const SizedBox(height: 20),
 
 
-
-                const SizedBox(height:15),
-
-
-
-
-
-
-          const Text(
-            "Welcome to\nStudent Opportunity Hub",
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              height: 1.3,
-            ),
-            textAlign: TextAlign.center,
-          ),
+                const Text(
+                  "Welcome to\nStudent Opportunity Hub",
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    height: 1.3,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
 
 
+                const SizedBox(height: 10),
 
 
+                const Text(
+                  "Discover internships, hackathons, jobs, certifications and more—all in one place.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black54,
+                    height: 1.5,
+                  ),
+                ),
 
-                const SizedBox(height:10),
+                const SizedBox(height: 30),
 
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 25,
+                  runSpacing: 20,
+                  children: [
 
+                    buildHomeCard(
+                        context, "Internships", Icons.school, Colors.green,
+                        const InternshipsPage()),
 
+                    buildHomeCard(context, "Hackathons", Icons.emoji_events,
+                        Colors.orange, const HackathonsPage()),
 
+                    buildHomeCard(context, "Team", Icons.groups, Colors.blue,
+                        const TeamFormationPage()),
 
-        const Text(
-          "Discover internships, hackathons, jobs, certifications and more—all in one place.",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.black54,
-            height: 1.5,
-          ),
-        ),
+                    buildHomeCard(
+                        context, "Certificates", Icons.workspace_premium,
+                        Colors.deepPurple, const CertificationPage()),
 
-        const SizedBox(height: 30),
+                    buildHomeCard(
+                        context, "Workshops", Icons.menu_book, Colors.red,
+                        const WorkshopsPage()),
 
-        Container(
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(18),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 10,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Column(
-                children: [
-                  Icon(Icons.work, color: Colors.blue),
-                  SizedBox(height: 5),
-                  Text("Jobs"),
-                ],
-              ),
-              Column(
-                children: [
-                  Icon(Icons.school, color: Colors.green),
-                  SizedBox(height: 5),
-                  Text("Internships"),
-                ],
-              ),
-              Column(
-                children: [
-                  Icon(Icons.emoji_events, color: Colors.orange),
-                  SizedBox(height: 5),
-                  Text("Hackathons"),
-                ],
-              ),
-            ],
-          ),
-        ),
+                    buildHomeCard(context, "Events", Icons.event, Colors.teal,
+                        const EventsPage()),
+                  ],
+                ),
 
-        const SizedBox(height: 30),
+                const SizedBox(height: 30),
 
-        const Text(
-          "Built by Team Student Opportunity Hub",
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey,
-          ),
-        ),
-
-
-
-
-
+                const Text(
+                  "Built by Team Student Opportunity Hub",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
 
 
               ],
@@ -425,155 +431,37 @@ class HomePage extends StatelessWidget {
 
 
     );
-
-
   }
 
-
-
-
-
-
-
-  Widget buildButton(
-
-
-      BuildContext context,
-
-
-      String text,
-
-
-      Widget page,
-
-
-      ) {
-
-
-
-    return SizedBox(
-
-
-      width:280,
-
-
-
-      child: ElevatedButton(
-
-
-
-        style: ElevatedButton.styleFrom(
-
-
-
-          backgroundColor: Colors.white,
-
-
-
-          foregroundColor: Colors.black,
-
-
-
-          elevation:3,
-
-
-
-          padding: const EdgeInsets.all(18),
-
-
-
-          shape: RoundedRectangleBorder(
-
-
-
-            borderRadius: BorderRadius.circular(12),
-
-
-
-            side: const BorderSide(
-
-              color: Colors.grey,
-
+  Widget buildHomeCard(BuildContext context,
+      String title,
+      IconData icon,
+      Color color,
+      Widget page,) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => page),
+        );
+      },
+      child: SizedBox(
+        width: 90,
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 38),
+            const SizedBox(height: 6),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
             ),
-
-
-
-          ),
-
-
-
+          ],
         ),
-
-
-
-        onPressed: () {
-
-
-
-          Navigator.push(
-
-
-
-            context,
-
-
-
-            MaterialPageRoute(
-
-
-
-              builder:(context)=>page,
-
-
-
-            ),
-
-
-
-          );
-
-
-
-        },
-
-
-
-        child: Text(
-
-
-
-          text,
-
-
-
-          style: const TextStyle(
-
-
-
-            fontSize:18,
-
-
-
-            fontWeight: FontWeight.bold,
-
-
-
-          ),
-
-
-
-        ),
-
-
-
       ),
-
-
-
     );
-
-
   }
-
-
 }

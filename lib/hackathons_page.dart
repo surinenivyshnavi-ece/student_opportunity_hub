@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'add_hackathon_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'opportunity_details_page.dart';
+import 'package:share_plus/share_plus.dart';
 
 
 class HackathonsPage extends StatefulWidget {
@@ -94,6 +95,8 @@ class _HackathonsPageState extends State<HackathonsPage> {
     }
 
   }
+
+
 
 
   Future<void> checkAdmin() async {
@@ -468,6 +471,30 @@ class _HackathonsPageState extends State<HackathonsPage> {
                                     },
                                   ),
                                 ],
+                              ),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.share,
+                                  color: Colors.green,
+                                ),
+                                onPressed: () {
+                                  SharePlus.instance.share(
+                                    ShareParams(
+                                      text: '''
+🏆 ${data['title']}
+
+Platform: ${data['platform']}
+Domain: ${data['domain']}
+Duration: ${data['duration']}
+
+${data['description']}
+
+Apply Here:
+${data['link']}
+''',
+                                    ),
+                                  );
+                                },
                               ),
 
                               const SizedBox(height: 12),

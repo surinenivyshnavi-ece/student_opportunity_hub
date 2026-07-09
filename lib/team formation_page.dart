@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'add_team_formation_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'opportunity_details_page.dart';
+import 'package:share_plus/share_plus.dart';
 
 
 class TeamFormationPage extends StatefulWidget {
