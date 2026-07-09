@@ -263,8 +263,46 @@ class HomePage extends StatelessWidget {
                 ),
               );
             } else if (value == "logout") {
-              await GoogleSignIn().signOut();
-              await FirebaseAuth.instance.signOut();
+
+              bool? confirmLogout = await showDialog<bool>(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text("Logout"),
+                    content: const Text(
+                      "Are you sure you want to logout?",
+                    ),
+                    actions: [
+
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context, false);
+                        },
+                        child: const Text("Cancel"),
+                      ),
+
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context, true);
+                        },
+                        child: const Text("Logout"),
+                      ),
+
+                    ],
+                  );
+                },
+              );
+
+              if (confirmLogout == true) {
+                await GoogleSignIn().signOut();
+                await FirebaseAuth.instance.signOut();
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Logged out successfully"),
+                  ),
+                );
+              }
             }
           },
           itemBuilder: (context) =>
@@ -373,7 +411,7 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 30),
+                const SizedBox(height: 40),
 
                 Wrap(
                   alignment: WrapAlignment.center,
@@ -409,8 +447,9 @@ class HomePage extends StatelessWidget {
                 const Text(
                   "Built by Team Student Opportunity Hub",
                   style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
                   ),
                 ),
 
@@ -445,12 +484,29 @@ class HomePage extends StatelessWidget {
           MaterialPageRoute(builder: (_) => page),
         );
       },
-      child: SizedBox(
-        width: 90,
+      child: Container(
+        width: 100,
+        height: 100,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 8,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: color, size: 38),
-            const SizedBox(height: 6),
+            Icon(
+              icon,
+              color: color,
+              size: 38,
+            ),
+            const SizedBox(height: 8),
             Text(
               title,
               textAlign: TextAlign.center,
