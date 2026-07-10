@@ -39,6 +39,7 @@ flutter:
   assets:
     - assets/images/logo.png
     - assets/images/icon.png
+    - assets/images/banner.png
 
 
 flutter_native_splash:

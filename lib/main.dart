@@ -226,7 +226,7 @@ class HomePage extends StatelessWidget {
 
       //drawer: const AppDrawer(),
 
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0xFFF5F8F2),
 
 
       appBar: AppBar(
@@ -251,58 +251,48 @@ class HomePage extends StatelessWidget {
             color: Colors.black,
           ),
           onSelected: (value) async {
-
             if (value == "profile") {
-
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => ProfilePage(),
                 ),
               );
-
             }
 
             else if (value == "bookmarks") {
-
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => const BookmarksPage(),
                 ),
               );
-
             }
 
             else if (value == "feedback") {
-
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) =>  const FeedbackPage(),
+                  builder: (_) => const FeedbackPage(),
                 ),
               );
-
             }
 
             else if (value == "settings") {
-
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text("Settings coming soon"),
                 ),
               );
-
             }
 
             else if (value == "logout") {
-
               // Your logout confirmation dialog here
 
             }
-
           },
-          itemBuilder: (context) => [
+          itemBuilder: (context) =>
+          [
             const PopupMenuItem(
               value: "profile",
               child: Row(
@@ -362,140 +352,156 @@ class HomePage extends StatelessWidget {
       ),
 
 
-      body: Stack(
+      body: SingleChildScrollView(
+        child: Column(
           children: [
 
-          const AnimatedStudentBackground(),
-
-      Center(
-        child: SingleChildScrollView(
-
-
-          child: Padding(
-
-
-            padding: const EdgeInsets.all(20),
-
-
-            child: Column(
-
-
-              mainAxisAlignment:
-              MainAxisAlignment.center,
-
-
+            // Top Banner
+            Stack(
+              clipBehavior: Clip.none,
               children: [
 
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(35),
+                    bottomRight: Radius.circular(35),
+                  ),
+                  child: SizedBox(
+                    height: 300,
+                    width: double.infinity,
+                    child: Image.asset(
+                      "assets/images/banner.png",
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
 
-                const SizedBox(height: 15),
-                Container(
-                  padding: const EdgeInsets.all(18),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.shade300,
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
+                Positioned(
+                  bottom: -50,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: CircleAvatar(
+                      radius: 60,
+                      backgroundColor: Colors.white,
+                      child: CircleAvatar(
+                        radius: 53,
+                        backgroundImage: AssetImage("assets/images/logo.png"),
+                        backgroundColor: Colors.white,
                       ),
-                    ],
-                  ),
-                  child: Image.asset(
-                    'assets/images/logo.png',
-                    height: 90,
+                    ),
                   ),
                 ),
-
-                const SizedBox(height: 20),
-
-
-                const Text(
-                  "Welcome to\nStudent Opportunity Hub",
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    height: 1.3,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-
-
-                const SizedBox(height: 10),
-
-
-                const Text(
-                  "Discover internships, hackathons, jobs, certifications and more—all in one place.",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black54,
-                    height: 1.5,
-                  ),
-                ),
-
-                const SizedBox(height: 40),
-
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 25,
-                  runSpacing: 20,
-                  children: [
-
-                    buildHomeCard(
-                        context, "Internships", Icons.school, Colors.green,
-                        const InternshipsPage()),
-
-                    buildHomeCard(context, "Hackathons", Icons.emoji_events,
-                        Colors.orange, const HackathonsPage()),
-
-                    buildHomeCard(context, "Team", Icons.groups, Colors.blue,
-                        const TeamFormationPage()),
-
-                    buildHomeCard(
-                        context, "Certificates", Icons.workspace_premium,
-                        Colors.deepPurple, const CertificationPage()),
-
-                    buildHomeCard(
-                        context, "Workshops", Icons.menu_book, Colors.red,
-                        const WorkshopsPage()),
-
-                    buildHomeCard(context, "Events", Icons.event, Colors.teal,
-                        const EventsPage()),
-                  ],
-                ),
-
-                const SizedBox(height: 30),
-
-                const Text(
-                  "Built by Team Student Opportunity Hub",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
-                  ),
-                ),
-
-
               ],
+            ),
 
+            const SizedBox(height: 60),
 
+            const Text(
+              "Welcome to\nStudent Opportunity Hub",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30),
+              child: Text(
+                "Discover internships, hackathons, jobs, certifications and more—all in one place.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black54,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 22),
+              child: GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: 3,
+                crossAxisSpacing: 18,
+                mainAxisSpacing: 20,
+                childAspectRatio: .82,
+                children: [
+
+                  buildHomeCard(
+                    context,
+                    "Internships",
+                    Icons.school,
+                    Colors.green,
+                    const InternshipsPage(),
+                  ),
+
+                  buildHomeCard(
+                    context,
+                    "Hackathons",
+                    Icons.emoji_events,
+                    Colors.orange,
+                    const HackathonsPage(),
+                  ),
+
+                  buildHomeCard(
+                    context,
+                    "Team",
+                    Icons.groups,
+                    Colors.blue,
+                    const TeamFormationPage(),
+                  ),
+
+                  buildHomeCard(
+                    context,
+                    "Certificates",
+                    Icons.workspace_premium,
+                    Colors.deepPurple,
+                    const CertificationPage(),
+                  ),
+
+                  buildHomeCard(
+                    context,
+                    "Workshops",
+                    Icons.menu_book,
+                    Colors.red,
+                    const WorkshopsPage(),
+                  ),
+
+                  buildHomeCard(
+                    context,
+                    "Events",
+                    Icons.event,
+                    Colors.teal,
+                    const EventsPage(),
+                  ),
+                ],
+              ),
             ),
 
 
-          ),
+// 👇 Add this here
+            const SizedBox(height: 30),
 
+            const Text(
+              "Built by Team Student Opportunity Hub",
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
 
+            const SizedBox(height: 30),
+
+            const SizedBox(height: 40),
+          ],
         ),
-
-
-
-    ),
-
-    ],
-    ),
-
-
+      ),
     );
   }
 
@@ -511,143 +517,44 @@ class HomePage extends StatelessWidget {
           MaterialPageRoute(builder: (_) => page),
         );
       },
+      borderRadius: BorderRadius.circular(22),
       child: Container(
-        width: 100,
-        height: 100,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(22),
           boxShadow: [
             BoxShadow(
-              color: Colors.black12,
+              color: Colors.grey.shade300,
               blurRadius: 8,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 3),
             ),
           ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              color: color,
-              size: 38,
+            CircleAvatar(
+              radius: 28,
+              backgroundColor: color.withOpacity(0.15),
+              child: Icon(
+                icon,
+                color: color,
+                size: 32,
+              ),
             ),
-            const SizedBox(height: 8),
+
+            const SizedBox(height: 12),
+
             Text(
               title,
               textAlign: TextAlign.center,
               style: const TextStyle(
+                fontSize: 15,
                 fontWeight: FontWeight.bold,
-                fontSize: 13,
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-class AnimatedStudentBackground extends StatelessWidget {
-  const AnimatedStudentBackground({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xffD8F3DC),
-              Color(0xffE8F5E9),
-              Color(0xffF8FFF9),
-            ],
-          ),
-        ),
-        child: Stack(
-          children: [
-
-            floatingIcon(
-              Icons.school,
-              Colors.deepPurple,
-              top: 80,
-              left: 40,
-              duration: 5,
-            ),
-
-            floatingIcon(
-              Icons.work,
-              Colors.blue,
-              top: 150,
-              right: 50,
-              duration: 6,
-            ),
-
-            floatingIcon(
-              Icons.menu_book,
-              Colors.green,
-              bottom: 250,
-              left: 40,
-              duration: 4,
-            ),
-
-            floatingIcon(
-              Icons.emoji_events,
-              Colors.orange,
-              bottom: 180,
-              right: 40,
-              duration: 5,
-            ),
-
-            floatingIcon(
-              Icons.lightbulb,
-              Colors.amber,
-              top: 320,
-              left: 25,
-              duration: 7,
-            ),
-
-            floatingIcon(
-              Icons.flight,
-              Colors.indigo,
-              top: 90,
-              right: 100,
-              duration: 8,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget floatingIcon(
-      IconData icon,
-      Color color, {
-        double? top,
-        double? left,
-        double? right,
-        double? bottom,
-        required int duration,
-      }) {
-    return Positioned(
-      top: top,
-      left: left,
-      right: right,
-      bottom: bottom,
-      child: Icon(
-        icon,
-        size: 42,
-        color: color.withOpacity(0.15),
-      )
-          .animate(
-        onPlay: (controller) => controller.repeat(reverse: true),
-      )
-          .moveY(
-        begin: -8,
-        end: 8,
-        duration: Duration(seconds: duration),
       ),
     );
   }
