@@ -15,6 +15,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'certification_page.dart';
 import 'workshops_page.dart';
 import 'events_page.dart';
+import 'feedback_page.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -224,7 +226,7 @@ class HomePage extends StatelessWidget {
 
       //drawer: const AppDrawer(),
 
-      backgroundColor: const Color(0xFF9EB294),
+      backgroundColor: Colors.transparent,
 
 
       appBar: AppBar(
@@ -249,64 +251,58 @@ class HomePage extends StatelessWidget {
             color: Colors.black,
           ),
           onSelected: (value) async {
+
             if (value == "profile") {
+
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => ProfilePage(),
                 ),
               );
-            } else if (value == "settings") {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Settings page coming soon"),
+
+            }
+
+            else if (value == "bookmarks") {
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const BookmarksPage(),
                 ),
               );
-            } else if (value == "logout") {
 
-              bool? confirmLogout = await showDialog<bool>(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text("Logout"),
-                    content: const Text(
-                      "Are you sure you want to logout?",
-                    ),
-                    actions: [
+            }
 
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context, false);
-                        },
-                        child: const Text("Cancel"),
-                      ),
+            else if (value == "feedback") {
 
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context, true);
-                        },
-                        child: const Text("Logout"),
-                      ),
-
-                    ],
-                  );
-                },
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>  const FeedbackPage(),
+                ),
               );
 
-              if (confirmLogout == true) {
-                await GoogleSignIn().signOut();
-                await FirebaseAuth.instance.signOut();
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Logged out successfully"),
-                  ),
-                );
-              }
             }
+
+            else if (value == "settings") {
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Settings coming soon"),
+                ),
+              );
+
+            }
+
+            else if (value == "logout") {
+
+              // Your logout confirmation dialog here
+
+            }
+
           },
-          itemBuilder: (context) =>
-          [
+          itemBuilder: (context) => [
             const PopupMenuItem(
               value: "profile",
               child: Row(
@@ -317,6 +313,29 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
+
+            const PopupMenuItem(
+              value: "bookmarks",
+              child: Row(
+                children: [
+                  Icon(Icons.bookmark),
+                  SizedBox(width: 10),
+                  Text("Bookmarks"),
+                ],
+              ),
+            ),
+
+            const PopupMenuItem(
+              value: "feedback",
+              child: Row(
+                children: [
+                  Icon(Icons.feedback),
+                  SizedBox(width: 10),
+                  Text("Feedback"),
+                ],
+              ),
+            ),
+
             const PopupMenuItem(
               value: "settings",
               child: Row(
@@ -327,6 +346,7 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
+
             const PopupMenuItem(
               value: "logout",
               child: Row(
@@ -342,9 +362,12 @@ class HomePage extends StatelessWidget {
       ),
 
 
-      body: Center(
+      body: Stack(
+          children: [
 
+          const AnimatedStudentBackground(),
 
+      Center(
         child: SingleChildScrollView(
 
 
@@ -466,7 +489,11 @@ class HomePage extends StatelessWidget {
         ),
 
 
-      ),
+
+    ),
+
+    ],
+    ),
 
 
     );
@@ -517,6 +544,110 @@ class HomePage extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+class AnimatedStudentBackground extends StatelessWidget {
+  const AnimatedStudentBackground({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned.fill(
+      child: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xffD8F3DC),
+              Color(0xffE8F5E9),
+              Color(0xffF8FFF9),
+            ],
+          ),
+        ),
+        child: Stack(
+          children: [
+
+            floatingIcon(
+              Icons.school,
+              Colors.deepPurple,
+              top: 80,
+              left: 40,
+              duration: 5,
+            ),
+
+            floatingIcon(
+              Icons.work,
+              Colors.blue,
+              top: 150,
+              right: 50,
+              duration: 6,
+            ),
+
+            floatingIcon(
+              Icons.menu_book,
+              Colors.green,
+              bottom: 250,
+              left: 40,
+              duration: 4,
+            ),
+
+            floatingIcon(
+              Icons.emoji_events,
+              Colors.orange,
+              bottom: 180,
+              right: 40,
+              duration: 5,
+            ),
+
+            floatingIcon(
+              Icons.lightbulb,
+              Colors.amber,
+              top: 320,
+              left: 25,
+              duration: 7,
+            ),
+
+            floatingIcon(
+              Icons.flight,
+              Colors.indigo,
+              top: 90,
+              right: 100,
+              duration: 8,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget floatingIcon(
+      IconData icon,
+      Color color, {
+        double? top,
+        double? left,
+        double? right,
+        double? bottom,
+        required int duration,
+      }) {
+    return Positioned(
+      top: top,
+      left: left,
+      right: right,
+      bottom: bottom,
+      child: Icon(
+        icon,
+        size: 42,
+        color: color.withOpacity(0.15),
+      )
+          .animate(
+        onPlay: (controller) => controller.repeat(reverse: true),
+      )
+          .moveY(
+        begin: -8,
+        end: 8,
+        duration: Duration(seconds: duration),
       ),
     );
   }

@@ -52,6 +52,34 @@ class OpportunityDetailsPage extends StatelessWidget {
     );
 
   }
+  Widget buildInfoCard({
+    required IconData icon,
+    required String title,
+    required dynamic value,
+  }) {
+    if (value == null || value.toString().trim().isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Card(
+      elevation: 3,
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: Colors.deepPurple.shade100,
+          child: Icon(icon, color: Colors.deepPurple),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(value.toString()),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +90,11 @@ class OpportunityDetailsPage extends StatelessWidget {
         : data['link']?.toString() ?? '';
 
     return Scaffold(
+      backgroundColor: const Color(0xFF9EB294),
       appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
+        elevation: 0,
         title: Text(
           data['title'] ??
               data['teamName'] ??
@@ -77,238 +109,315 @@ class OpportunityDetailsPage extends StatelessWidget {
           CrossAxisAlignment.start,
           children: [
 
-            Text(
-              data['title'] ??
-                  data['teamName'] ??
-                  data['name'] ??
-                  'Details',
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [
+                    Colors.deepPurple,
+                    Colors.purple,
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    data['title'] ??
+                        data['teamName'] ??
+                        data['name'] ??
+                        "Details",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    data['company'] ??
+                        data['organizer'] ??
+                        "",
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
               ),
             ),
 
             const SizedBox(height: 20),
 
-            buildDetail(
-              "Company",
-              data['company'],
+            buildInfoCard(
+              icon: Icons.business,
+              title: "Company",
+              value: data['company'],
             ),
 
-            buildDetail(
-              "Organizer",
-              data['organizer'],
-            ),
-            buildDetail(
-              "Platform",
-              data['platform'],
+            buildInfoCard(
+              icon: Icons.groups,
+              title: "Organizer",
+              value: data['organizer'],
             ),
 
-            buildDetail(
-              "Category",
-              data['category'],
+            buildInfoCard(
+              icon: Icons.language,
+              title: "Platform",
+              value: data['platform'],
             ),
 
-            buildDetail(
-              "Type",
-              data['type'],
+            buildInfoCard(
+              icon: Icons.category,
+              title: "Category",
+              value: data['category'],
             ),
 
-            buildDetail(
-              "Date",
-              data['date'],
+            buildInfoCard(
+              icon: Icons.work,
+              title: "Type",
+              value: data['type'],
             ),
 
-            buildDetail(
-              "Venue",
-              data['venue'],
+            buildInfoCard(
+              icon: Icons.calendar_today,
+              title: "Date",
+              value: data['date'],
             ),
 
-            buildDetail(
-              "Speaker",
-              data['speaker'],
+            buildInfoCard(
+              icon: Icons.location_on,
+              title: "Venue",
+              value: data['venue'],
             ),
 
-            buildDetail(
-              "Certificate",
-              data['certificate'],
+            buildInfoCard(
+              icon: Icons.mic,
+              title: "Speaker",
+              value: data['speaker'],
             ),
 
-            buildDetail(
-              "Event Fee",
-              data['eventFee'],
+            buildInfoCard(
+              icon: Icons.workspace_premium,
+              title: "Certificate",
+              value: data['certificate'],
             ),
 
-            buildDetail(
-              "Course Level",
-              data['level'],
+            buildInfoCard(
+              icon: Icons.currency_rupee,
+              title: "Event Fee",
+              value: data['eventFee'],
             ),
 
-
-            buildDetail(
-              "Domain",
-              data['domain'],
+            buildInfoCard(
+              icon: Icons.school,
+              title: "Course Level",
+              value: data['level'],
             ),
 
-            buildDetail(
-              "Location",
-              data['location'],
+            buildInfoCard(
+              icon: Icons.computer,
+              title: "Domain",
+              value: data['domain'],
             ),
 
-            buildDetail(
-              "Mode",
-              data['mode'],
+            buildInfoCard(
+              icon: Icons.place,
+              title: "Location",
+              value: data['location'],
             ),
 
-            buildDetail(
-              "Duration",
-              data['duration'],
+            buildInfoCard(
+              icon: Icons.wifi,
+              title: "Mode",
+              value: data['mode'],
             ),
 
-            buildDetail(
-              "Stipend",
-              data['stipend'],
+            buildInfoCard(
+              icon: Icons.schedule,
+              title: "Duration",
+              value: data['duration'],
             ),
 
-            buildDetail(
-              "Eligibility",
-              data['eligibility'],
+            buildInfoCard(
+              icon: Icons.payments,
+              title: "Stipend",
+              value: data['stipend'],
             ),
 
-            buildDetail(
-              "Skills Required",
-              data['skillsRequired'],
+            buildInfoCard(
+              icon: Icons.verified_user,
+              title: "Eligibility",
+              value: data['eligibility'],
             ),
 
-            buildDetail(
-              "Team Size",
-              data['teamSize'],
+            buildInfoCard(
+              icon: Icons.code,
+              title: "Skills Required",
+              value: data['skillsRequired'],
             ),
 
-            buildDetail(
-              "Registration Fee",
-              data['registrationFee'],
+            buildInfoCard(
+              icon: Icons.group,
+              title: "Team Size",
+              value: data['teamSize'],
             ),
 
-            buildDetail(
-              "Prize",
-              data['prize'],
+            buildInfoCard(
+              icon: Icons.attach_money,
+              title: "Registration Fee",
+              value: data['registrationFee'],
             ),
 
-            buildDetail(
-              "Deadline",
-              data['deadline'],
+            buildInfoCard(
+              icon: Icons.emoji_events,
+              title: "Prize",
+              value: data['prize'],
             ),
 
-            buildDetail(
-              "Required Skill",
-              data['requiredSkill'],
+            buildInfoCard(
+              icon: Icons.event_available,
+              title: "Deadline",
+              value: data['deadline'],
             ),
 
-            buildDetail(
-              "Preferred Role",
-              data['preferredRole'],
+            buildInfoCard(
+              icon: Icons.star,
+              title: "Required Skill",
+              value: data['requiredSkill'],
             ),
 
-            buildDetail(
-              "Members Needed",
-              data['membersNeeded'],
+            buildInfoCard(
+              icon: Icons.person_outline,
+              title: "Preferred Role",
+              value: data['preferredRole'],
             ),
 
-            buildDetail(
-              "Contact",
-              data['contact'],
+            buildInfoCard(
+              icon: Icons.people,
+              title: "Members Needed",
+              value: data['membersNeeded'],
             ),
 
-            buildDetail(
-              "Looking For Team",
-              data['lookingForTeam'],
+            buildInfoCard(
+              icon: Icons.phone,
+              title: "Contact",
+              value: data['contact'],
             ),
 
-            buildDetail(
-              "Available For Projects",
-              data['availableForProjects'],
+            buildInfoCard(
+              icon: Icons.group_add,
+              title: "Looking For Team",
+              value: data['lookingForTeam'],
             ),
 
-            buildDetail(
-              "Available For Hackathons",
-              data['availableForHackathons'],
+            buildInfoCard(
+              icon: Icons.assignment,
+              title: "Available For Projects",
+              value: data['availableForProjects'],
             ),
 
-            buildDetail(
-              "About Me",
-              data['aboutMe'],
+            buildInfoCard(
+              icon: Icons.rocket_launch,
+              title: "Available For Hackathons",
+              value: data['availableForHackathons'],
             ),
 
-            buildDetail(
-              "Branch",
-              data['branch'],
+            buildInfoCard(
+              icon: Icons.info,
+              title: "About Me",
+              value: data['aboutMe'],
             ),
 
-            buildDetail(
-              "Career Goal",
-              data['careerGoal'],
+            buildInfoCard(
+              icon: Icons.account_tree,
+              title: "Branch",
+              value: data['branch'],
             ),
 
-            buildDetail(
-              "City",
-              data['city'],
+            buildInfoCard(
+              icon: Icons.flag,
+              title: "Career Goal",
+              value: data['careerGoal'],
             ),
 
-            buildDetail(
-              "College",
-              data['college'],
+            buildInfoCard(
+              icon: Icons.location_city,
+              title: "City",
+              value: data['city'],
             ),
 
-            buildDetail(
-              "Skills",
-              data['skills'],
+            buildInfoCard(
+              icon: Icons.school_outlined,
+              title: "College",
+              value: data['college'],
             ),
 
-            buildDetail(
-              "Year",
-              data['year'],
+            buildInfoCard(
+              icon: Icons.psychology,
+              title: "Skills",
+              value: data['skills'],
             ),
 
-            buildDetail(
-              "GitHub",
-              data['githubLink'],
+            buildInfoCard(
+              icon: Icons.class_,
+              title: "Year",
+              value: data['year'],
             ),
 
-            buildDetail(
-              "LinkedIn",
-              data['linkedInLink'],
+            buildInfoCard(
+              icon: Icons.code,
+              title: "GitHub",
+              value: data['githubLink'],
+            ),
+
+            buildInfoCard(
+              icon: Icons.business_center,
+              title: "LinkedIn",
+              value: data['linkedInLink'],
             ),
 
             const SizedBox(height: 15),
 
-            if ((data['description'] ?? '')
-                .toString()
-                .isNotEmpty)
-              Column(
-                crossAxisAlignment:
-                CrossAxisAlignment.start,
-                children: [
-
-                  const Text(
-                    "Description",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight:
-                      FontWeight.bold,
-                    ),
+            if ((data['description'] ?? '').toString().isNotEmpty)
+              Card(
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(
+                            Icons.description,
+                            color: Colors.deepPurple,
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            "Description",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 12),
+                      Text(
+                        data['description'],
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
                   ),
-
-                  const SizedBox(height: 8),
-
-                  Text(
-                    data['description'],
-                    style:
-                    const TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
+                ),
               ),
 
             const SizedBox(height: 30),
@@ -316,15 +425,22 @@ class OpportunityDetailsPage extends StatelessWidget {
             if (link.isNotEmpty)
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    openLink(
-                      context,
-                      link,
-                    );
-                  },
-                  child: const Text(
-                    "Open Link",
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 55,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      openLink(context, link);
+                    },
+                    icon: const Icon(Icons.open_in_new),
+                    label: const Text("Apply Now"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
                   ),
                 ),
               ),
