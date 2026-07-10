@@ -120,7 +120,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         useMaterial3: true,
         colorSchemeSeed: Colors.indigo,
-        scaffoldBackgroundColor: const Color(0xffF5F7FA),
+        scaffoldBackgroundColor: const Color(0xFFB5C0A2),
 
         appBarTheme: const AppBarTheme(
           centerTitle: true,
@@ -226,7 +226,7 @@ class HomePage extends StatelessWidget {
 
       //drawer: const AppDrawer(),
 
-      backgroundColor: const Color(0xFFF5F8F2),
+      backgroundColor: const Color(0xFFE7F6FF),
 
 
       appBar: AppBar(
@@ -367,7 +367,7 @@ class HomePage extends StatelessWidget {
                     bottomRight: Radius.circular(35),
                   ),
                   child: SizedBox(
-                    height: 300,
+                    height: 220,
                     width: double.infinity,
                     child: Image.asset(
                       "assets/images/banner.png",
@@ -377,15 +377,15 @@ class HomePage extends StatelessWidget {
                 ),
 
                 Positioned(
-                  bottom: -50,
+                  bottom: -40,
                   left: 0,
                   right: 0,
                   child: Center(
                     child: CircleAvatar(
-                      radius: 60,
+                      radius: 50,
                       backgroundColor: Colors.white,
                       child: CircleAvatar(
-                        radius: 53,
+                        radius: 44,
                         backgroundImage: AssetImage("assets/images/logo.png"),
                         backgroundColor: Colors.white,
                       ),
@@ -395,18 +395,18 @@ class HomePage extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: 60),
+            const SizedBox(height: 45),
 
             const Text(
               "Welcome to\nStudent Opportunity Hub",
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 28,
+                fontSize: 25,
                 fontWeight: FontWeight.bold,
               ),
             ),
 
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
 
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 30),
@@ -415,12 +415,12 @@ class HomePage extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.black54,
+                  color: Colors.black87,
                 ),
               ),
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
 
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 22),
@@ -428,9 +428,9 @@ class HomePage extends StatelessWidget {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 crossAxisCount: 3,
-                crossAxisSpacing: 18,
-                mainAxisSpacing: 20,
-                childAspectRatio: .82,
+                crossAxisSpacing: 14,
+                mainAxisSpacing: 14,
+                childAspectRatio: .95,
                 children: [
 
                   buildHomeCard(
@@ -496,9 +496,8 @@ class HomePage extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 15),
 
-            const SizedBox(height: 40),
           ],
         ),
       ),
@@ -517,7 +516,7 @@ class HomePage extends StatelessWidget {
           MaterialPageRoute(builder: (_) => page),
         );
       },
-      borderRadius: BorderRadius.circular(22),
+      borderRadius: BorderRadius.circular(18),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -534,16 +533,16 @@ class HomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircleAvatar(
-              radius: 28,
+              radius: 24,
               backgroundColor: color.withOpacity(0.15),
               child: Icon(
                 icon,
                 color: color,
-                size: 32,
+                size: 28,
               ),
             ),
 
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
 
             Text(
               title,
