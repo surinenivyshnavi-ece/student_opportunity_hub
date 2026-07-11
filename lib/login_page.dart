@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'complete_profile_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -46,7 +47,6 @@ class _LoginPageState extends State<LoginPage> {
         idToken: googleAuth.idToken,
       );
 
-
       final userCredential =
       await FirebaseAuth.instance.signInWithCredential(credential);
 
@@ -58,8 +58,15 @@ class _LoginPageState extends State<LoginPage> {
           .doc(uid);
 
       final doc = await userRef.get();
+      print("================================");
+      print("UID: $uid");
+      print("Document exists: ${doc.exists}");
+      print(doc.data());
+      print("================================");
 
       if (!doc.exists) {
+        print("New user - Opening Complete Profile");
+
         await userRef.set({
           "name": user.displayName ?? "",
           "email": user.email ?? "",
@@ -72,9 +79,43 @@ class _LoginPageState extends State<LoginPage> {
           "role": "student",
           "verified": false,
           "status": "pending",
+          "profileCompleted": false,
           "createdAt": FieldValue.serverTimestamp(),
         });
+
+        if (context.mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const CompleteProfilePage(),
+            ),
+          );
+        }
+
+        return;   // ADD THIS
       }
+
+
+// Existing users check
+      final data = doc.data() as Map<String, dynamic>;
+
+      if (data["profileCompleted"] != true) {
+
+        print("Profile not completed - Opening Complete Profile");
+
+        if (context.mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const CompleteProfilePage(),
+            ),
+          );
+        }
+
+        return;
+      }
+
+      print("Profile completed - Continue to Home");
 
 
       print("USER UID: $uid");
