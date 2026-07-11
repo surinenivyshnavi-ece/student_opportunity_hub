@@ -48,14 +48,33 @@ class _LoginPageState extends State<LoginPage> {
 
 
       final userCredential =
-      await FirebaseAuth.instance
-          .signInWithCredential(credential);
-
-
+      await FirebaseAuth.instance.signInWithCredential(credential);
 
       final user = userCredential.user!;
-
       final uid = user.uid;
+
+      final userRef = FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid);
+
+      final doc = await userRef.get();
+
+      if (!doc.exists) {
+        await userRef.set({
+          "name": user.displayName ?? "",
+          "email": user.email ?? "",
+          "photoUrl": user.photoURL ?? "",
+          "college": "",
+          "branch": "",
+          "year": "",
+          "rollNo": "",
+          "phone": "",
+          "role": "student",
+          "verified": false,
+          "status": "pending",
+          "createdAt": FieldValue.serverTimestamp(),
+        });
+      }
 
 
       print("USER UID: $uid");
