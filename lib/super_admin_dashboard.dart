@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'admin_requests_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'manage_college_admins_page.dart';
 
 class SuperAdminDashboard extends StatelessWidget {
   const SuperAdminDashboard({super.key});
@@ -7,9 +11,17 @@ class SuperAdminDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Scaffold(
-
       appBar: AppBar(
         title: const Text("Super Admin Dashboard"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await GoogleSignIn().signOut();
+              await FirebaseAuth.instance.signOut();
+            },
+          ),
+        ],
       ),
 
       body: SingleChildScrollView(
@@ -104,6 +116,27 @@ class SuperAdminDashboard extends StatelessWidget {
               context,
               "Manage Admin Requests",
               Icons.person_add,
+                  () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                    const AdminRequestsPage(),
+                  ),
+                );
+              },
+            ),
+            ElevatedButton(
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context)=>
+                    const ManageCollegeAdminsPage(),
+                  ),
+                );
+              },
+              child: const Text("Manage College Admins"),
             ),
 
 
@@ -111,13 +144,18 @@ class SuperAdminDashboard extends StatelessWidget {
               context,
               "Manage Students",
               Icons.people_alt,
+                  () {
+                // We'll add the page later
+              },
             ),
-
 
             _buildButton(
               context,
               "Manage Content",
               Icons.dashboard_customize,
+                  () {
+                // We'll add the page later
+              },
             ),
 
           ],
@@ -172,6 +210,7 @@ class SuperAdminDashboard extends StatelessWidget {
       BuildContext context,
       String title,
       IconData icon,
+      VoidCallback onTap,
       ) {
 
     return Card(
@@ -192,11 +231,7 @@ class SuperAdminDashboard extends StatelessWidget {
           Icons.arrow_forward_ios,
         ),
 
-        onTap: () {
-
-          // We will connect pages here next
-
-        },
+        onTap: onTap,
 
       ),
     );

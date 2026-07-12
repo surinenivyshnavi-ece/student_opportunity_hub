@@ -11,6 +11,7 @@ import 'feedback_page.dart';
 import 'certification_page.dart';
 import 'workshops_page.dart';
 import 'events_page.dart';
+import 'admin_request_form_page.dart';
 class HomePage extends StatelessWidget {
 
 
@@ -79,6 +80,15 @@ class HomePage extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text("Settings coming soon"),
+                ),
+              );
+            }
+
+            else if (value == "admin_request") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const AdminRequestFormPage(),
                 ),
               );
             }
@@ -156,6 +166,16 @@ class HomePage extends StatelessWidget {
                   Icon(Icons.settings),
                   SizedBox(width: 10),
                   Text("Settings"),
+                ],
+              ),
+            ),
+            PopupMenuItem(
+              value: "admin_request",
+              child: Row(
+                children: const [
+                  Icon(Icons.admin_panel_settings),
+                  SizedBox(width: 10),
+                  Text("Request College Admin Access"),
                 ],
               ),
             ),

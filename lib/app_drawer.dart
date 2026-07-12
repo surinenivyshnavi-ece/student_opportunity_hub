@@ -8,6 +8,7 @@ import 'certification_page.dart';
 import 'events_page.dart';
 import 'workshops_page.dart';
 import 'feedback_page.dart';
+import 'admin_request_form_page.dart';
 
 
 class AppDrawer extends StatelessWidget {
@@ -172,7 +173,19 @@ class AppDrawer extends StatelessWidget {
 
             },
 
+          ),ListTile(
+            leading: const Icon(Icons.admin_panel_settings),
+            title: const Text("Request College Admin Access"),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AdminRequestFormPage(),
+                ),
+              );
+            },
           ),
+
 
 
 

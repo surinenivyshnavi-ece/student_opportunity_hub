@@ -21,8 +21,8 @@ import 'home_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'complete_profile_page.dart';
 import 'pending_verification_page.dart';
-import 'admin_dashboard.dart';
 import 'super_admin_dashboard.dart';
+import 'college_admin_home_page.dart';
 
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -240,9 +240,30 @@ class AuthCheck extends StatelessWidget {
 
               // 2. College Admin
               if (adminDoc.exists) {
-                return const AdminDashboard();
-              }
 
+                final adminData =
+                adminDoc.data() as Map<String, dynamic>;
+
+
+                if (adminData["role"] == "collegeAdmin") {
+
+                  final status =
+                      adminData["status"] ?? "active";
+
+
+                  if (status.toString().trim().toLowerCase() == "inactive") {
+
+                    FirebaseAuth.instance.signOut();
+
+                    return const LoginPage();
+
+                  }
+
+
+                  return const CollegeAdminHomePage();
+
+                }
+              }
 
               // 3. Student
               if (!userDoc.exists) {
