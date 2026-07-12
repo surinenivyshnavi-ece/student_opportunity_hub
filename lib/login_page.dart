@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'complete_profile_page.dart';
+import 'pending_verification_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -58,6 +59,7 @@ class _LoginPageState extends State<LoginPage> {
           .doc(uid);
 
       final doc = await userRef.get();
+
       print("================================");
       print("UID: $uid");
       print("Document exists: ${doc.exists}");
@@ -94,15 +96,10 @@ class _LoginPageState extends State<LoginPage> {
 
         return;   // ADD THIS
       }
-
-
-// Existing users check
       final data = doc.data() as Map<String, dynamic>;
 
+
       if (data["profileCompleted"] != true) {
-
-        print("Profile not completed - Opening Complete Profile");
-
         if (context.mounted) {
           Navigator.pushReplacement(
             context,
@@ -111,50 +108,25 @@ class _LoginPageState extends State<LoginPage> {
             ),
           );
         }
-
         return;
       }
 
-      print("Profile completed - Continue to Home");
-
-
-      print("USER UID: $uid");
-
-
-      // Check admin collection
-
-      final userDoc = await FirebaseFirestore.instance
-          .collection("admins")
-          .doc(uid)
-          .get();
-
-
-      print("ADMIN DATA:");
-      print(userDoc.data());
-
-
-
-      if(userDoc.exists){
-
-        ScaffoldMessenger.of(context)
-            .showSnackBar(
-          const SnackBar(
-            content: Text("Admin Login"),
-          ),
-        );
-
+      if (data["verified"] != true) {
+        if (context.mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const PendingVerificationPage(),
+            ),
+          );
+        }
+        return;
       }
 
-      else{
+     // If profile is completed and verified
+      // No navigation needed here because AuthCheck will open HomePage.
+      return;
 
-        ScaffoldMessenger.of(context)
-            .showSnackBar(
-          const SnackBar(
-            content: Text("Student Login"),
-          ),
-        );
-
-      }
 
 
     }

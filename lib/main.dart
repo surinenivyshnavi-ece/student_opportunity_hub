@@ -20,6 +20,9 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'home_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'complete_profile_page.dart';
+import 'pending_verification_page.dart';
+import 'admin_dashboard.dart';
+import 'super_admin_dashboard.dart';
 
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -184,13 +187,31 @@ class AuthCheck extends StatelessWidget {
 
         if (snapshot.data != null) {
 
-          return FutureBuilder<DocumentSnapshot>(
-            future: FirebaseFirestore.instance
-                .collection("users")
-                .doc(snapshot.data!.uid)
-                .get(),
+          return FutureBuilder<List<DocumentSnapshot>>(
+            future: Future.wait([
+
+              // Student profile check
+              FirebaseFirestore.instance
+                  .collection("users")
+                  .doc(snapshot.data!.uid)
+                  .get(),
+
+              // College admin check
+              FirebaseFirestore.instance
+                  .collection("admins")
+                  .doc(snapshot.data!.uid)
+                  .get(),
+
+              // Super admin check
+              FirebaseFirestore.instance
+                  .collection("super_admins")
+                  .doc(snapshot.data!.uid)
+                  .get(),
+
+            ]),
 
             builder: (context, userSnapshot) {
+
 
               if (!userSnapshot.hasData) {
                 return const Scaffold(
@@ -201,20 +222,45 @@ class AuthCheck extends StatelessWidget {
               }
 
 
-              if (!userSnapshot.data!.exists) {
+              final userDoc =
+              userSnapshot.data![0];
+
+              final adminDoc =
+              userSnapshot.data![1];
+
+              final superAdminDoc =
+              userSnapshot.data![2];
+
+
+              // 1. Super Admin first
+              if (superAdminDoc.exists) {
+                return const SuperAdminDashboard();
+              }
+
+
+              // 2. College Admin
+              if (adminDoc.exists) {
+                return const AdminDashboard();
+              }
+
+
+              // 3. Student
+              if (!userDoc.exists) {
                 return const CompleteProfilePage();
               }
 
 
               final data =
-              userSnapshot.data!.data()
-              as Map<String, dynamic>;
+              userDoc.data() as Map<String, dynamic>;
 
 
               if (data["profileCompleted"] != true) {
-
                 return const CompleteProfilePage();
+              }
 
+
+              if (data["verified"] != true) {
+                return const PendingVerificationPage();
               }
 
 

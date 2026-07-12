@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'home_page.dart';
+import 'pending_verification_page.dart';
 
 class CompleteProfilePage extends StatefulWidget {
   const CompleteProfilePage({super.key});
@@ -23,13 +23,11 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
 
 
   Future<void> saveProfile() async {
-
     setState(() {
       loading = true;
     });
 
     try {
-
       final uid = FirebaseAuth.instance.currentUser!.uid;
 
       await FirebaseFirestore.instance
@@ -45,38 +43,33 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
         "phone": phoneController.text.trim(),
 
         "profileCompleted": true,
+        "verified": false,
+        "status": "pending",
+        "rejectionReason": "",
 
       }, SetOptions(merge: true));
 
-
-      if(context.mounted){
-
+      if (context.mounted) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => const HomePage(),
+            builder: (_) => const PendingVerificationPage(),
           ),
         );
-
       }
-
-
-    } catch(e){
-
-      ScaffoldMessenger.of(context)
-          .showSnackBar(
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Error: $e"),
         ),
       );
-
+    } finally {
+      if (mounted) {
+        setState(() {
+          loading = false;
+        });
+      }
     }
-
-
-    setState(() {
-      loading = false;
-    });
-
   }
 
 
