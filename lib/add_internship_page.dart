@@ -95,6 +95,9 @@ class _AddInternshipPageState extends State<AddInternshipPage> {
     };
 
     if (widget.documentId == null) {
+      await FirebaseFirestore.instance
+          .collection('internships')
+          .add(internshipData);
 
       internshipData['createdAt'] =
           FieldValue.serverTimestamp();

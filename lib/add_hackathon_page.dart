@@ -12,6 +12,7 @@ class AddHackathonPage extends StatefulWidget {
     this.documentId,
     this.hackathonData,
   });
+  
 
   @override
   State<AddHackathonPage> createState() =>
