@@ -87,19 +87,23 @@ class _AddCertificationPageState
       await FirebaseFirestore.instance
           .collection("certifications")
           .add(certificationData);
-      await http.post(
-        Uri.parse(
-          "https://student-opportunity-hub-4hkx.onrender.com/sendNotification",
-        ),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: jsonEncode({
-          "title": "📜 New Certification",
-          "body":
-          "${platformController.text.trim()} has released ${titleController.text.trim()}.",
-        }),
-      );
+     try {
+       await http.post(
+         Uri.parse(
+           "https://student-opportunity-hub-4hkx.onrender.com/sendNotification",
+         ),
+         headers: {
+           "Content-Type": "application/json",
+         },
+         body: jsonEncode({
+           "title": "📜 New Certification",
+           "body":
+               "${platformController.text.trim()} has released ${titleController.text.trim()}.",
+         }),
+       );
+     } catch (e) {
+       debugPrint(e.toString());
+     }
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Certification Added Successfully"),
