@@ -7,6 +7,7 @@ class AddInternshipPage extends StatefulWidget {
   final String? documentId;
   final Map<String, dynamic>? internshipData;
 
+
   const AddInternshipPage({
     super.key,
     this.documentId,
@@ -21,9 +22,9 @@ class AddInternshipPage extends StatefulWidget {
 class _AddInternshipPageState extends State<AddInternshipPage> {
   final companyController = TextEditingController();
   final titleController = TextEditingController();
-  final domainController = TextEditingController();
+  String selectedDomain = "Software Development";
   final locationController = TextEditingController();
-  final modeController = TextEditingController();
+  String selectedMode = "Online";
   final durationController = TextEditingController();
   final stipendController = TextEditingController();
   final eligibilityController = TextEditingController();
@@ -42,15 +43,34 @@ class _AddInternshipPageState extends State<AddInternshipPage> {
 
       titleController.text =
           widget.internshipData!['title'] ?? '';
+      final domain = widget.internshipData!['domain'];
 
-      domainController.text =
-          widget.internshipData!['domain'] ?? '';
+      selectedDomain = [
+        "Software Development",
+        "AI/ML",
+        "Embedded Systems",
+        "Cyber Security",
+        "Data Science",
+        "IoT",
+        "Electronics",
+        "Mechanical",
+        "Civil",
+      ].contains(domain)
+          ? domain
+          : "Software Development";
 
       locationController.text =
           widget.internshipData!['location'] ?? '';
 
-      modeController.text =
-          widget.internshipData!['mode'] ?? '';
+      final mode = widget.internshipData!['mode'];
+
+      selectedMode = [
+        "Online",
+        "Offline",
+        "Hybrid",
+      ].contains(mode)
+          ? mode
+          : "Online";
 
       durationController.text =
           widget.internshipData!['duration'] ?? '';
@@ -91,9 +111,9 @@ class _AddInternshipPageState extends State<AddInternshipPage> {
 
       'company': companyController.text.trim(),
       'title': titleController.text.trim(),
-      'domain': domainController.text.trim(),
+      'domain': selectedDomain,
       'location': locationController.text.trim(),
-      'mode': modeController.text.trim(),
+      'mode': selectedMode,
       'duration': durationController.text.trim(),
       'stipend': stipendController.text.trim(),
       'eligibility': eligibilityController.text.trim(),
@@ -148,9 +168,7 @@ class _AddInternshipPageState extends State<AddInternshipPage> {
   void dispose() {
     companyController.dispose();
     titleController.dispose();
-    domainController.dispose();
     locationController.dispose();
-    modeController.dispose();
     durationController.dispose();
     stipendController.dispose();
     eligibilityController.dispose();
@@ -195,9 +213,83 @@ class _AddInternshipPageState extends State<AddInternshipPage> {
           children: [
             buildTextField(companyController, "Company Name"),
             buildTextField(titleController, "Internship Title"),
-            buildTextField(domainController, "Domain"),
+            DropdownButtonFormField<String>(
+              value: selectedDomain,
+              decoration: const InputDecoration(
+                labelText: "Domain",
+                border: OutlineInputBorder(),
+              ),
+              items: const [
+                DropdownMenuItem(
+                  value: "Software Development",
+                  child: Text("Software Development"),
+                ),
+                DropdownMenuItem(
+                  value: "AI/ML",
+                  child: Text("AI/ML"),
+                ),
+                DropdownMenuItem(
+                  value: "Embedded Systems",
+                  child: Text("Embedded Systems"),
+                ),
+                DropdownMenuItem(
+                  value: "Cyber Security",
+                  child: Text("Cyber Security"),
+                ),
+                DropdownMenuItem(
+                  value: "Data Science",
+                  child: Text("Data Science"),
+                ),
+                DropdownMenuItem(
+                  value: "IoT",
+                  child: Text("IoT"),
+                ),
+                DropdownMenuItem(
+                  value: "Electronics",
+                  child: Text("Electronics"),
+                ),
+                DropdownMenuItem(
+                  value: "Mechanical",
+                  child: Text("Mechanical"),
+                ),
+                DropdownMenuItem(
+                  value: "Civil",
+                  child: Text("Civil"),
+                ),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  selectedDomain = value!;
+                });
+              },
+            ),
             buildTextField(locationController, "Location"),
-            buildTextField(modeController, "Mode (Online/Offline/Hybrid)"),
+            DropdownButtonFormField<String>(
+              value: selectedMode,
+              decoration: const InputDecoration(
+                labelText: "Mode",
+                border: OutlineInputBorder(),
+              ),
+              items: const [
+                DropdownMenuItem(
+                  value: "Online",
+                  child: Text("Online"),
+                ),
+                DropdownMenuItem(
+                  value: "Offline",
+                  child: Text("Offline"),
+                ),
+                DropdownMenuItem(
+                  value: "Hybrid",
+                  child: Text("Hybrid"),
+                ),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  selectedMode = value!;
+                });
+              },
+            ),
             buildTextField(durationController, "Duration"),
             buildTextField(stipendController, "Stipend"),
             buildTextField(

@@ -1,14 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'admin_requests_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'manage_college_admins_page.dart';
 
-class SuperAdminDashboard extends StatelessWidget {
+class SuperAdminDashboard extends StatefulWidget {
   const SuperAdminDashboard({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<SuperAdminDashboard> createState() =>
+      _SuperAdminDashboardState();
+}
+
+class _SuperAdminDashboardState extends State<SuperAdminDashboard> {
+
+  int students = 0;
+  int admins = 0;
+  int internships = 0;
+  int hackathons = 0;
+@override
+void initState() {
+super.initState();
+loadCounts();
+}
+
+Future<void> loadCounts() async {
+final studentsSnapshot =
+await FirebaseFirestore.instance.collection("users").get();
+
+final adminsSnapshot =
+await FirebaseFirestore.instance.collection("admins").get();
+
+final internshipsSnapshot =
+await FirebaseFirestore.instance.collection("internships").get();
+
+final hackathonsSnapshot =
+await FirebaseFirestore.instance.collection("hackathons").get();
+
+setState(() {
+students = studentsSnapshot.docs.length;
+admins = adminsSnapshot.docs.length;
+internships = internshipsSnapshot.docs.length;
+hackathons = hackathonsSnapshot.docs.length;
+});
+}
+
+@override
+Widget build(BuildContext context) {
+
+
 
     return Scaffold(
       appBar: AppBar(
@@ -50,7 +91,7 @@ class SuperAdminDashboard extends StatelessWidget {
                 Expanded(
                   child: _buildCard(
                     "Students",
-                    "0",
+                    students.toString(),
                     Icons.people,
                   ),
                 ),
@@ -60,7 +101,7 @@ class SuperAdminDashboard extends StatelessWidget {
                 Expanded(
                   child: _buildCard(
                     "Admins",
-                    "0",
+                    admins.toString(),
                     Icons.admin_panel_settings,
                   ),
                 ),
@@ -78,7 +119,7 @@ class SuperAdminDashboard extends StatelessWidget {
                 Expanded(
                   child: _buildCard(
                     "Internships",
-                    "0",
+                    internships.toString(),
                     Icons.work,
                   ),
                 ),
@@ -88,7 +129,7 @@ class SuperAdminDashboard extends StatelessWidget {
                 Expanded(
                   child: _buildCard(
                     "Hackathons",
-                    "0",
+                    hackathons.toString(),
                     Icons.emoji_events,
                   ),
                 ),
@@ -110,6 +151,7 @@ class SuperAdminDashboard extends StatelessWidget {
 
 
             const SizedBox(height: 15),
+
 
 
             _buildButton(

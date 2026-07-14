@@ -326,11 +326,11 @@ class _InternshipsPageState extends State<InternshipsPage> {
 
                   bool modeMatch =
                       selectedMode == "All" ||
-                          mode == selectedMode;
+                          mode.toLowerCase().contains(selectedMode.toLowerCase());
 
                   bool domainMatch =
                       selectedDomain == "All" ||
-                          domain == selectedDomain;
+                          domain.toLowerCase().contains(selectedDomain.toLowerCase());
 
                   return searchMatch &&
                       modeMatch &&
