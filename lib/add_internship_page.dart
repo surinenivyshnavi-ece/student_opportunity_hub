@@ -76,6 +76,16 @@ class _AddInternshipPageState extends State<AddInternshipPage> {
   }
 
   Future<void> addInternship() async {
+    if (companyController.text.trim().isEmpty ||
+        titleController.text.trim().isEmpty ||
+        deadlineController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please fill all required fields"),
+        ),
+      );
+      return;
+    }
 
     final Map<String, dynamic> internshipData = {
 
@@ -95,12 +105,13 @@ class _AddInternshipPageState extends State<AddInternshipPage> {
     };
 
     if (widget.documentId == null) {
+      internshipData['createdAt'] =
+          FieldValue.serverTimestamp();
+
       await FirebaseFirestore.instance
           .collection('internships')
           .add(internshipData);
 
-      internshipData['createdAt'] =
-          FieldValue.serverTimestamp();
 
       await http.post(
         Uri.parse(
@@ -122,6 +133,11 @@ class _AddInternshipPageState extends State<AddInternshipPage> {
           .collection('internships')
           .doc(widget.documentId)
           .update(internshipData);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Internship updated successfully"),
+        ),
+      );
 
     }
 
