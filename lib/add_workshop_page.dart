@@ -91,18 +91,27 @@ class _AddWorkshopPageState extends State<AddWorkshopPage> {
       await FirebaseFirestore.instance
           .collection("workshops")
           .add(workshopData);
-      await http.post(
-        Uri.parse(
-          "https://student-opportunity-hub-4hkx.onrender.com/sendNotification",
+      try {
+        await http.post(
+          Uri.parse(
+            "https://student-opportunity-hub-4hkx.onrender.com/sendNotification",
+          ),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: jsonEncode({
+            "title": "🎓 New Workshop",
+            "body":
+            "${organizerController.text.trim()} is conducting ${titleController.text.trim()}.",
+          }),
+        );
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Workshop Added Successfully"),
         ),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: jsonEncode({
-          "title": "🎓 New Workshop",
-          "body":
-          "${organizerController.text.trim()} is conducting ${titleController.text.trim()}.",
-        }),
       );
 
     } else {
@@ -124,12 +133,14 @@ class _AddWorkshopPageState extends State<AddWorkshopPage> {
 
   Widget buildTextField(
       String label,
-      TextEditingController controller,
-      ) {
+      TextEditingController controller, {
+        int maxLines = 1,
+      }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextFormField(
         controller: controller,
+        maxLines: maxLines,
         validator: (value) {
           if (value == null || value.trim().isEmpty) {
             return "Enter $label";
@@ -246,7 +257,11 @@ class _AddWorkshopPageState extends State<AddWorkshopPage> {
 
               buildTextField("Registration Deadline", deadlineController),
 
-              buildTextField("Description", descriptionController),
+              buildTextField(
+                "Description",
+                descriptionController,
+                maxLines: 5,
+              ),
 
               buildTextField("Registration Link", linkController),
 

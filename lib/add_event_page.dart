@@ -76,19 +76,23 @@ class _AddEventPageState extends State<AddEventPage> {
       await FirebaseFirestore.instance
           .collection('events')
           .add(eventData);
-      await http.post(
-        Uri.parse(
-          "https://student-opportunity-hub-4hkx.onrender.com/sendNotification",
-        ),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: jsonEncode({
-          "title": "📅 New Event",
-          "body":
-          "${organizerController.text.trim()} has announced ${titleController.text.trim()}.",
-        }),
-      );
+      try {
+        await http.post(
+          Uri.parse(
+            "https://student-opportunity-hub-4hkx.onrender.com/sendNotification",
+          ),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: jsonEncode({
+            "title": "📅 New Event",
+            "body":
+            "${organizerController.text.trim()} has announced ${titleController.text.trim()}.",
+          }),
+        );
+      } catch (e) {
+        debugPrint(e.toString());
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Event Added Successfully"),
@@ -301,7 +305,7 @@ class _AddEventPageState extends State<AddEventPage> {
 
                   child: Text(
                     widget.documentId == null
-                        ? "Add Event"
+                        ? "Save Event"
                         : "Update Event",
                     style: const TextStyle(fontSize: 18),
                   ),
