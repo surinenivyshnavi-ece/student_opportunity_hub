@@ -27,7 +27,7 @@ class _AddTeamFormationPageState
   final requiredSkillController = TextEditingController();
   final preferredRoleController = TextEditingController();
   final membersNeededController = TextEditingController();
-  final contactController = TextEditingController();
+  final emailController = TextEditingController();
   final linkController = TextEditingController();
 
   bool lookingForTeam = true;
@@ -51,8 +51,8 @@ class _AddTeamFormationPageState
       membersNeededController.text =
           widget.teamData!['membersNeeded'] ?? '';
 
-      contactController.text =
-          widget.teamData!['contact'] ?? '';
+      emailController.text =
+          widget.teamData!['email'] ?? '';
 
       linkController.text =
           widget.teamData!['link'] ?? '';
@@ -94,8 +94,8 @@ class _AddTeamFormationPageState
       'membersNeeded':
       membersNeededController.text.trim(),
 
-      'contact':
-      contactController.text.trim(),
+      'email':
+      FirebaseAuth.instance.currentUser?.email ?? '',
 
       'link':
       linkController.text.trim(),
@@ -163,7 +163,7 @@ class _AddTeamFormationPageState
     requiredSkillController.dispose();
     preferredRoleController.dispose();
     membersNeededController.dispose();
-    contactController.dispose();
+    emailController.dispose();
     linkController.dispose();
     super.dispose();
   }
@@ -225,10 +225,7 @@ class _AddTeamFormationPageState
               "Members Needed",
             ),
 
-            buildTextField(
-              contactController,
-              "Contact",
-            ),
+
 
             buildTextField(
               linkController,

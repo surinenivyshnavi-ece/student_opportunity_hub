@@ -8,6 +8,7 @@ import 'manage_certifications_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'login_page.dart';
+import 'team formation_page.dart';
 
 
 class CollegeAdminHomePage extends StatelessWidget {
@@ -162,7 +163,22 @@ class CollegeAdminHomePage extends StatelessWidget {
                 );
               },
             ),
-          )
+          ),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.groups),
+              title: const Text("Manage Team Formation"),
+              subtitle: const Text("View, Edit & Delete Team Posts"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const TeamFormationPage(),
+                  ),
+                );
+              },
+            ),
+          ),
         ],
       ),
     );

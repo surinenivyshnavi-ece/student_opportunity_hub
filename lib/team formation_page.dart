@@ -424,17 +424,14 @@ class _TeamFormationPageState
 
                               Row(
                                 children: [
-
                                   const Icon(
-                                    Icons.phone,
+                                    Icons.email,
                                     color: Colors.orange,
                                     size: 18,
                                   ),
-
                                   const SizedBox(width: 6),
-
                                   Expanded(
-                                    child: Text(data['contact'] ?? ''),
+                                    child: Text(data['email'] ?? ''),
                                   ),
                                 ],
                               ),
@@ -540,8 +537,7 @@ class _TeamFormationPageState
 
 
       ),
-      floatingActionButton: isAdmin
-          ? FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green.shade700,
         foregroundColor: Colors.white,
         child: const Icon(Icons.add),
@@ -553,8 +549,7 @@ class _TeamFormationPageState
             ),
           );
         },
-      )
-          : null,
+      ),
 
 
 
