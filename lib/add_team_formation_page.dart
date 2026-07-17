@@ -67,94 +67,64 @@ class _AddTeamFormationPageState
           widget.teamData!['availableForHackathons'] ?? true;
     }
   }
-
   Future<void> addTeam() async {
+    try {
+      if (teamNameController.text.trim().isEmpty ||
+          requiredSkillController.text.trim().isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Please fill all required fields"),
+          ),
+        );
+        return;
+      }
 
-    if (teamNameController.text.trim().isEmpty ||
-        requiredSkillController.text.trim().isEmpty) {
+      final teamData = {
+        'teamName': teamNameController.text.trim(),
+        'requiredSkill': requiredSkillController.text.trim(),
+        'preferredRole': preferredRoleController.text.trim(),
+        'membersNeeded': membersNeededController.text.trim(),
+        'email': FirebaseAuth.instance.currentUser?.email ?? '',
+        'link': linkController.text.trim(),
+        'lookingForTeam': lookingForTeam,
+        'availableForProjects': availableForProjects,
+        'availableForHackathons': availableForHackathons,
+        'createdBy': FirebaseAuth.instance.currentUser!.uid,
+      };
 
+      if (widget.documentId == null) {
+        teamData['createdAt'] = FieldValue.serverTimestamp();
+
+        await FirebaseFirestore.instance
+            .collection('team_formations')
+            .add(teamData);
+
+        // Notification (optional)
+        await http.post(
+          Uri.parse(
+            "https://student-opportunity-hub-4hkx.onrender.com/sendNotification",
+          ),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode({
+            "title": "👥 Team Formation",
+            "body": "Team members are required for ${teamNameController.text.trim()}.",
+          }),
+        );
+      } else {
+        await FirebaseFirestore.instance
+            .collection('team_formations')
+            .doc(widget.documentId)
+            .update(teamData);
+      }
+
+      if (!mounted) return;
+      Navigator.pop(context, true);
+
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Please fill all required fields"),
-        ),
-      );
-      return;
-    }
-
-    final teamData = {
-
-      'teamName': teamNameController.text.trim(),
-
-      'requiredSkill':
-      requiredSkillController.text.trim(),
-
-      'preferredRole':
-      preferredRoleController.text.trim(),
-
-      'membersNeeded':
-      membersNeededController.text.trim(),
-
-      'email':
-      FirebaseAuth.instance.currentUser?.email ?? '',
-
-      'link':
-      linkController.text.trim(),
-
-      'lookingForTeam':
-      lookingForTeam,
-
-      'availableForProjects':
-      availableForProjects,
-
-      'availableForHackathons':
-      availableForHackathons,
-
-      'createdBy': FirebaseAuth.instance.currentUser!.uid,
-    };
-
-    if (widget.documentId == null) {
-
-      teamData['createdAt'] =
-          FieldValue.serverTimestamp();
-
-      await FirebaseFirestore.instance
-          .collection('team_formations')
-          .add(teamData);
-      await http.post(
-        Uri.parse(
-          "https://student-opportunity-hub-4hkx.onrender.com/sendNotification",
-        ),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: jsonEncode({
-          "title": "👥 Team Formation",
-          "body":
-          "Team members are required for ${teamNameController.text.trim()}.",
-        }),
-      );
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Team Formation Added Successfully"),
-        ),
-      );
-
-    } else {
-
-      await FirebaseFirestore.instance
-          .collection('team_formations')
-          .doc(widget.documentId)
-          .update(teamData);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Team Formation Updated Successfully"),
-        ),
+        SnackBar(content: Text("Error: $e")),
       );
     }
-
-    Navigator.pop(context);
   }
 
   @override
@@ -225,7 +195,10 @@ class _AddTeamFormationPageState
               "Members Needed",
             ),
 
-
+            buildTextField(
+              emailController,
+              "Email",
+            ),
 
             buildTextField(
               linkController,

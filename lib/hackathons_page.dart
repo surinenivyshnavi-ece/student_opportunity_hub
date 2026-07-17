@@ -251,10 +251,46 @@ class _HackathonsPageState extends State<HackathonsPage> {
                     items: const [
                       DropdownMenuItem(value: "All", child: Text("All")),
                       DropdownMenuItem(value: "AI/ML", child: Text("AI/ML")),
-                      DropdownMenuItem(value: "Web Development", child: Text("Web Dev")),
                       DropdownMenuItem(value: "Data Science", child: Text("Data Science")),
+                      DropdownMenuItem(value: "App Development", child: Text("App Development")),
+                      DropdownMenuItem(value: "Web Development", child: Text("Web Development")),
+                      DropdownMenuItem(value: "Embedded Systems", child: Text("Embedded Systems")),
+                      DropdownMenuItem(value: "IoT", child: Text("Internet of Things (IoT)")),
                       DropdownMenuItem(value: "Cyber Security", child: Text("Cyber Security")),
-                      DropdownMenuItem(value: "Embedded Systems", child: Text("Embedded")),
+                      DropdownMenuItem(value: "Cloud Computing", child: Text("Cloud Computing")),
+                      DropdownMenuItem(value: "DevOps", child: Text("DevOps")),
+                      DropdownMenuItem(value: "Blockchain", child: Text("Blockchain")),
+                      DropdownMenuItem(value: "Robotics", child: Text("Robotics")),
+                      DropdownMenuItem(value: "AR/VR", child: Text("AR/VR")),
+                      DropdownMenuItem(value: "Game Development", child: Text("Game Development")),
+                      DropdownMenuItem(value: "Computer Vision", child: Text("Computer Vision")),
+                      DropdownMenuItem(value: "NLP", child: Text("Natural Language Processing")),
+                      DropdownMenuItem(value: "Electronics", child: Text("Electronics")),
+                      DropdownMenuItem(value: "VLSI", child: Text("VLSI")),
+                      DropdownMenuItem(value: "Communication Systems", child: Text("Communication Systems")),
+                      DropdownMenuItem(value: "Signal Processing", child: Text("Signal Processing")),
+                      DropdownMenuItem(value: "Control Systems", child: Text("Control Systems")),
+                      DropdownMenuItem(value: "Automation", child: Text("Automation")),
+                      DropdownMenuItem(value: "Electrical", child: Text("Electrical Engineering")),
+                      DropdownMenuItem(value: "Mechanical", child: Text("Mechanical Engineering")),
+                      DropdownMenuItem(value: "Civil", child: Text("Civil Engineering")),
+                      DropdownMenuItem(value: "Chemical", child: Text("Chemical Engineering")),
+                      DropdownMenuItem(value: "Biomedical", child: Text("Biomedical Engineering")),
+                      DropdownMenuItem(value: "Aerospace", child: Text("Aerospace Engineering")),
+                      DropdownMenuItem(value: "Automobile", child: Text("Automobile Engineering")),
+                      DropdownMenuItem(value: "3D Printing", child: Text("3D Printing")),
+                      DropdownMenuItem(value: "Renewable Energy", child: Text("Renewable Energy")),
+                      DropdownMenuItem(value: "Smart Agriculture", child: Text("Smart Agriculture")),
+                      DropdownMenuItem(value: "FinTech", child: Text("FinTech")),
+                      DropdownMenuItem(value: "EdTech", child: Text("EdTech")),
+                      DropdownMenuItem(value: "HealthTech", child: Text("HealthTech")),
+                      DropdownMenuItem(value: "UI/UX Design", child: Text("UI/UX Design")),
+                      DropdownMenuItem(value: "Product Design", child: Text("Product Design")),
+                      DropdownMenuItem(value: "Digital Marketing", child: Text("Digital Marketing")),
+                      DropdownMenuItem(value: "Entrepreneurship", child: Text("Entrepreneurship")),
+                      DropdownMenuItem(value: "Open Innovation", child: Text("Open Innovation")),
+                      DropdownMenuItem(value: "Research", child: Text("Research")),
+                      DropdownMenuItem(value: "General", child: Text("General")),
                     ],
                     onChanged: (value) {
                       setState(() {
@@ -498,17 +534,30 @@ ${data['link']}
                               ),
 
                               const SizedBox(height: 12),
-
                               Wrap(
                                 spacing: 8,
                                 runSpacing: 8,
                                 children: [
 
-                                  Chip(label: Text(data['mode'] ?? '')),
+                                  Chip(
+                                    avatar: const Icon(Icons.computer, size: 18),
+                                    label: Text(data['domain'] ?? ''),
+                                  ),
 
-                                  Chip(label: Text(data['teamSize'] ?? '')),
+                                  Chip(
+                                    avatar: const Icon(Icons.language, size: 18),
+                                    label: Text(data['mode'] ?? ''),
+                                  ),
 
-                                  Chip(label: Text(data['prize'] ?? '')),
+                                  Chip(
+                                    avatar: const Icon(Icons.group, size: 18),
+                                    label: Text(data['teamSize'] ?? ''),
+                                  ),
+
+                                  Chip(
+                                    avatar: const Icon(Icons.emoji_events, size: 18),
+                                    label: Text(data['prize'] ?? ''),
+                                  ),
 
                                 ],
                               ),
