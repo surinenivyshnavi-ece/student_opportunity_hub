@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -18,8 +19,48 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final cityController = TextEditingController();
   final githubLinkController = TextEditingController();
   final linkedInLinkController = TextEditingController();
-  final profilePhotoUrlController = TextEditingController();
   final skillsController = TextEditingController();
+  String avatar = "👤";
+  Future<void> _selectAvatar(BuildContext context) async {
+    final avatars = [
+      "👨",
+      "👩",
+      "👨‍🎓",
+      "👩‍🎓",
+      "👨‍💻",
+      "👩‍💻",
+    ];
+
+    final selectedAvatar = await showDialog<String>(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: const Text("Choose Avatar"),
+          content: Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: avatars.map((emoji) {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.pop(context, emoji);
+                },
+                child: Text(
+                  emoji,
+                  style: const TextStyle(fontSize: 40),
+                ),
+              );
+            }).toList(),
+          ),
+        );
+      },
+    );
+
+    if (selectedAvatar != null) {
+      setState(() {
+        avatar = selectedAvatar;
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -31,7 +72,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     try {
       final doc = await FirebaseFirestore.instance
           .collection('profiles')
-          .doc('user_profile')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
           .get();
 
       if (!doc.exists) return;
@@ -47,8 +88,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
       cityController.text = data['city'] ?? '';
       githubLinkController.text = data['githubLink'] ?? '';
       linkedInLinkController.text = data['linkedInLink'] ?? '';
-      profilePhotoUrlController.text =
-          data['profilePhotoUrl'] ?? '';
+      avatar = data['avatar'] ?? "👤";
+
 
       if (data['skills'] != null) {
         skillsController.text =
@@ -65,7 +106,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
     try {
       await FirebaseFirestore.instance
           .collection('profiles')
-          .doc('user_profile')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+
           .set({
         'name': nameController.text.trim(),
         'aboutMe': aboutMeController.text.trim(),
@@ -76,14 +118,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
         'city': cityController.text.trim(),
         'githubLink': githubLinkController.text.trim(),
         'linkedInLink': linkedInLinkController.text.trim(),
-        'profilePhotoUrl':
-        profilePhotoUrlController.text.trim(),
+        'avatar': avatar,
         'skills': skillsController.text
             .split(',')
             .map((e) => e.trim())
             .where((e) => e.isNotEmpty)
             .toList(),
-      });
+      }, SetOptions(merge: true));
 
       if (!mounted) return;
 
@@ -136,7 +177,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     cityController.dispose();
     githubLinkController.dispose();
     linkedInLinkController.dispose();
-    profilePhotoUrlController.dispose();
     skillsController.dispose();
     super.dispose();
   }
@@ -147,10 +187,29 @@ class _EditProfilePageState extends State<EditProfilePage> {
       appBar: AppBar(
         title: const Text("Edit Profile"),
       ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            GestureDetector(
+              onTap: () => _selectAvatar(context),
+              child: Column(
+                children: [
+                  CircleAvatar(
+                    radius: 45,
+                    child: Text(
+                      avatar,
+                      style: const TextStyle(fontSize: 40),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text("Tap to choose avatar"),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
             buildTextField(
               nameController,
               "Name",
@@ -198,11 +257,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
 
             buildTextField(
-              profilePhotoUrlController,
-              "Profile Photo URL",
-            ),
-
-            buildTextField(
               skillsController,
               "Skills (comma separated)",
             ),
@@ -218,6 +272,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   "Save Profile",
                 ),
               ),
+
             ),
           ],
         ),

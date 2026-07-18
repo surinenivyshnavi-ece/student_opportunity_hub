@@ -19,6 +19,10 @@ class _LoginPageState extends State<LoginPage> {
 
   bool isLoading = false;
   bool isDeactivated = false;
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  bool obscurePassword = true;
 
   Future<void> signInWithGoogle() async {
 
@@ -189,6 +193,9 @@ class _LoginPageState extends State<LoginPage> {
       }
 
 
+
+
+
     catch(e){
 
       ScaffoldMessenger.of(context)
@@ -212,6 +219,21 @@ class _LoginPageState extends State<LoginPage> {
     }
 
   }
+  Future<void> signInWithEmail() async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      // Use the same navigation logic you already have
+      // (check admin, profileCompleted, verified)
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? "Login Failed")),
+      );
+    }
+  }
 
 
 
@@ -224,43 +246,118 @@ Widget build(BuildContext context) {
     appBar: AppBar(
       title: const Text("Login"),
     ),
+    body: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
 
-    body: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
+          if (isDeactivated)
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text(
+                "Your admin account has been deactivated",
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 16,
+                ),
+              ),
+            ),
 
-        if (isDeactivated)
-          const Padding(
-            padding: EdgeInsets.all(16),
-            child: Text(
-              "Your admin account has been deactivated",
-              style: TextStyle(
-                color: Colors.red,
-                fontSize: 16,
+          TextField(
+            controller: emailController,
+            decoration: const InputDecoration(
+              labelText: "Email",
+              border: OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 15),
+
+          TextField(
+            controller: passwordController,
+            obscureText: obscurePassword,
+            decoration: InputDecoration(
+              labelText: "Password",
+              border: const OutlineInputBorder(),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  obscurePassword
+                      ? Icons.visibility
+                      : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() {
+                    obscurePassword = !obscurePassword;
+                  });
+                },
               ),
             ),
           ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: () async {
+                if (emailController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Enter your email first"),
+                    ),
+                  );
+                  return;
+                }
 
+                await FirebaseAuth.instance.sendPasswordResetEmail(
+                  email: emailController.text.trim(),
+                );
 
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-
-            child: ElevatedButton.icon(
-              icon: const Icon(Icons.login),
-
-              label: isLoading
-                  ? const Text("Signing in...")
-                  : const Text("Sign in as Student"),
-
-              onPressed: isLoading
-                  ? null
-                  : signInWithGoogle,
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Password reset email sent"),
+                  ),
+                );
+              },
+              child: const Text("Forgot Password?"),
             ),
           ),
-        ),
 
-      ],
+          const SizedBox(height: 20),
+
+          // Password TextField will come here next
+
+          const SizedBox(height: 20),
+
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: signInWithEmail,
+              child: const Text("Login"),
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          const Row(
+            children: [
+              Expanded(child: Divider()),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: Text("OR"),
+              ),
+              Expanded(child: Divider()),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          ElevatedButton.icon(
+            icon: const Icon(Icons.login),
+            label: isLoading
+                ? const Text("Signing in...")
+                : const Text("Continue with Google"),
+            onPressed: isLoading ? null : signInWithGoogle,
+          ),
+
+        ],
+      ),
     ),
   );
 }

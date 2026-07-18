@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'edit_profile_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfilePage extends StatelessWidget {
   ProfilePage({super.key});
@@ -42,7 +43,7 @@ class ProfilePage extends StatelessWidget {
       ),
 
       body: StreamBuilder<DocumentSnapshot>(
-        stream: profilesRef.doc('user_profile').snapshots(),
+        stream: profilesRef.doc(FirebaseAuth.instance.currentUser!.uid).snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Center(
@@ -74,17 +75,11 @@ class ProfilePage extends StatelessWidget {
 
               CircleAvatar(
                 radius: 50,
-                backgroundImage:
-                (data['profilePhotoUrl'] ?? '').toString().isNotEmpty
-                    ? NetworkImage(data['profilePhotoUrl'])
-                    : null,
-                child:
-                (data['profilePhotoUrl'] ?? '').toString().isEmpty
-                    ? const Icon(
-                  Icons.person,
-                  size: 50,
-                )
-                    : null,
+                backgroundColor: Colors.white,
+                child: Text(
+                  data['avatar'] ?? "👤",
+                  style: const TextStyle(fontSize: 45),
+                ),
               ),
 
               const SizedBox(height: 15),
