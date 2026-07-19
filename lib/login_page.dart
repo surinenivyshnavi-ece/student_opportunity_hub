@@ -4,7 +4,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'complete_profile_page.dart';
 import 'pending_verification_page.dart';
-import 'admin_request_form_page.dart';
 import 'college_admin_home_page.dart';
 import 'super_admin_home_page.dart';
 
@@ -23,6 +22,161 @@ class _LoginPageState extends State<LoginPage> {
   final passwordController = TextEditingController();
 
   bool obscurePassword = true;
+  Future<void> checkUserAfterLogin(User user) async {
+
+    final uid = user.uid;
+
+
+    // 1. Check Admin
+    final adminDoc = await FirebaseFirestore.instance
+        .collection("admins")
+        .doc(uid)
+        .get();
+
+
+    if (adminDoc.exists) {
+
+      final adminData = adminDoc.data()!;
+
+
+      if(adminData["role"]=="super_admin"){
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const SuperAdminHomePage(),
+          ),
+        );
+
+        return;
+
+      }
+
+
+      if(adminData["role"]=="collegeAdmin"){
+
+        final status = adminData["status"] ?? "active";
+
+
+        if(status.toString().trim().toLowerCase()=="inactive"){
+
+          await FirebaseAuth.instance.signOut();
+
+          if(context.mounted){
+            setState(() {
+              isDeactivated=true;
+            });
+          }
+
+          return;
+
+        }
+
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const CollegeAdminHomePage(),
+          ),
+        );
+
+        return;
+
+      }
+    }
+
+
+
+    // 2. Check Student Profile
+
+    final userRef = FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid);
+
+
+    final doc = await userRef.get();
+
+
+
+    // New user
+
+    if(!doc.exists){
+
+      await userRef.set({
+
+        "name": user.displayName ?? "",
+        "email": user.email ?? "",
+        "photoUrl": user.photoURL ?? "",
+        "college":"",
+        "branch":"",
+        "year":"",
+        "rollNo":"",
+        "phone":"",
+        "role":"student",
+        "verified":false,
+        "status":"pending",
+        "profileCompleted":false,
+        "createdAt":FieldValue.serverTimestamp(),
+
+      });
+
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const CompleteProfilePage(),
+        ),
+      );
+
+
+      return;
+    }
+
+
+
+    final data = doc.data()!;
+
+
+
+    // 3. Check profile completed
+
+    if(data["profileCompleted"] != true){
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const CompleteProfilePage(),
+        ),
+      );
+
+      return;
+    }
+
+
+
+
+    // 4. Check verification
+
+    if(data["verified"] != true){
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const PendingVerificationPage(),
+        ),
+      );
+
+      return;
+    }
+
+
+
+    // 5. Verified user
+
+    // AuthCheck will open HomePage
+
+
+  }
 
   Future<void> signInWithGoogle() async {
 
@@ -61,142 +215,23 @@ class _LoginPageState extends State<LoginPage> {
       await FirebaseAuth.instance.signInWithCredential(credential);
 
       final user = userCredential.user!;
-      final uid = user.uid;
-      // Check if the user is an admin
-      final adminDoc = await FirebaseFirestore.instance
-          .collection("admins")
-          .doc(uid)
-          .get();
 
 
-      if (adminDoc.exists) {
-        final adminData = adminDoc.data()!;
-        print("ADMIN DATA:");
-        print(adminData);
-
-        print("ROLE:");
-        print(adminData["role"]);
-
-        print("STATUS:");
-        print(adminData["status"]);
+      await checkUserAfterLogin(user);
 
 
-
-
-
-          if (adminData["role"] == "collegeAdmin") {
-            final status = adminData["status"] ?? "active";
-
-
-            if (status.toString().trim().toLowerCase() == "inactive") {
-
-
-              await FirebaseAuth.instance.signOut();
-
-              if (context.mounted) {
-                setState(() {
-                  isDeactivated = true;
-                });
-              }
-
-              return;
-
-
-
-
-            }
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                const CollegeAdminHomePage(),
-              ),
-            );
-
-
-            return;
-          }
-        }
-
-        final userRef = FirebaseFirestore.instance
-            .collection("users")
-            .doc(uid);
-
-        final doc = await userRef.get();
-
-        print("================================");
-        print("UID: $uid");
-        print("Document exists: ${doc.exists}");
-        print(doc.data());
-        print("================================");
-
-        if (!doc.exists) {
-          print("New user - Opening Complete Profile");
-
-          await userRef.set({
-            "name": user.displayName ?? "",
-            "email": user.email ?? "",
-            "photoUrl": user.photoURL ?? "",
-            "college": "",
-            "branch": "",
-            "year": "",
-            "rollNo": "",
-            "phone": "",
-            "role": "student",
-            "verified": false,
-            "status": "pending",
-            "profileCompleted": false,
-            "createdAt": FieldValue.serverTimestamp(),
-          });
-
-          if (context.mounted) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const CompleteProfilePage(),
-              ),
-            );
-          }
-
-          return; // ADD THIS
-        }
-        final data = doc.data() as Map<String, dynamic>;
-
-
-        if (data["profileCompleted"] != true) {
-          if (context.mounted) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const CompleteProfilePage(),
-              ),
-            );
-          }
-          return;
-        }
-
-        if (data["verified"] != true) {
-          if (context.mounted) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const PendingVerificationPage(),
-              ),
-            );
-          }
-          return;
-        }
-
-        // If profile is completed and verified
-        // No navigation needed here because AuthCheck will open HomePage.
-        return;
+      return;
       }
 
 
 
 
 
-    catch(e){
+
+
+
+
+     catch(e){
 
       ScaffoldMessenger.of(context)
           .showSnackBar(
@@ -220,19 +255,59 @@ class _LoginPageState extends State<LoginPage> {
 
   }
   Future<void> signInWithEmail() async {
+
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
+
+final userCredential =
+await FirebaseAuth.instance.signInWithEmailAndPassword(
+email: emailController.text.trim(),
+password: passwordController.text.trim(),
+);
+
+
+final user = userCredential.user!;
+
+
+await checkUserAfterLogin(user);
+
+
+      // Add your same navigation logic here:
+      // Admin check
+      // Profile completed check
+      // Verification check
+
+
+    } on FirebaseAuthException catch (e) {
+
+
+      String message = "Login failed";
+
+
+      if (e.code == "user-not-found") {
+
+        message = "No account found with this email";
+
+      }
+      else if (e.code == "wrong-password") {
+
+        message = "Incorrect password";
+
+      }
+      else if (e.code == "invalid-email") {
+
+        message = "Invalid email format";
+
+      }
+
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+        ),
       );
 
-      // Use the same navigation logic you already have
-      // (check admin, profileCompleted, verified)
-    } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? "Login Failed")),
-      );
     }
+
   }
 
 
@@ -293,32 +368,7 @@ Widget build(BuildContext context) {
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              onPressed: () async {
-                if (emailController.text.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Enter your email first"),
-                    ),
-                  );
-                  return;
-                }
 
-                await FirebaseAuth.instance.sendPasswordResetEmail(
-                  email: emailController.text.trim(),
-                );
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Password reset email sent"),
-                  ),
-                );
-              },
-              child: const Text("Forgot Password?"),
-            ),
-          ),
 
           const SizedBox(height: 20),
 
@@ -361,4 +411,14 @@ Widget build(BuildContext context) {
     ),
   );
 }
+@override
+void dispose(){
+
+emailController.dispose();
+passwordController.dispose();
+
+super.dispose();
+
+}
+
 }
