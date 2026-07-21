@@ -128,6 +128,10 @@ class _CertificationPageState extends State<CertificationPage>{
 
               Expanded(
 
+
+
+
+
            child: Container(
           decoration: BoxDecoration(
           color: Colors.white,
@@ -367,8 +371,13 @@ class _CertificationPageState extends State<CertificationPage>{
 
 
                 return ListView.builder(
-
-                  itemCount:docs.length,
+                  padding: const EdgeInsets.only(
+                    top: 16,
+                    left: 0,
+                    right: 0,
+                    bottom: 16,
+                  ),
+                  itemCount: docs.length,
 
 
                   itemBuilder:(context,index){

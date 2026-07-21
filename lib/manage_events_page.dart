@@ -49,6 +49,8 @@ class ManageEventsPage extends StatelessWidget {
       ),
 
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.green, // Change button color
+        foregroundColor: Colors.white, // Change icon color
         child: const Icon(Icons.add),
         onPressed: () {
           Navigator.push(
@@ -93,6 +95,7 @@ class ManageEventsPage extends StatelessWidget {
               doc.data() as Map<String, dynamic>;
 
               return Card(
+                color: const Color(0xFFE9F5DB),
                 margin:
                 const EdgeInsets.symmetric(vertical: 8),
                 elevation: 3,
@@ -129,6 +132,10 @@ class ManageEventsPage extends StatelessWidget {
                         children: [
 
                           ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xFF9EB294),
+                              foregroundColor: Colors.white,
+                            ),
                             icon: const Icon(Icons.edit),
                             label: const Text("Edit"),
                             onPressed: () {
@@ -149,7 +156,8 @@ class ManageEventsPage extends StatelessWidget {
 
                           ElevatedButton.icon(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
+                              backgroundColor: Color(0xFF9EB294),
+                              foregroundColor: Colors.white,
                             ),
                             icon: const Icon(Icons.delete),
                             label: const Text("Delete"),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'add_certification_page.dart';
 
+
 class ManageCertificationsPage extends StatelessWidget {
   const ManageCertificationsPage({super.key});
 
@@ -51,13 +52,14 @@ class ManageCertificationsPage extends StatelessWidget {
       ),
 
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.green, // Change button color
+        foregroundColor: Colors.white, // Change icon color
         child: const Icon(Icons.add),
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) =>
-              const AddCertificationPage(),
+              builder: (_) => const AddCertificationPage(),
             ),
           );
         },
@@ -99,10 +101,8 @@ class ManageCertificationsPage extends StatelessWidget {
               doc.data() as Map<String, dynamic>;
 
               return Card(
-                margin:
-                const EdgeInsets.symmetric(
-                  vertical: 8,
-                ),
+                color: const Color(0xFFE9F5DB), // Your desired card color
+                margin: const EdgeInsets.symmetric(vertical: 8),
                 elevation: 3,
                 child: Padding(
                   padding:
@@ -144,13 +144,12 @@ class ManageCertificationsPage extends StatelessWidget {
                         children: [
 
                           ElevatedButton.icon(
-                            icon: const Icon(
-                              Icons.edit,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xFF9EB294),
+                              foregroundColor: Colors.white,
                             ),
-                            label:
-                            const Text(
-                              "Edit",
-                            ),
+                            icon: const Icon(Icons.edit),
+                            label: const Text("Edit"),
                             onPressed: () {
                               Navigator.push(
                                 context,
@@ -172,10 +171,9 @@ class ManageCertificationsPage extends StatelessWidget {
                           ),
 
                           ElevatedButton.icon(
-                            style:
-                            ElevatedButton.styleFrom(
-                              backgroundColor:
-                              Colors.red,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xFF9EB294),
+                              foregroundColor: Colors.white,
                             ),
                             icon: const Icon(
                               Icons.delete,
