@@ -144,6 +144,7 @@ class _AddInternshipPageState extends State<AddInternshipPage> {
           "title": "New Internship",
           "body":
           "${companyController.text.trim()} has posted ${titleController.text.trim()}.",
+          "screen":"internship",
         }),
       );
 

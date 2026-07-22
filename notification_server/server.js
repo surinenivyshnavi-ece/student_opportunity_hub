@@ -14,13 +14,18 @@ app.use(express.json());
 
 app.post("/sendNotification", async (req, res) => {
   try {
-    const { title, body } = req.body;
+    const { title, body, screen } = req.body;
 
     const message = {
       notification: {
         title: title,
         body: body,
       },
+
+      data: {
+        screen: screen,
+      },
+
       topic: "allUsers",
     };
 

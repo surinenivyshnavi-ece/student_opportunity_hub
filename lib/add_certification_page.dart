@@ -99,6 +99,7 @@ class _AddCertificationPageState
            "title": "📜 New Certification",
            "body":
                "${platformController.text.trim()} has released ${titleController.text.trim()}.",
+           "screen" :"certification",
          }),
        );
      } catch (e) {

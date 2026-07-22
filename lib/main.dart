@@ -78,6 +78,56 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     requestPermission();
     setupForegroundNotifications();
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+
+      String? screen = message.data["screen"];
+
+      if (screen == "internship") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const InternshipsPage(),
+          ),
+        );
+      }
+
+      if (screen == "hackathon") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const HackathonsPage(),
+          ),
+        );
+      }
+
+      if (screen == "event") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const EventsPage(),
+          ),
+        );
+      }
+
+      if (screen == "workshop") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const WorkshopsPage(),
+          ),
+        );
+      }
+
+      if (screen == "certification") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const CertificationPage(),
+          ),
+        );
+      }
+
+    });
   }
 
   Future<void> requestPermission() async {
@@ -90,11 +140,76 @@ class _MyAppState extends State<MyApp> {
     );
 
     await FirebaseMessaging.instance.subscribeToTopic("allUsers");
+    String? token = await FirebaseMessaging.instance.getToken();
 
+    print("FCM Token: $token");
+
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null && token != null) {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(user.uid)
+          .set(
+        {
+          "fcmToken": token,
+        },
+        SetOptions(merge: true),
+      );
+    }
     print("Subscribed to allUsers topic successfully");
-  }
+
+  }   // <-- ADD THIS BRACKET
+
   void setupForegroundNotifications() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+
+      String? screen = message.data["screen"];
+
+      if (screen == "internship") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const InternshipsPage(),
+          ),
+        );
+      }
+
+      if (screen == "hackathon") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const HackathonsPage(),
+          ),
+        );
+      }
+
+      if (screen == "event") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const EventsPage(),
+          ),
+        );
+      }
+
+      if (screen == "workshop") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const WorkshopsPage(),
+          ),
+        );
+      }
+
+      if (screen == "certification") {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const CertificationPage(),
+          ),
+        );
+      }
 
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
@@ -104,7 +219,7 @@ class _MyAppState extends State<MyApp> {
           notification.hashCode,
           notification.title,
           notification.body,
-          NotificationDetails(
+          const NotificationDetails(
             android: AndroidNotificationDetails(
               'student_opportunity_channel',
               'Student Opportunity Notifications',
@@ -114,8 +229,10 @@ class _MyAppState extends State<MyApp> {
           ),
         );
       }
+
     });
   }
+
 
   @override
   Widget build(BuildContext context) {

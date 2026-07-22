@@ -88,6 +88,7 @@ class _AddEventPageState extends State<AddEventPage> {
             "title": "📅 New Event",
             "body":
             "${organizerController.text.trim()} has announced ${titleController.text.trim()}.",
+            "screen" :"event",
           }),
         );
       } catch (e) {

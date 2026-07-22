@@ -103,6 +103,7 @@ class _AddWorkshopPageState extends State<AddWorkshopPage> {
             "title": "🎓 New Workshop",
             "body":
             "${organizerController.text.trim()} is conducting ${titleController.text.trim()}.",
+            "screen":"workshop",
           }),
         );
       } catch (e) {

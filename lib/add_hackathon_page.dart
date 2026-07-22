@@ -128,6 +128,7 @@ class _AddHackathonPageState extends State<AddHackathonPage> {
             "title": "🚀 New Hackathon",
             "body":
             "${organizerController.text.trim()} has announced ${titleController.text.trim()}.",
+            "screen" :"hackathon"
           }),
         );
       } catch (e) {
