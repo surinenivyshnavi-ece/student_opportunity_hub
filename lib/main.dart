@@ -80,6 +80,9 @@ class _MyAppState extends State<MyApp> {
     setupForegroundNotifications();
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
 
+      print("Notification Clicked");
+      print(message.data);
+
       String? screen = message.data["screen"];
 
       if (screen == "internship") {
@@ -127,6 +130,7 @@ class _MyAppState extends State<MyApp> {
         );
       }
 
+
     });
   }
 
@@ -163,6 +167,9 @@ class _MyAppState extends State<MyApp> {
 
   void setupForegroundNotifications() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+
+      print("Foreground Notification");
+      print(message.data);
 
       String? screen = message.data["screen"];
 

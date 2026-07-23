@@ -92,7 +92,7 @@ class _AddWorkshopPageState extends State<AddWorkshopPage> {
           .collection("workshops")
           .add(workshopData);
       try {
-        await http.post(
+        final response = await http.post(
           Uri.parse(
             "https://student-opportunity-hub-4hkx.onrender.com/sendNotification",
           ),
@@ -103,11 +103,15 @@ class _AddWorkshopPageState extends State<AddWorkshopPage> {
             "title": "🎓 New Workshop",
             "body":
             "${organizerController.text.trim()} is conducting ${titleController.text.trim()}.",
-            "screen":"workshop",
+            "screen": "workshop",
           }),
         );
+
+        print("Status Code: ${response.statusCode}");
+        print("Response: ${response.body}");
+
       } catch (e) {
-        debugPrint(e.toString());
+        print("Notification Error: $e");
       }
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
