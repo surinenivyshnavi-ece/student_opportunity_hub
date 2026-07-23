@@ -106,6 +106,7 @@ class _AddEventPageState extends State<AddEventPage> {
           .collection('events')
           .doc(widget.documentId)
           .update(eventData);
+      if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

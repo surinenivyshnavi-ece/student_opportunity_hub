@@ -117,6 +117,7 @@ class _AddCertificationPageState
           .collection("certifications")
           .doc(widget.documentId)
           .update(certificationData);
+      if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

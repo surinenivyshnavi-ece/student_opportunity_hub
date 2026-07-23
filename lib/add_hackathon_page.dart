@@ -146,6 +146,7 @@ class _AddHackathonPageState extends State<AddHackathonPage> {
           .collection('hackathons')
           .doc(widget.documentId)
           .update(hackathonData);
+      if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

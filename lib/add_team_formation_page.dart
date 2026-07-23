@@ -117,7 +117,6 @@ class _AddTeamFormationPageState
             .doc(widget.documentId)
             .update(teamData);
       }
-
       if (!mounted) return;
       Navigator.pop(context, true);
 

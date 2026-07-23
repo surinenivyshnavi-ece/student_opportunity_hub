@@ -154,6 +154,7 @@ class _AddInternshipPageState extends State<AddInternshipPage> {
           .collection('internships')
           .doc(widget.documentId)
           .update(internshipData);
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text("Internship updated successfully"),

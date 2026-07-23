@@ -27,6 +27,8 @@ import 'college_admin_home_page.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
+final GlobalKey<NavigatorState> navigatorKey =
+GlobalKey<NavigatorState>();
 
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(
@@ -70,69 +72,75 @@ class MyApp extends StatefulWidget {
   @override
   State<MyApp> createState() => _MyAppState();
 }
-
 class _MyAppState extends State<MyApp> {
+
+  void openScreen(String? screen) {
+    switch (screen) {
+      case "internship":
+        navigatorKey.currentState?.push(
+          MaterialPageRoute(builder: (_) => const InternshipsPage()),
+        );
+        break;
+
+      case "hackathon":
+        navigatorKey.currentState?.push(
+          MaterialPageRoute(builder: (_) => const HackathonsPage()),
+        );
+        break;
+
+      case "event":
+        navigatorKey.currentState?.push(
+          MaterialPageRoute(builder: (_) => const EventsPage()),
+        );
+        break;
+
+      case "workshop":
+        navigatorKey.currentState?.push(
+          MaterialPageRoute(builder: (_) => const WorkshopsPage()),
+        );
+        break;
+
+      case "certification":
+        navigatorKey.currentState?.push(
+          MaterialPageRoute(builder: (_) => const CertificationPage()),
+        );
+        break;
+
+      case "teamformation":
+        navigatorKey.currentState?.push(
+          MaterialPageRoute(builder: (_) => const TeamFormationPage()),
+        );
+        break;
+    }
+  }
+
+  Future<void> checkInitialMessage() async {
+    RemoteMessage? message =
+    await FirebaseMessaging.instance.getInitialMessage();
+
+    if (message == null) return;
+
+    openScreen(message.data["screen"]);
+  }
 
   @override
   void initState() {
     super.initState();
+
     requestPermission();
     setupForegroundNotifications();
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    checkInitialMessage();
 
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print("Notification Clicked");
       print(message.data);
 
-      String? screen = message.data["screen"];
-
-      if (screen == "internship") {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const InternshipsPage(),
-          ),
-        );
-      }
-
-      if (screen == "hackathon") {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const HackathonsPage(),
-          ),
-        );
-      }
-
-      if (screen == "event") {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const EventsPage(),
-          ),
-        );
-      }
-
-      if (screen == "workshop") {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const WorkshopsPage(),
-          ),
-        );
-      }
-
-      if (screen == "certification") {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const CertificationPage(),
-          ),
-        );
-      }
-
-
+      openScreen(message.data["screen"]);
     });
   }
+
+  @override
+
 
   Future<void> requestPermission() async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -171,52 +179,7 @@ class _MyAppState extends State<MyApp> {
       print("Foreground Notification");
       print(message.data);
 
-      String? screen = message.data["screen"];
-
-      if (screen == "internship") {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const InternshipsPage(),
-          ),
-        );
-      }
-
-      if (screen == "hackathon") {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const HackathonsPage(),
-          ),
-        );
-      }
-
-      if (screen == "event") {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const EventsPage(),
-          ),
-        );
-      }
-
-      if (screen == "workshop") {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const WorkshopsPage(),
-          ),
-        );
-      }
-
-      if (screen == "certification") {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const CertificationPage(),
-          ),
-        );
-      }
+      openScreen(message.data["screen"]);
 
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
@@ -276,7 +239,8 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
 
-      home: AuthCheck(),
+      navigatorKey: navigatorKey,
+      home: const AuthCheck(),
     );
   }
 }

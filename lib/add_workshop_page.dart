@@ -93,6 +93,7 @@ class _AddWorkshopPageState extends State<AddWorkshopPage> {
           .add(workshopData);
       try {
         final response = await http.post(
+
           Uri.parse(
             "https://student-opportunity-hub-4hkx.onrender.com/sendNotification",
           ),
@@ -125,6 +126,7 @@ class _AddWorkshopPageState extends State<AddWorkshopPage> {
           .collection("workshops")
           .doc(widget.documentId)
           .update(workshopData);
+      if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
