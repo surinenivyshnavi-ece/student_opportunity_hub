@@ -22,7 +22,7 @@ class AddInternshipPage extends StatefulWidget {
 class _AddInternshipPageState extends State<AddInternshipPage> {
   final companyController = TextEditingController();
   final titleController = TextEditingController();
-  String selectedDomain = "Software Development";
+  String selectedDomain = "App Development";
   final locationController = TextEditingController();
   String selectedMode = "Online";
   final durationController = TextEditingController();
@@ -46,18 +46,51 @@ class _AddInternshipPageState extends State<AddInternshipPage> {
       final domain = widget.internshipData!['domain'];
 
       selectedDomain = [
-        "Software Development",
+        "All",
         "AI/ML",
-        "Embedded Systems",
-        "Cyber Security",
         "Data Science",
+        "App Development",
+        "Web Development",
+        "Embedded Systems",
         "IoT",
+        "Cyber Security",
+        "Cloud Computing",
+        "DevOps",
+        "Blockchain",
+        "Robotics",
+        "AR/VR",
+        "Game Development",
+        "Computer Vision",
+        "NLP",
         "Electronics",
+        "VLSI",
+        "Communication Systems",
+        "Signal Processing",
+        "Control Systems",
+        "Automation",
+        "Electrical",
         "Mechanical",
         "Civil",
+        "Chemical",
+        "Biomedical",
+        "Aerospace",
+        "Automobile",
+        "3D Printing",
+        "Renewable Energy",
+        "Smart Agriculture",
+        "FinTech",
+        "EdTech",
+        "HealthTech",
+        "UI/UX Design",
+        "Product Design",
+        "Digital Marketing",
+        "Entrepreneurship",
+        "Open Innovation",
+        "Research",
+        "General",
       ].contains(domain)
           ? domain
-          : "Software Development";
+          : "All";
 
       locationController.text =
           widget.internshipData!['location'] ?? '';
@@ -216,7 +249,52 @@ class _AddInternshipPageState extends State<AddInternshipPage> {
             buildTextField(companyController, "Company Name"),
             buildTextField(titleController, "Internship Title"),
             DropdownButtonFormField<String>(
-              value: selectedDomain,
+              value: [
+                "All",
+                "AI/ML",
+                "Data Science",
+                "App Development",
+                "Web Development",
+                "Embedded Systems",
+                "IoT",
+                "Cyber Security",
+                "Cloud Computing",
+                "DevOps",
+                "Blockchain",
+                "Robotics",
+                "AR/VR",
+                "Game Development",
+                "Computer Vision",
+                "NLP",
+                "Electronics",
+                "VLSI",
+                "Communication Systems",
+                "Signal Processing",
+                "Control Systems",
+                "Automation",
+                "Electrical",
+                "Mechanical",
+                "Civil",
+                "Chemical",
+                "Biomedical",
+                "Aerospace",
+                "Automobile",
+                "3D Printing",
+                "Renewable Energy",
+                "Smart Agriculture",
+                "FinTech",
+                "EdTech",
+                "HealthTech",
+                "UI/UX Design",
+                "Product Design",
+                "Digital Marketing",
+                "Entrepreneurship",
+                "Open Innovation",
+                "Research",
+                "General",
+              ].contains(selectedDomain)
+                  ? selectedDomain
+                  : "All",
               decoration: const InputDecoration(
                 labelText: "Domain",
                 border: OutlineInputBorder(),

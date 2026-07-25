@@ -32,7 +32,7 @@ class _AddCertificationPageState
   final descriptionController = TextEditingController();
   final linkController = TextEditingController();
 
-  String domain = "Programming";
+  String domain = "All";
   String mode = "Online";
   @override
   void initState() {
@@ -57,8 +57,54 @@ class _AddCertificationPageState
       linkController.text =
           widget.certificationData!['link'] ?? '';
 
-      domain =
-          widget.certificationData!['domain'] ?? "Programming";
+      final savedDomain = widget.certificationData!['domain'];
+
+      domain = [
+        "All",
+        "AI/ML",
+        "Data Science",
+        "App Development",
+        "Web Development",
+        "Embedded Systems",
+        "IoT",
+        "Cyber Security",
+        "Cloud Computing",
+        "DevOps",
+        "Blockchain",
+        "Robotics",
+        "AR/VR",
+        "Game Development",
+        "Computer Vision",
+        "NLP",
+        "Electronics",
+        "VLSI",
+        "Communication Systems",
+        "Signal Processing",
+        "Control Systems",
+        "Automation",
+        "Electrical",
+        "Mechanical",
+        "Civil",
+        "Chemical",
+        "Biomedical",
+        "Aerospace",
+        "Automobile",
+        "3D Printing",
+        "Renewable Energy",
+        "Smart Agriculture",
+        "FinTech",
+        "EdTech",
+        "HealthTech",
+        "UI/UX Design",
+        "Product Design",
+        "Digital Marketing",
+        "Entrepreneurship",
+        "Open Innovation",
+        "Research",
+        "General",
+      ].contains(savedDomain)
+          ? savedDomain
+          : "All";
 
       mode =
           widget.certificationData!['mode'] ?? "Online";
@@ -193,7 +239,52 @@ class _AddCertificationPageState
 
               DropdownButtonFormField<String>(
 
-                value: domain,
+                value: [
+                  "All",
+                  "AI/ML",
+                  "Data Science",
+                  "App Development",
+                  "Web Development",
+                  "Embedded Systems",
+                  "IoT",
+                  "Cyber Security",
+                  "Cloud Computing",
+                  "DevOps",
+                  "Blockchain",
+                  "Robotics",
+                  "AR/VR",
+                  "Game Development",
+                  "Computer Vision",
+                  "NLP",
+                  "Electronics",
+                  "VLSI",
+                  "Communication Systems",
+                  "Signal Processing",
+                  "Control Systems",
+                  "Automation",
+                  "Electrical",
+                  "Mechanical",
+                  "Civil",
+                  "Chemical",
+                  "Biomedical",
+                  "Aerospace",
+                  "Automobile",
+                  "3D Printing",
+                  "Renewable Energy",
+                  "Smart Agriculture",
+                  "FinTech",
+                  "EdTech",
+                  "HealthTech",
+                  "UI/UX Design",
+                  "Product Design",
+                  "Digital Marketing",
+                  "Entrepreneurship",
+                  "Open Innovation",
+                  "Research",
+                  "General",
+                ].contains(domain)
+                    ? domain
+                    : "All",
 
                 decoration: const InputDecoration(
                   labelText: "Domain",
