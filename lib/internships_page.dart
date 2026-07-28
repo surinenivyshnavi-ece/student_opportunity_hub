@@ -5,6 +5,7 @@ import 'add_internship_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'opportunity_details_page.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:add_2_calendar/add_2_calendar.dart';
 
 class InternshipsPage extends StatefulWidget {
   const InternshipsPage({super.key});

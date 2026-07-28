@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:add_2_calendar/add_2_calendar.dart';
 
 class OpportunityDetailsPage extends StatelessWidget {
   final Map<String, dynamic> data;
@@ -30,6 +31,21 @@ class OpportunityDetailsPage extends StatelessWidget {
       );
     }
 
+  }
+  Future<void> addToCalendar() async {
+    final Event event = Event(
+      title: data['title'] ?? 'Opportunity',
+      description: data['description'] ?? '',
+      location: data['location'] ??
+          data['venue'] ??
+          data['company'] ??
+          data['organizer'] ??
+          '',
+      startDate: DateTime.now(),
+      endDate: DateTime.now().add(const Duration(hours: 1)),
+    );
+
+    Add2Calendar.addEvent2Cal(event);
   }
 
   Widget buildDetail(
@@ -443,6 +459,27 @@ class OpportunityDetailsPage extends StatelessWidget {
                     ),
                   ),
                 ),
+                const SizedBox(height: 15),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 55,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      addToCalendar();
+                    },
+                    icon: const Icon(Icons.calendar_today),
+                    label: const Text("Add to Calendar"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                  ),
+                ),
+
               ),
           ],
         ),
