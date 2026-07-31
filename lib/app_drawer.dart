@@ -9,6 +9,7 @@ import 'events_page.dart';
 import 'workshops_page.dart';
 import 'feedback_page.dart';
 import 'admin_request_form_page.dart';
+import 'calendar_reminder_page.dart';
 
 
 class AppDrawer extends StatelessWidget {

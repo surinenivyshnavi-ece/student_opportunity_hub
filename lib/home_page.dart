@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'calendar_reminder_page.dart';
 
 import 'internships_page.dart';
 import 'hackathons_page.dart';
@@ -72,6 +73,14 @@ class HomePage extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (_) => const FeedbackPage(),
+                ),
+              );
+            }
+            else if (value == "calendar") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const CalendarReminderPage(),
                 ),
               );
             }
@@ -159,6 +168,7 @@ class HomePage extends StatelessWidget {
               ),
             ),
 
+
             const PopupMenuItem(
               value: "settings",
               child: Row(
@@ -169,6 +179,17 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
+            const PopupMenuItem(
+              value: "calendar",
+              child: Row(
+                children: [
+                  Icon(Icons.calendar_month),
+                  SizedBox(width: 10),
+                  Text("Calendar Reminder"),
+                ],
+              ),
+            ),
+
             PopupMenuItem(
               value: "admin_request",
               child: Row(

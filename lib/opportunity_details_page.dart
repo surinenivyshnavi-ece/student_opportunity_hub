@@ -437,28 +437,52 @@ class OpportunityDetailsPage extends StatelessWidget {
               ),
 
             const SizedBox(height: 30),
-
             if (link.isNotEmpty)
-              SizedBox(
-                width: double.infinity,
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 55,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      openLink(context, link);
-                    },
-                    icon: const Icon(Icons.open_in_new),
-                    label: const Text("Apply Now"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepPurple,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                  ),
-                ),
+            Column(
+            children: [
+
+            SizedBox(
+            width: double.infinity,
+            height: 55,
+            child: ElevatedButton.icon(
+            onPressed: () {
+            openLink(context, link);
+            },
+            icon: const Icon(Icons.open_in_new),
+            label: const Text("Apply Now"),
+            style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.deepPurple,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(15),
+    ),
+    ),
+    ),
+    ),
+
+    const SizedBox(height: 15),
+
+    SizedBox(
+    width: double.infinity,
+    height: 55,
+    child: ElevatedButton.icon(
+    onPressed: () {
+    addToCalendar();
+    },
+    icon: const Icon(Icons.calendar_today),
+    label: const Text("Add to Calendar"),
+    style: ElevatedButton.styleFrom(
+    backgroundColor: Colors.green,
+    foregroundColor: Colors.white,
+    shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(15),
+    ),
+    ),
+    ),
+    ),
+
+    ],
+    ),
                 const SizedBox(height: 15),
 
                 SizedBox(
@@ -480,8 +504,7 @@ class OpportunityDetailsPage extends StatelessWidget {
                   ),
                 ),
 
-              ),
-          ],
+              ],
         ),
       ),
     );
