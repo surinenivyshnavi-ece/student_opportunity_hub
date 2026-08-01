@@ -5,7 +5,6 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
     id("kotlin-android")
 }
-
 android {
     namespace = "com.studentopportunityhub.app"
     compileSdk = flutter.compileSdkVersion

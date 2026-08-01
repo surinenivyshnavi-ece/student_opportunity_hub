@@ -1,6 +1,14 @@
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Notification permission (Android 13+) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
+    <!-- Exact alarm permission -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+
+    <!-- Receive boot to restore notifications after restart -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:label="Student Opportunity Hub"

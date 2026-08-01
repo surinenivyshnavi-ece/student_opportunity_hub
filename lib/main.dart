@@ -23,6 +23,7 @@ import 'complete_profile_page.dart';
 import 'pending_verification_page.dart';
 import 'super_admin_dashboard.dart';
 import 'college_admin_home_page.dart';
+import 'services/notification_service.dart';
 
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -57,6 +58,7 @@ void main() async {
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
   );
+  await NotificationService().initialize();
 
 
   runApp(const MyApp());

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'services/notification_service.dart';
 
 class CalendarReminderPage extends StatefulWidget {
   const CalendarReminderPage({super.key});
@@ -79,6 +80,17 @@ class _CalendarReminderPageState extends State<CalendarReminderPage> {
                   "time": pickedTime.format(context),
                   "createdAt": FieldValue.serverTimestamp(),
                 });
+                await NotificationService().scheduleReminder(
+                  title: controller.text,
+                  body: "Your reminder is due now",
+                  dateTime: DateTime(
+                    date.year,
+                    date.month,
+                    date.day,
+                    pickedTime.hour,
+                    pickedTime.minute,
+                  ),
+                );
 
                 Navigator.pop(context);
               },
