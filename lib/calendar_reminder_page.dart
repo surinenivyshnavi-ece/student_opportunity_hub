@@ -47,6 +47,9 @@ class _CalendarReminderPageState extends State<CalendarReminderPage> {
             ),
             ElevatedButton(
               onPressed: () async {
+
+                debugPrint("Save button pressed");
+
                 if (controller.text.isEmpty) return;
 
                 final TimeOfDay? pickedTime = await showTimePicker(
@@ -55,6 +58,8 @@ class _CalendarReminderPageState extends State<CalendarReminderPage> {
                 );
 
                 if (pickedTime == null) return;
+
+                debugPrint("Time selected: ${pickedTime.format(context)}");
 
                 _selectedTime = pickedTime;
 
@@ -80,6 +85,19 @@ class _CalendarReminderPageState extends State<CalendarReminderPage> {
                   "time": pickedTime.format(context),
                   "createdAt": FieldValue.serverTimestamp(),
                 });
+                debugPrint("Calling scheduleReminder()");
+
+                await NotificationService().scheduleReminder(
+                  title: controller.text,
+                  body: "Your reminder is due now",
+                  dateTime: DateTime(
+                    date.year,
+                    date.month,
+                    date.day,
+                    pickedTime.hour,
+                    pickedTime.minute,
+                  ),
+                );
                 await NotificationService().scheduleReminder(
                   title: controller.text,
                   body: "Your reminder is due now",
