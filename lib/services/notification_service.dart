@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:student_opportunity_hub/reminder_detail_page.dart';
+import '../main.dart';
 
 class NotificationService {
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  Function(String reminderId)? onReminderTapped;
 
   static final FlutterLocalNotificationsPlugin localNotifications =
   FlutterLocalNotificationsPlugin();

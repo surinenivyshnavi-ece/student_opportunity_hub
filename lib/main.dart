@@ -24,12 +24,12 @@ import 'pending_verification_page.dart';
 import 'super_admin_dashboard.dart';
 import 'college_admin_home_page.dart';
 import 'services/notification_service.dart';
-
+import 'reminder_detail_page.dart';
+final GlobalKey<NavigatorState> navigatorKey =
+GlobalKey<NavigatorState>();
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 FlutterLocalNotificationsPlugin();
-final GlobalKey<NavigatorState> navigatorKey =
-GlobalKey<NavigatorState>();
 
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(
@@ -42,7 +42,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
 
   FirebaseMessaging.onBackgroundMessage(
     firebaseMessagingBackgroundHandler,
@@ -59,8 +58,28 @@ void main() async {
   await flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
   );
-  await NotificationService().initialize();
 
+  final notificationService = NotificationService();
+
+  // ============================================================
+  // SCHEDULED REMINDER NOTIFICATION CLICK
+  // ============================================================
+
+  notificationService.onReminderTapped = (String reminderId) {
+    debugPrint(
+      "🔔 Reminder notification clicked: $reminderId",
+    );
+
+    navigatorKey.currentState?.push(
+      MaterialPageRoute(
+        builder: (_) => ReminderDetailPage(
+          reminderId: reminderId,
+        ),
+      ),
+    );
+  };
+
+  await notificationService.initialize();
 
   runApp(const MyApp());
 }
