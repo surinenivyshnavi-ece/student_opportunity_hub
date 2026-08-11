@@ -14,52 +14,69 @@ class CalendarReminderPage extends StatefulWidget {
 class _CalendarReminderPageState extends State<CalendarReminderPage> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  final Map<DateTime, List<String>> _reminders = {};
+
+  final Map<DateTime, List<Map<String, dynamic>>> _reminders = {};
+
   TimeOfDay _selectedTime = TimeOfDay.now();
+
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   final String uid = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void initState() {
     super.initState();
+
     _selectedDay = _focusedDay;
+
     _loadReminders();
   }
+
+  // ============================================================
+  // ADD REMINDER
+  // ============================================================
 
   Future<void> _addReminder() async {
     final TextEditingController controller = TextEditingController();
 
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           title: const Text("Add Reminder"),
+
           content: TextField(
             controller: controller,
             decoration: const InputDecoration(
               hintText: "Enter reminder",
             ),
           ),
+
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                Navigator.pop(dialogContext);
+              },
               child: const Text("Cancel"),
             ),
+
             ElevatedButton(
               onPressed: () async {
-
                 debugPrint("Save button pressed");
 
-                if (controller.text.isEmpty) return;
+                if (controller.text.trim().isEmpty) {
+                  return;
+                }
 
-                final TimeOfDay? pickedTime = await showTimePicker(
-                  context: context,
+                final TimeOfDay? pickedTime =
+                await showTimePicker(
+                  context: dialogContext,
                   initialTime: _selectedTime,
                 );
 
-                if (pickedTime == null) return;
-
-                debugPrint("Time selected: ${pickedTime.format(context)}");
+                if (pickedTime == null) {
+                  return;
+                }
 
                 _selectedTime = pickedTime;
 
@@ -69,13 +86,23 @@ class _CalendarReminderPageState extends State<CalendarReminderPage> {
                   _selectedDay!.day,
                 );
 
-                setState(() {
-                  _reminders.putIfAbsent(date, () => []);
-                  _reminders[date]!.add(
-                    "${controller.text} (${pickedTime.format(context)})",
-                  );
-                });
-                await _firestore
+                final reminderDateTime = DateTime(
+                  date.year,
+                  date.month,
+                  date.day,
+                  pickedTime.hour,
+                  pickedTime.minute,
+                );
+
+                debugPrint(
+                  "Reminder DateTime: $reminderDateTime",
+                );
+
+                // ==================================================
+                // SAVE TO FIRESTORE
+                // ==================================================
+
+                final reminderDoc = await _firestore
                     .collection("users")
                     .doc(uid)
                     .collection("reminders")
@@ -85,33 +112,59 @@ class _CalendarReminderPageState extends State<CalendarReminderPage> {
                   "time": pickedTime.format(context),
                   "createdAt": FieldValue.serverTimestamp(),
                 });
-                debugPrint("Calling scheduleReminder()");
 
-                await NotificationService().scheduleReminder(
-                  title: controller.text,
-                  body: "Your reminder is due now",
-                  dateTime: DateTime(
-                    date.year,
-                    date.month,
-                    date.day,
-                    pickedTime.hour,
-                    pickedTime.minute,
-                  ),
-                );
-                await NotificationService().scheduleReminder(
-                  title: controller.text,
-                  body: "Your reminder is due now",
-                  dateTime: DateTime(
-                    date.year,
-                    date.month,
-                    date.day,
-                    pickedTime.hour,
-                    pickedTime.minute,
-                  ),
+                final String reminderId = reminderDoc.id;
+
+
+
+                debugPrint(
+                  "✅ Reminder saved with ID: $reminderId",
                 );
 
-                Navigator.pop(context);
+                // ==================================================
+                // UPDATE UI
+                // ==================================================
+
+                setState(() {
+                  _reminders.putIfAbsent(date, () => []);
+
+                  _reminders[date]!.add({
+                    "id": reminderId,
+                    "title": controller.text.trim(),
+                    "time": pickedTime.format(dialogContext),
+                  });
+                });
+
+                // ==================================================
+                // SCHEDULE NOTIFICATION
+                // ==================================================
+
+                debugPrint(
+                  "Calling scheduleReminder()",
+                );
+
+                await NotificationService().scheduleReminder(
+                  reminderId: reminderId,
+                  title: controller.text.trim(),
+                  body: "Your reminder is due now",
+                  dateTime: reminderDateTime,
+                );
+
+                // IMPORTANT:
+                // Only schedule ONCE.
+                //
+                // Your previous code called scheduleReminder()
+                // twice, which could create duplicate notifications.
+
+                debugPrint(
+                  "✅ Reminder and notification created",
+                );
+
+                if (mounted) {
+                  Navigator.pop(dialogContext);
+                }
               },
+
               child: const Text("Save"),
             ),
           ],
@@ -119,34 +172,46 @@ class _CalendarReminderPageState extends State<CalendarReminderPage> {
       },
     );
   }
-  Future<void> _loadReminders() async {
-    final uid = FirebaseAuth.instance.currentUser!.uid;
 
-    final snapshot = await FirebaseFirestore.instance
+  // ============================================================
+  // LOAD REMINDERS
+  // ============================================================
+
+  Future<void> _loadReminders() async {
+    final snapshot = await _firestore
         .collection("users")
         .doc(uid)
         .collection("reminders")
         .get();
 
-    Map<DateTime, List<String>> loadedReminders = {};
+    final Map<DateTime, List<Map<String, dynamic>>>
+    loadedReminders = {};
 
-    for (var doc in snapshot.docs) {
+    for (final doc in snapshot.docs) {
       final data = doc.data();
 
-      DateTime date = DateTime.parse(data["date"]);
+      final DateTime date =
+      DateTime.parse(data["date"]);
 
-      DateTime onlyDate = DateTime(
+      final DateTime onlyDate = DateTime(
         date.year,
         date.month,
         date.day,
       );
 
-      loadedReminders.putIfAbsent(onlyDate, () => []);
-
-      loadedReminders[onlyDate]!.add(
-        "${data["title"]} (${data["time"]})",
+      loadedReminders.putIfAbsent(
+        onlyDate,
+            () => [],
       );
+
+      loadedReminders[onlyDate]!.add({
+        "id": doc.id,
+        "title": data["title"] ?? "",
+        "time": data["time"] ?? "",
+      });
     }
+
+    if (!mounted) return;
 
     setState(() {
       _reminders.clear();
@@ -154,22 +219,77 @@ class _CalendarReminderPageState extends State<CalendarReminderPage> {
     });
   }
 
+  // ============================================================
+  // OPEN PARTICULAR REMINDER
+  // ============================================================
+
+  void _openReminder(
+      Map<String, dynamic> reminder,
+      ) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(
+            reminder["title"] ?? "Reminder",
+          ),
+
+          content: Text(
+            "Time: ${reminder["time"] ?? ""}",
+          ),
+
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text("Close"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // ============================================================
+  // BUILD
+  // ============================================================
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Calendar Reminder"),
       ),
+
       body: Column(
         children: [
           TableCalendar(
-            firstDay: DateTime.utc(2020, 1, 1),
-            lastDay: DateTime.utc(2035, 12, 31),
+            firstDay: DateTime.utc(
+              2020,
+              1,
+              1,
+            ),
+
+            lastDay: DateTime.utc(
+              2035,
+              12,
+              31,
+            ),
+
             focusedDay: _focusedDay,
+
             selectedDayPredicate: (day) {
-              return isSameDay(_selectedDay, day);
+              return isSameDay(
+                _selectedDay,
+                day,
+              );
             },
-            onDaySelected: (selectedDay, focusedDay) {
+
+            onDaySelected: (
+                selectedDay,
+                focusedDay,
+                ) {
               setState(() {
                 _selectedDay = selectedDay;
                 _focusedDay = focusedDay;
@@ -188,36 +308,63 @@ class _CalendarReminderPageState extends State<CalendarReminderPage> {
                   _selectedDay!.day,
                 );
 
-                final reminders = _reminders[date] ?? [];
+                final reminders =
+                    _reminders[date] ?? [];
 
                 if (reminders.isEmpty) {
                   return const Center(
                     child: Text(
                       "No reminders",
-                      style: TextStyle(fontSize: 18),
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
                     ),
                   );
                 }
 
                 return ListView.builder(
                   itemCount: reminders.length,
-                  itemBuilder: (context, index) {
+
+                  itemBuilder: (
+                      context,
+                      index,
+                      ) {
+                    final reminder =
+                    reminders[index];
+
                     return ListTile(
-                      leading: const Icon(Icons.notifications),
-                      title: Text(reminders[index]),
+                      leading: const Icon(
+                        Icons.notifications,
+                      ),
+
+                      title: Text(
+                        reminder["title"] ?? "",
+                      ),
+
+                      subtitle: Text(
+                        reminder["time"] ?? "",
+                      ),
+
+                      onTap: () {
+                        _openReminder(
+                          reminder,
+                        );
+                      },
                     );
                   },
                 );
               },
             ),
-          )
-
+          ),
         ],
       ),
 
       floatingActionButton: FloatingActionButton(
         onPressed: _addReminder,
-        child: const Icon(Icons.add),
+
+        child: const Icon(
+          Icons.add,
+        ),
       ),
     );
   }
