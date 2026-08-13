@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:add_2_calendar/add_2_calendar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class OpportunityDetailsPage extends StatelessWidget {
   final Map<String, dynamic> data;
@@ -31,6 +33,121 @@ class OpportunityDetailsPage extends StatelessWidget {
       );
     }
 
+  }
+  Future<void> applyForOpportunity(
+      BuildContext context,
+      String link,
+      ) async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please login first"),
+        ),
+      );
+      return;
+    }
+
+    try {
+      // Open the actual registration/application link
+      final launched = await launchUrl(
+        Uri.parse(link),
+        mode: LaunchMode.externalApplication,
+      );
+
+      if (!launched) {
+        throw Exception("Could not open application link");
+      }
+
+      // Wait until the user returns to the app,
+      // then ask whether they completed the application.
+      if (!context.mounted) return;
+
+      final bool? completed = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (dialogContext) {
+          return AlertDialog(
+            title: const Text("Application Status"),
+            content: const Text(
+              "Did you complete the registration/application "
+                  "on the website?",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(dialogContext, false);
+                },
+                child: const Text("Not Yet"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(dialogContext, true);
+                },
+                child: const Text("Yes, I Applied"),
+              ),
+            ],
+          );
+        },
+      );
+
+      // User selected "Not Yet" or closed the dialog.
+      if (completed != true) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Application was not added."),
+            ),
+          );
+        }
+        return;
+      }
+
+      // Only now save the application.
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(user.uid)
+          .collection("applications")
+          .add({
+        "title": data['title'] ??
+            data['name'] ??
+            "Opportunity",
+
+        "type": data['type'] ??
+            "Opportunity",
+
+        "organizer": data['organizer'] ??
+            data['company'] ??
+            "",
+
+        "date": data['date'] ?? "",
+
+        "deadline": data['deadline'] ?? "",
+
+        "link": link,
+
+        "status": "Applied",
+
+        "appliedAt": FieldValue.serverTimestamp(),
+      });
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Application added to My Applications"),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Could not process application: $e"),
+          ),
+        );
+      }
+    }
   }
   Future<void> addToCalendar() async {
     final Event event = Event(
@@ -445,9 +562,9 @@ class OpportunityDetailsPage extends StatelessWidget {
             width: double.infinity,
             height: 55,
             child: ElevatedButton.icon(
-            onPressed: () {
-            openLink(context, link);
-            },
+              onPressed: () {
+                applyForOpportunity(context, link);
+              },
             icon: const Icon(Icons.open_in_new),
             label: const Text("Apply Now"),
             style: ElevatedButton.styleFrom(
@@ -480,34 +597,12 @@ class OpportunityDetailsPage extends StatelessWidget {
     ),
     ),
     ),
+  ],
+    ),
 
     ],
     ),
-                const SizedBox(height: 15),
-
-                SizedBox(
-                  width: double.infinity,
-                  height: 55,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      addToCalendar();
-                    },
-                    icon: const Icon(Icons.calendar_today),
-                    label: const Text("Add to Calendar"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                  ),
-                ),
-
-              ],
-        ),
-      ),
+    ),
     );
-
   }
 }

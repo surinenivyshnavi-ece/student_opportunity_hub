@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'calendar_reminder_page.dart';
-
+import 'my_applications_page.dart';
 import 'internships_page.dart';
 import 'hackathons_page.dart';
 import 'team formation_page.dart';
@@ -98,6 +98,16 @@ class HomePage extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (_) => const AdminRequestFormPage(),
+                ),
+              );
+            }
+            else if (value == "my_applications") {
+              Navigator.pop(context);
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const MyApplicationsPage(),
                 ),
               );
             }
@@ -197,6 +207,16 @@ class HomePage extends StatelessWidget {
                   Icon(Icons.admin_panel_settings),
                   SizedBox(width: 10),
                   Text("Request College Admin Access"),
+                ],
+              ),
+            ),
+            const PopupMenuItem(
+              value: "my_applications",
+              child: Row(
+                children: const [
+                  Icon(Icons.assignment),
+                  SizedBox(width: 12),
+                  Text("My Applications"),
                 ],
               ),
             ),

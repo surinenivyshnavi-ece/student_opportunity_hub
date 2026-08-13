@@ -43,24 +43,38 @@ class NotificationService {
     await localNotifications.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
-        final payload = response.payload;
-
         debugPrint("🔔 Reminder notification tapped");
-        debugPrint("Payload: $payload");
+        debugPrint("Payload: ${response.payload}");
 
-        if (payload == null) return;
+        final reminderId = response.payload;
 
-        final parts = payload.split('|');
-
-        if (parts.length >= 3 && parts[0] == 'REMINDER') {
-          final title = parts[1];
-          final body = parts[2];
-
-          debugPrint("Reminder title: $title");
-          debugPrint("Reminder body: $body");
-
-          // Navigation will be handled here.
+        if (reminderId == null || reminderId.isEmpty) {
+          debugPrint("❌ Reminder ID is empty");
+          return;
         }
+
+        debugPrint("🚀 Trying to open ReminderDetailPage...");
+        debugPrint("Reminder ID = $reminderId");
+
+        final navigator = navigatorKey.currentState;
+
+        if (navigator == null) {
+          debugPrint("❌ navigatorKey.currentState is NULL");
+          return;
+        }
+
+        debugPrint("✅ Navigator is available");
+
+        navigator.push(
+          MaterialPageRoute(
+            builder: (context) {
+              debugPrint("✅ Building ReminderDetailPage");
+              return ReminderDetailPage(
+                reminderId: reminderId,
+              );
+            },
+          ),
+        );
       },
     );
     debugPrint("✅ Local notifications initialized");
