@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'home_page.dart';
 
 class MyApplicationsPage extends StatelessWidget {
   const MyApplicationsPage({super.key});
@@ -107,16 +108,29 @@ class MyApplicationsPage extends StatelessWidget {
 
 // User is not logged in
     if (user == null) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text("My Applications"),
-        ),
+      return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) {
+            if (!didPop) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const HomePage(),
+                ),
+              );
+            }
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text("My Applications"),
+            ),
         body: const Center(
           child: Text(
             "Please login to view your applications.",
             style: TextStyle(fontSize: 16),
           ),
         ),
+          )
       );
     }
 

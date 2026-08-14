@@ -102,7 +102,7 @@ class HomePage extends StatelessWidget {
               );
             }
             else if (value == "my_applications") {
-              Navigator.pop(context);
+
 
               Navigator.push(
                 context,
