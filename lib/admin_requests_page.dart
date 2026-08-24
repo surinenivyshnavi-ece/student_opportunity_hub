@@ -22,7 +22,7 @@ class AdminRequestsPage extends StatelessWidget {
         "email": data["email"],
         "college": data["college"],
         "branch": data["branch"],
-        "role": "college_admin",
+        "role": "collegeAdmin",
         "approvedAt": Timestamp.now(),
       });
 

@@ -4,6 +4,8 @@ import 'admin_requests_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'manage_college_admins_page.dart';
+import 'manage_students_page.dart';
+import 'manage_content_page.dart';
 
 class SuperAdminDashboard extends StatefulWidget {
   const SuperAdminDashboard({super.key});
@@ -187,7 +189,12 @@ Widget build(BuildContext context) {
               "Manage Students",
               Icons.people_alt,
                   () {
-                // We'll add the page later
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ManageStudentsPage(),
+                  ),
+                );
               },
             ),
 
@@ -196,10 +203,14 @@ Widget build(BuildContext context) {
               "Manage Content",
               Icons.dashboard_customize,
                   () {
-                // We'll add the page later
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ManageContentPage(),
+                  ),
+                );
               },
             ),
-
           ],
         ),
       ),
