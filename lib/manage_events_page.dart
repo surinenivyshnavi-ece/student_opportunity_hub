@@ -133,7 +133,7 @@ class ManageEventsPage extends StatelessWidget {
 
                           ElevatedButton.icon(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF9EB294),
+                              backgroundColor: const Color(0xFF1976D2), // Blue
                               foregroundColor: Colors.white,
                             ),
                             icon: const Icon(Icons.edit),
@@ -156,7 +156,7 @@ class ManageEventsPage extends StatelessWidget {
 
                           ElevatedButton.icon(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF9EB294),
+                              backgroundColor: const Color(0xFFD32F2F), // Red
                               foregroundColor: Colors.white,
                             ),
                             icon: const Icon(Icons.delete),

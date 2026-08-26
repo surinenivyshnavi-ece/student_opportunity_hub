@@ -147,7 +147,7 @@ class ManageInternshipsPage extends StatelessWidget {
 
                           ElevatedButton.icon(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF9EB294),
+                              backgroundColor: const Color(0xFF1976D2), // Blue
                               foregroundColor: Colors.white,
                             ),
                             icon: const Icon(Icons.edit),
@@ -156,27 +156,23 @@ class ManageInternshipsPage extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) =>
-                                      AddInternshipPage(
-                                        documentId: doc.id,
-                                        internshipData: data,
-                                      ),
+                                  builder: (_) => AddInternshipPage(
+                                    documentId: doc.id,
+                                    internshipData: data,
+                                  ),
                                 ),
                               );
                             },
                           ),
 
                           const SizedBox(width: 10),
-
                           ElevatedButton.icon(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF9EB294),
+                              backgroundColor: const Color(0xFFD32F2F), // Red
                               foregroundColor: Colors.white,
                             ),
-                            icon:
-                            const Icon(Icons.delete),
-                            label:
-                            const Text("Delete"),
+                            icon: const Icon(Icons.delete),
+                            label: const Text("Delete"),
                             onPressed: () {
                               deleteInternship(
                                 context,

@@ -403,26 +403,70 @@ class _WorkshopsPageState extends State<WorkshopsPage> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
 
-                                  IconButton(
-                                    icon: const Icon(Icons.bookmark_border),
-                                    onPressed: () async {
-                                      final user = FirebaseAuth.instance.currentUser;
-                                      if (user == null) return;
+                                  StreamBuilder<DocumentSnapshot>(
+                                    stream: FirebaseAuth.instance.currentUser == null
+                                        ? null
+                                        : FirebaseFirestore.instance
+                                        .collection('bookmarks')
+                                        .doc(FirebaseAuth.instance.currentUser!.uid)
+                                        .collection('saved')
+                                        .doc(docs[index].id)
+                                        .snapshots(),
+                                    builder: (context, bookmarkSnapshot) {
+                                      final isBookmarked = bookmarkSnapshot.data?.exists ?? false;
 
-                                      await FirebaseFirestore.instance
-                                          .collection('bookmarks')
-                                          .doc(user.uid)
-                                          .collection('saved')
-                                          .doc(docs[index].id)
-                                          .set({
-                                        ...data,
-                                        "type": "workshop",
-                                      });
-
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                          content: Text("Workshop bookmarked"),
+                                      return IconButton(
+                                        icon: Icon(
+                                          isBookmarked
+                                              ? Icons.bookmark
+                                              : Icons.bookmark_border,
+                                          color: isBookmarked
+                                              ? Colors.green
+                                              : Colors.black87,
                                         ),
+                                        onPressed: () async {
+                                          final user = FirebaseAuth.instance.currentUser;
+
+                                          if (user == null) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(
+                                                content: Text("Please login to bookmark"),
+                                              ),
+                                            );
+                                            return;
+                                          }
+
+                                          final bookmarkRef = FirebaseFirestore.instance
+                                              .collection('bookmarks')
+                                              .doc(user.uid)
+                                              .collection('saved')
+                                              .doc(docs[index].id);
+
+                                          if (isBookmarked) {
+                                            await bookmarkRef.delete();
+
+                                            if (context.mounted) {
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                const SnackBar(
+                                                  content: Text("Workshop removed from bookmarks"),
+                                                ),
+                                              );
+                                            }
+                                          } else {
+                                            await bookmarkRef.set({
+                                              ...data,
+                                              "type": "workshop",
+                                            });
+
+                                            if (context.mounted) {
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                const SnackBar(
+                                                  content: Text("Workshop bookmarked"),
+                                                ),
+                                              );
+                                            }
+                                          }
+                                        },
                                       );
                                     },
                                   ),

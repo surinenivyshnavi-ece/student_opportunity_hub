@@ -145,7 +145,7 @@ class ManageCertificationsPage extends StatelessWidget {
 
                           ElevatedButton.icon(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF9EB294),
+                              backgroundColor: const Color(0xFF1976D2), // Edit - Blue
                               foregroundColor: Colors.white,
                             ),
                             icon: const Icon(Icons.edit),
@@ -172,7 +172,7 @@ class ManageCertificationsPage extends StatelessWidget {
 
                           ElevatedButton.icon(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF9EB294),
+                              backgroundColor: const Color(0xFFD32F2F), // Delete - Red
                               foregroundColor: Colors.white,
                             ),
                             icon: const Icon(

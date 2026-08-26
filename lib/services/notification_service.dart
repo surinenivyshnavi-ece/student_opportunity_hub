@@ -5,6 +5,7 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:student_opportunity_hub/reminder_detail_page.dart';
 import '../main.dart';
+import 'app_update_service.dart';
 
 class NotificationService {
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;

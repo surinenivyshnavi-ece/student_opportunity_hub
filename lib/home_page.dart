@@ -13,11 +13,24 @@ import 'certification_page.dart';
 import 'workshops_page.dart';
 import 'events_page.dart';
 import 'admin_request_form_page.dart';
-class HomePage extends StatelessWidget {
-
-
+import 'services/app_update_service.dart';
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AppUpdateService.checkForUpdate(context);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
