@@ -9,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'login_page.dart';
 import 'team formation_page.dart';
+import 'college_admin_profile_page.dart';
 
 
 class CollegeAdminHomePage extends StatelessWidget {
@@ -55,7 +56,23 @@ class CollegeAdminHomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("College Admin Dashboard"),
+
         actions: [
+          // Profile button
+          IconButton(
+            icon: const Icon(Icons.person_outline),
+            tooltip: "Profile",
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const CollegeAdminProfilePage(),
+                ),
+              );
+            },
+          ),
+
+          // Logout button
           IconButton(
             icon: const Icon(Icons.logout),
             tooltip: "Logout",

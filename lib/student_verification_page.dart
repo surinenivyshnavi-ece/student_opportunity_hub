@@ -22,21 +22,72 @@ class _StudentVerificationPageState extends State<StudentVerificationPage> {
 
 
   Future<void> getAdminCollege() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
 
-    final uid = FirebaseAuth.instance.currentUser!.uid;
+      if (user == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('No user is currently logged in.'),
+            ),
+          );
+        }
+        return;
+      }
 
-    final adminDoc = await FirebaseFirestore.instance
-        .collection("admins")
-        .doc(uid)
-        .get();
+      final uid = user.uid;
 
+      final adminDoc = await FirebaseFirestore.instance
+          .collection("admins")
+          .doc(uid)
+          .get();
 
-    if (adminDoc.exists) {
+      if (!adminDoc.exists) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'College admin profile was not found.',
+              ),
+            ),
+          );
+        }
+        return;
+      }
 
-      setState(() {
-        adminCollege = adminDoc["college"];
-      });
+      final data = adminDoc.data();
 
+      final college = data?['college'];
+
+      if (college == null || college.toString().trim().isEmpty) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'College information is missing from admin profile.',
+              ),
+            ),
+          );
+        }
+        return;
+      }
+
+      if (mounted) {
+        setState(() {
+          adminCollege = college.toString();
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Error loading admin information: $e',
+            ),
+          ),
+        );
+      }
     }
   }
 
@@ -67,6 +118,7 @@ class _StudentVerificationPageState extends State<StudentVerificationPage> {
             .collection('users')
             .where('role', isEqualTo: 'student')
             .where('verified', isEqualTo: false)
+            .where('college', isEqualTo: adminCollege)
             .snapshots(),
         builder: (context, snapshot) {
 
